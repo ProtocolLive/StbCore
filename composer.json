@@ -1,0 +1,26 @@
+{
+  "name": "protocollive/stbcore",
+  "description": "Core files for SimpleTelegramBot",
+  "type": "library",
+  "require": {
+    "php": ">=8.1"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Protocol Corporation",
+      "email": "protocollive@outlook.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ProtocolLive\\SimpleTelegramBot\\StbObjects\\": "src/StbObjects"
+    },
+    "files": [
+      "src/basics.php",
+      "src/bot.php",
+      "src/debug.php",
+      "src/module.php"
+    ]
+  }
+}
