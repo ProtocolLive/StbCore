@@ -18,9 +18,7 @@
     },
     "files": [
       "src/basics.php",
-      "src/bot.php",
-      "src/debug.php",
-      "src/module.php"
+      "src/debug.php"
     ]
   }
 }
