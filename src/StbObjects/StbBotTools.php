@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.02.02
+//2023.02.02.03
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -37,6 +37,29 @@ abstract class StbBotTools{
     else:
       return $user;
     endif;
+  }
+
+  public static function Log(
+    int $Type,
+    string $Msg,
+    bool $NewLine = true
+  ):void{
+    /**
+     * @var TblData TblBotData
+     */
+    global $BotData;
+    DebugTrace();
+    if(($BotData->Log & $Type) === false):
+      return;
+    endif;
+    $Msg = date('Y-m-d H:i:s') . PHP_EOL . $Msg . PHP_EOL;
+    if($NewLine):
+      $Msg .= PHP_EOL;
+    endif;
+    if($Type === StbLog::Cron):
+      $file = 'cron';
+    endif;
+    file_put_contents(DirLogs . '/' . $file . '.log', $Msg, FILE_APPEND);
   }
 
   public static function SendUserCmd(
@@ -92,29 +115,6 @@ abstract class StbBotTools{
     else:
       return false;
     endif;
-  }
-
-  public static function Log(
-    int $Type,
-    string $Msg,
-    bool $NewLine = true
-  ):void{
-    /**
-     * @var TblData TblBotData
-     */
-    global $BotData;
-    DebugTrace();
-    if(($BotData->Log & $Type) === false):
-      return;
-    endif;
-    $Msg = date('Y-m-d H:i:s') . PHP_EOL . $Msg . PHP_EOL;
-    if($NewLine):
-      $Msg .= PHP_EOL;
-    endif;
-    if($Type === StbLog::Cron):
-      $file = 'cron';
-    endif;
-    file_put_contents(DirLogs . '/' . $file . '.log', $Msg, FILE_APPEND);
   }
 
   /**
