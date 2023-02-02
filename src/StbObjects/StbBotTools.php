@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.02.01
+//2023.02.02.02
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -94,7 +94,7 @@ abstract class StbBotTools{
     endif;
   }
 
-  public static function StbLog(
+  public static function Log(
     int $Type,
     string $Msg,
     bool $NewLine = true
