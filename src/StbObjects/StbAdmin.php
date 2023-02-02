@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.02.00
+//2023.02.02.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
@@ -28,7 +28,7 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Admins) === null
+    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Admins) === null
     or $Webhook->Text === Admin):
       return;
     endif;
@@ -95,7 +95,7 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -184,7 +184,7 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -227,7 +227,7 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
     or $Id === Admin):
       $Bot->CallbackAnswer(
         $Webhook->Id,
@@ -273,7 +273,7 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
     or $Id === Admin):
       $Bot->CallbackAnswer(
         $Webhook->Id,
@@ -299,7 +299,7 @@ abstract class StbAdmin{
     else:
       $id = $Webhook->User->Id;
     endif;
-    $user = AdminCheck($id);
+    $user = StbBotTools::AdminCheck($id);
     if($user === null):
       return;
     endif;
@@ -382,7 +382,7 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
     or $Admin === Admin):
       $Bot->CallbackAnswer(
         $Webhook->Id,
@@ -409,7 +409,7 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -493,7 +493,7 @@ abstract class StbAdmin{
     else:
       $id = $Webhook->Data->User->Id;
     endif;
-    if(AdminCheck($id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $description = $Bot->MyCmdGet()->Get($Cmd);
@@ -550,7 +550,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $mk = new TblMarkupInline;
@@ -587,7 +587,7 @@ abstract class StbAdmin{
      * @var TelegramBotLibrary $Bot
      */
     global $Webhook, $Bot;
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $cmds = $Bot->MyCmdGet();
@@ -605,7 +605,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Bot;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $CmdsNew = new TblCommands;
@@ -638,7 +638,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $Db->ListenerAdd(
@@ -710,7 +710,7 @@ abstract class StbAdmin{
      */
     global $Db, $Webhook, $Bot, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $Bot->TextEdit(
@@ -740,7 +740,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Bot;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $CmdsNew = new TblCommands;
@@ -784,7 +784,7 @@ abstract class StbAdmin{
     else:
       $temp = $Webhook->Data->User->Id;
     endif;
-    if(AdminCheck($temp, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($temp, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $mk = new TblMarkupInline;
@@ -967,7 +967,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot;
     DebugTrace();
-    if(AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $temp = $Db->VariableGet(
@@ -1006,7 +1006,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $Db->VariableSet(
@@ -1035,7 +1035,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot;
     DebugTrace();
-    if(AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
+    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
       return;
     endif;
     $temp = $Db->VariableGet(

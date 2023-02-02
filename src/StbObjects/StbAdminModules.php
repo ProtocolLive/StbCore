@@ -1,14 +1,12 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.01.23.00
+//2023.02.02.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
-use ProtocolLive\TelegramBotLibrary\{
-  TblObjects\TblMarkupInline,
-  TelegramBotLibrary,
-  TgObjects\TgCallback
-};
+use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
+use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
+use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 class StbAdminModules{
   public static function Callback_Modules():void{
@@ -20,7 +18,7 @@ class StbAdminModules{
      */
     global $Bot, $Db, $Lang, $Webhook;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -79,7 +77,7 @@ class StbAdminModules{
      */
     global $Bot, $Db, $Lang, $Webhook;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -133,7 +131,7 @@ class StbAdminModules{
      */
     global $Bot, $Webhook, $Lang, $Db;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -190,7 +188,7 @@ class StbAdminModules{
      */
     global $Bot, $Db, $Lang, $Webhook;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -238,7 +236,7 @@ class StbAdminModules{
      */
     global $Bot, $Lang, $Webhook, $Db;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -275,7 +273,7 @@ class StbAdminModules{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
+    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
