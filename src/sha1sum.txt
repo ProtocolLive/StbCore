@@ -1,6 +1,6 @@
 74b3a256b745be35e57bb1ada289b6b0502bdda5  StbObjects\StbAdmin.php
 512de326deafc2a7cfb0af462ef896305142315b  StbObjects\StbAdminModules.php
-196f8db0ccf6a79ef1e2ce2f7e5c8cd46fb1fb1d  StbObjects\StbBotTools.php
+028144c48840546fe4dbdc8243005b141bc83bb9  StbObjects\StbBotTools.php
 be943d502202bf9ff8bdf51663188f3b5affce2c  StbObjects\StbCronTools.php
 015e3d3c4ceb0eec7ce62bc85b91ade164003aaa  StbObjects\StbDatabase.php
 f8c03985ceea05890f609a5741617f602db2fa3a  StbObjects\StbDbAdminData.php
