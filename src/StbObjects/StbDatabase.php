@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.02.01
+//2023.02.03.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -155,7 +155,7 @@ final class StbDatabase{
   }
 
   public function ChatAdd(
-    TgChat $Chat
+    TgChat|TgUser $Chat
   ):bool{
     DebugTrace();
     $consult = $this->Db->Insert('chats');
