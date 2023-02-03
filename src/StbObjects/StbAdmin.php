@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.02.01
+//2023.02.03.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
@@ -879,7 +879,7 @@ abstract class StbAdmin{
     $consult = $PlDb->Select('sys_logs');
     $consult->JoinAdd('chats', 'chat_id');
     $consult->Order('time desc');
-    $consult->Limit(20);
+    $consult->Limit(10);
     $consult->Run(Fetch: true);
     while(($log = $consult->Fetch()) !== false):
       $msg .= date('Y/m/d H:i:s', $log['time']) . ' - ';
