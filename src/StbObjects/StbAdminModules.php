@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.02.00
+//2023.02.03.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
@@ -211,6 +211,10 @@ class StbAdminModules{
       $Lang->Get('UninstallButton', Group: 'Module'),
       $Db->CallBackHashSet(self::Callback_UniModPic1(...), $Module)
     );
+    StbModuleTools::Load($Module);
+    if(method_exists($Module, 'Plugin_Buttons')):
+      call_user_func($Module . '::Plugin_Buttons', $mk);
+    endif;
     $date = $Db->Modules($Module);
     $Bot->TextEdit(
       Admin,
