@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.04.00
+//2023.02.04.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -29,7 +29,7 @@ abstract class StbModuleHelper{
     $Pdo->beginTransaction();
 
     if($Db->ModuleInstall(self::ModName()) === false):
-      self::MsgError($Pdo, $Webhook, $Bot, $Lang);
+      self::MsgError($Pdo);
       error_log('Fail to install module ' . self::ModName());
       return;
     endif;
@@ -38,16 +38,18 @@ abstract class StbModuleHelper{
     foreach($Commands as $cmd):
       $cmds->Add($cmd[0], $cmd[1]);
       if($Db->CommandAdd($cmd[0], self::ModName()) === false):
-        self::MsgError($Pdo, $Webhook, $Bot, $Lang);
+        self::MsgError($Pdo);
         error_log('Fail to add the command ' . $cmd[0]);
         return;
       endif;
     endforeach;
-    if($Bot->MyCmdSet($cmds) === null):
-      self::MsgError($Pdo, $Webhook, $Bot, $Lang);
+    try{
+      $Bot->MyCmdSet($cmds);
+    }catch(TblException){
+      self::MsgError($Pdo);
       error_log('Fail to add the commands');
       return;
-    endif;
+    }
 
     $Bot->CallbackAnswer(
       $Webhook->Id,
@@ -55,6 +57,7 @@ abstract class StbModuleHelper{
     );
     if($Commit):
       $Pdo->commit();
+      StbAdminModules::Callback_Modules();
     endif;
   }
 
@@ -64,7 +67,6 @@ abstract class StbModuleHelper{
     $Pdo->Commit();
     StbAdminModules::Callback_Modules();
   }
-
 
   private static function ModName():string{
     $temp = debug_backtrace();
@@ -114,10 +116,12 @@ abstract class StbModuleHelper{
     foreach($Commands as $cmd):
       $cmds->Del($cmd[0]);
     endforeach;
-    if($Bot->MyCmdSet($cmds) === null):
-      self::MsgError($Pdo, $Webhook, $Bot, $Lang);
+    try{
+      $Bot->MyCmdSet($cmds);
+    }catch(TblException){
+      self::MsgError($Pdo);
       return;
-    endif;
+    }
 
     if($Commit):
       $Pdo->commit();
