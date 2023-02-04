@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.02.04
+//2023.02.04.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -44,11 +44,11 @@ abstract class StbBotTools{
       return;
     endif;
   
-    if(get_class($Webhook) === TblCmd::class)://TblCmdEdited extends TblCmd
+    if(get_class($Webhook) === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd();
     elseif($Webhook instanceof TgCallback):
       self::Update_Callback();
-    elseif($Webhook instanceof TgText):
+    elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
       self::Update_Text();
     elseif($Webhook instanceof TgPhoto):
       self::Update_ListenerDual(StbDbListeners::Photo);
