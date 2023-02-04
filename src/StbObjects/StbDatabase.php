@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.03.00
+//2023.02.04.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -485,7 +485,7 @@ final class StbDatabase{
 
   public function VariableSet(
     string $Name,
-    mixed $Value = null,
+    string|int|float $Value,
     string $Module = null,
     int $User = null,
     bool $AllowDuplicatedName = false
