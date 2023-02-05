@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.04.00
+//2023.02.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -29,7 +29,8 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgPhoto,
   TgText,
   TgUpdateType,
-  TgUser
+  TgUser,
+  TgUserShared
 };
 
 abstract class StbBotTools{
@@ -62,6 +63,8 @@ abstract class StbBotTools{
       self::Update_ListenerSimple(StbDbListeners::ChatMy);
     elseif($Webhook instanceof TgChatTitle):
       self::Update_ListenerSimple(StbDbListeners::Chat);
+    elseif($Webhook instanceof TgUserShared):
+      self::Update_ListenerDual(StbDbListeners::RequestUser);
     endif;
   }
 
