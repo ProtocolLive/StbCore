@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2022.08.27.00
+//2023.02.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 
@@ -15,5 +15,7 @@ enum StbDbListeners{
   case InvoiceCheckout;
   case InvoiceShipping;
   case Photo;
+  case RequestChat;
+  case RequestUser;
   case Voice;
 }
