@@ -1,103 +1,44 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.05.00
+//2023.02.05.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
   TblCommands,
-  TblException,
-  TblMarkupInline
+  TblMarkupInline,
+  TblMarkupKeyboard,
+  TblMarkupRemove
 };
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgParseMode,
-  TgText
+  TgText,
+  TgUserShared
 };
 
 abstract class StbAdmin{
-  private static function AdminAdd():void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var TgText $Webhook
-     * @var StbDatabase $Db
-     * @var StbLanguageSys $Lang
-     */
-    global $Bot, $Webhook, $Db, $Lang;
-    DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Admins) === null
-    or $Webhook->Text === Admin):
-      return;
-    endif;
-    try{
-      $user = $Bot->ChatGet($Webhook->Text);
-    }catch(TblException){
-      $Bot->TextSend(
-        $Webhook->Data->User->Id,
-        $Lang->Get('UserNull', Group: 'Errors')
-      );
-      return;
-    }
-    $mk = new TblMarkupInline;
-    $mk->ButtonCallback(
-      0,
-      0,
-      '🔙',
-      $Db->CallBackHashSet(self::Callback_Admins(...))
-    );
-    $mk->ButtonCallback(
-      0,
-      1,
-      '✅',
-      $Db->CallBackHashSet(
-        self::CallBack_Admin(...),
-        $Webhook->Text,
-        true
-      )
-    );
-    $name = $user->Name;
-    if($user->NameLast !== null):
-      $name .= ' ' . $user->NameLast;
-    endif;
-    if($user->Nick !== null):
-      $name .= ' (@' . $user->Nick . ')';
-    endif;
-    $Db->ListenerDel(
-      StbDbListeners::Text,
-      $Webhook->Data->User->Id
-    );
-    $Db->VariableDel(
-      StbDbVariables::Action->name,
-      null,
-      __CLASS__,
-      User: $Webhook->Data->User->Id
-    );
-    $Bot->TextSend(
-      $Webhook->Data->User->Id,
-      sprintf(
-        $Lang->Get('AdminAddConfirm', Group: 'Admin'),
-        $name
-      ),
-      Markup: $mk
-    );
-  }
-
   public static function Callback_Admin(
     int $Admin,
     bool $ListenerDel = false
   ):void{
     /**
      * @var TelegramBotLibrary $Bot
-     * @var TgCallback $Webhook
+     * @var TgCallback|TgUserShared $Webhook
      * @var StbDatabase $Db
      * @var StbLanguageSys $Lang
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
+    if($Webhook instanceof TgCallback):
+      $id = $Webhook->User->Id;
+    else:
+      $id = $Webhook->Data->User->Id;
+    endif;
+    if(StbBotTools::AdminCheck($id, StbDbAdminPerm::Admins) === null):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
@@ -153,26 +94,35 @@ abstract class StbAdmin{
     if($admin->Nick !== null):
       $AdminName .= ' (' . $admin->Nick . ')';
     endif;
-    $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
-      sprintf(
-        $Lang->Get('Admin', Group: 'Admin'),
-        $AdminName,
-        date($Lang->Get('DateTime'), $admin->Creation)
-      ),
-      Markup: $mk
-    );
-    if($ListenerDel):
-      $Db->ListenerDel(
-        StbDbListeners::Text,
-        $Webhook->User->Id
+    if($Webhook instanceof TgCallback):
+      $Bot->TextEdit(
+        $Webhook->Data->Data->Chat->Id,
+        $Webhook->Data->Data->Id,
+        sprintf(
+          $Lang->Get('Admin', Group: 'Admin'),
+          $AdminName,
+          date($Lang->Get('DateTime'), $admin->Creation)
+        ),
+        Markup: $mk
       );
-      $Db->VariableDel(
-        StbDbVariables::AdminAdd->name,
-        null,
-        __CLASS__,
-        $Webhook->User->Id
+    else:
+      $Bot->TextSend(
+        $Webhook->Data->Chat->Id,
+        sprintf(
+          $Lang->Get('Admin', Group: 'Admin'),
+          $AdminName,
+          date($Lang->Get('DateTime'), $admin->Creation)
+        ),
+        Markup: $mk
+      );
+    endif;
+    if($ListenerDel):
+      /**
+       * @var TgUserShared $Webhook
+       */
+      $Db->ListenerDel(
+        StbDbListeners::RequestUser,
+        $Webhook->Data->User->Id
       );
     endif;
   }
@@ -193,28 +143,32 @@ abstract class StbAdmin{
       );
       return;
     endif;
-    $Db->VariableSet(
-      StbDbVariables::Action->name,
-      StbDbVariables::AdminAdd->name,
-      null,
-      $Webhook->User->Id
-    );
-    $Db->ListenerAdd(
-      StbDbListeners::Text,
-      __CLASS__,
-      $Webhook->User->Id
-    );
-    $mk = new TblMarkupInline;
-    $mk->ButtonCallback(
+    $mk = new TblMarkupKeyboard(Resize: true);
+    $mk->Button(
       0,
       0,
-      $Lang->Get('Cancel'),
-      $Db->CallBackHashSet(self::Callback_Cancel(...))
+      $Lang->Get('Cancel')
+    );
+    $mk->ButtonRequestUser(
+      0,
+      1,
+      $Lang->Get('AdminAddButton', Group: 'Admin'),
+      StbResquestChatId::AdminAdd->value,
+      false
     );
     $Bot->TextSend(
       $Webhook->User->Id,
-      $Lang->Get('AdminAddId', Group: 'Admin'),
+      $Lang->Get('AdminAdd', Group: 'Admin'),
       Markup: $mk
+    );
+    $Bot->MessageDelete(
+      $Webhook->Data->Data->Chat->Id,
+      $Webhook->Data->Data->Id
+    );
+    $Db->ListenerAdd(
+      StbDbListeners::RequestUser,
+      __CLASS__,
+      $Webhook->User->Id
     );
   }
 
@@ -1103,6 +1057,22 @@ abstract class StbAdmin{
     endif;
   }
 
+  public static function Listener_RequestUser():bool{
+    /**
+     * @var TgUserShared $Webhook
+     * @var TelegramBotLibrary $Bot
+     */
+    global $Webhook, $Bot, $Db, $Lang;
+    $Db->ChatAdd($Bot->ChatGet($Webhook->UserId));
+    self::Callback_Admin($Webhook->UserId, true);
+    $Bot->TextSend(
+      $Webhook->Data->User->Id,
+      $Lang->Get('AdminAddPerms', Group: 'Admin'),
+      Markup: new TblMarkupRemove
+    );
+    return false;
+  }
+
   public static function Listener_Text():bool{
     /**
      * @var TgText $Webhook
@@ -1117,9 +1087,6 @@ abstract class StbAdmin{
     );
     if($temp === null):
       return true;
-    elseif($temp === StbDbVariables::AdminAdd->name):
-      self::AdminAdd();
-      return false;
     elseif($temp === StbDbVariables::CmdAddName->name):
       self::CmdAddName();
       return false;
