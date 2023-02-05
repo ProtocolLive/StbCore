@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.03.00
+//2023.02.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
@@ -69,8 +69,10 @@ abstract class StbAdmin{
       StbDbListeners::Text,
       $Webhook->Data->User->Id
     );
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::Action->name,
+      null,
+      __CLASS__,
       User: $Webhook->Data->User->Id
     );
     $Bot->TextSend(
@@ -164,12 +166,12 @@ abstract class StbAdmin{
     if($ListenerDel):
       $Db->ListenerDel(
         StbDbListeners::Text,
-        __CLASS__,
         $Webhook->User->Id
       );
-      $Db->VariableSet(
+      $Db->VariableDel(
         StbDbVariables::AdminAdd->name,
         null,
+        __CLASS__,
         $Webhook->User->Id
       );
     endif;
@@ -464,7 +466,7 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db;
     DebugTrace();
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::Action->name,
       null,
       __CLASS__,
@@ -682,13 +684,13 @@ abstract class StbAdmin{
      */
     global $Db, $Webhook;
     DebugTrace();
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::Action->name,
       null,
       __CLASS__,
       $Webhook->User->Id
     );
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::CmdName->name,
       null,
       __CLASS__,
@@ -978,13 +980,13 @@ abstract class StbAdmin{
     $cmds = $Bot->MyCmdGet();
     $cmds->Add($temp, trim($Webhook->Text));
     $Bot->MyCmdSet($cmds);
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::Action->name,
       null,
       __CLASS__,
       $Webhook->Data->User->Id
     );
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::CmdName->name,
       null,
       __CLASS__,
@@ -1046,13 +1048,13 @@ abstract class StbAdmin{
     $cmds = $Bot->MyCmdGet();
     $cmds->Add($temp, trim($Webhook->Text));
     $Bot->MyCmdSet($cmds);
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::Action->name,
       null,
       __CLASS__,
       $Webhook->Data->User->Id
     );
-    $Db->VariableSet(
+    $Db->VariableDel(
       StbDbVariables::CmdName->name,
       null,
       __CLASS__,
