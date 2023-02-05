@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2022.12.31.00
+//2023.02.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 
@@ -12,7 +12,7 @@ extends StbLanguageMaster{
   ){
     DebugTrace();
     $this->Default = $Default;
-    foreach(glob(DirSystem . '/language/*', GLOB_ONLYDIR) as $dir):
+    foreach(glob(dirname(__DIR__) . '/language/*', GLOB_ONLYDIR) as $dir):
       foreach(glob($dir . '/*.json') as $file):
         $temp = file_get_contents($file);
         $temp = json_decode($temp, true);
