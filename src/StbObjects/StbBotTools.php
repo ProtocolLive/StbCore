@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.05.00
+//2023.02.23.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -27,6 +27,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgInvoiceShipping,
   TgParseMode,
   TgPhoto,
+  TgChatPhotoNew,
   TgText,
   TgUpdateType,
   TgUser,
@@ -34,37 +35,31 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 abstract class StbBotTools{
+
   public static function Action_():void{
     /**
      * @var TelegramBotLibrary $Bot
+     * @var StbDatabase $Db
      */
-    global $Bot, $Webhook;
+    global $Bot, $Webhook, $Db;
     DebugTrace();
     $Webhook = $Bot->WebhookGet();
     if($Webhook === null):
       return;
     endif;
-  
+
     if(get_class($Webhook) === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd();
     elseif($Webhook instanceof TgCallback):
       self::Update_Callback();
     elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
       self::Update_Text();
-    elseif($Webhook instanceof TgPhoto):
-      self::Update_ListenerDual(StbDbListeners::Photo);
-    elseif($Webhook instanceof TgInvoiceCheckout):
-      self::Update_ListenerSimple(StbDbListeners::InvoiceCheckout);
-    elseif($Webhook instanceof TgInvoiceShipping):
-      self::Update_ListenerSimple(StbDbListeners::InvoiceShipping);
-    elseif($Webhook instanceof TgInlineQuery):
-      self::Update_ListenerSimple(StbDbListeners::InlineQuery);
-    elseif($Webhook instanceof TgGroupStatusMy):
-      self::Update_ListenerSimple(StbDbListeners::ChatMy);
-    elseif($Webhook instanceof TgChatTitle):
-      self::Update_ListenerSimple(StbDbListeners::Chat);
-    elseif($Webhook instanceof TgUserShared):
-      self::Update_ListenerDual(StbDbListeners::RequestUser);
+    else:
+      $listener = self::ObjToListener($Webhook);
+      $module = $Db->ListenerGet($listener);
+      $module = $module[0]['module'];
+      StbModuleTools::Load($module);
+      call_user_func($module . '::Listener_' . $listener->name);
     endif;
   }
 
@@ -188,6 +183,21 @@ abstract class StbBotTools{
     file_put_contents(DirLogs . '/' . $file . '.log', $Msg, FILE_APPEND);
   }
 
+  private static function ObjToListener(
+    object $Obj
+  ):StbDbListeners{
+    return match(get_class($Obj)){
+      TgChatPhotoNew::class => StbDbListeners::ChatPhotoNew,
+      TgChatTitle::class => StbDbListeners::Chat,
+      TgPhoto::class => StbDbListeners::Photo,
+      TgGroupStatusMy::class => StbDbListeners::ChatMy,
+      TgInlineQuery::class => StbDbListeners::InlineQuery,
+      TgInvoiceCheckout::class => StbDbListeners::InvoiceCheckout,
+      TgInvoiceShipping::class => StbDbListeners::InvoiceShipping,
+      TgUserShared::class => StbDbListeners::RequestUser
+    };
+  }
+
   public static function SendUserCmd(
     string $Command,
     string $EventAdditional = null
@@ -305,43 +315,6 @@ abstract class StbBotTools{
     if(StbBotTools::SendUserCmd($Webhook->Command) === false):
       StbBotTools::SendUserCmd('unknown');
     endif;
-  }
-
-  private static function Update_ListenerDual(
-    StbDbListeners $Listener
-  ):void{
-    /**
-     * @var TgPhoto $Webhook
-     * @var StbDatabase $Db
-     */
-    global $Db, $Webhook;
-    foreach($Db->ListenerGet($Listener) as $listener):
-      StbModuleTools::Load($listener['module']);
-      if(call_user_func($listener['module'] . '::Listener_' . $Listener->name) === false):
-        return;
-      endif;
-    endforeach;
-    foreach($Db->ListenerGet($Listener, $Webhook->Data->Chat->Id) as $listener):
-      StbModuleTools::Load($listener['module']);
-      if(call_user_func($listener['module'] . '::Listener_' . $Listener->name) === false):
-        return;
-      endif;
-    endforeach;
-  }
-
-  private static function Update_ListenerSimple(
-    StbDbListeners $Listener
-  ):void{
-    /**
-     * @var StbDatabase $Db
-     */
-    global $Db;
-    foreach($Db->ListenerGet($Listener) as $listener):
-      StbModuleTools::Load($listener['module']);
-      if(call_user_func($listener['module'] . '::Listener_' . $Listener->name) === false):
-        return;
-      endif;
-    endforeach;
   }
 
   private static function Update_Text():void{
