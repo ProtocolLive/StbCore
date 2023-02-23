@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.23.00
+//2023.02.23.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -27,6 +27,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgInvoiceShipping,
   TgParseMode,
   TgPhoto,
+  TgPinnedMsg,
   TgChatPhotoNew,
   TgText,
   TgUpdateType,
@@ -56,7 +57,13 @@ abstract class StbBotTools{
       self::Update_Text();
     else:
       $listener = self::ObjToListener($Webhook);
+      if($listener === null):
+        return;
+      endif;
       $module = $Db->ListenerGet($listener);
+      if($listener === []):
+        return;
+      endif;
       $module = $module[0]['module'];
       StbModuleTools::Load($module);
       call_user_func($module . '::Listener_' . $listener->name);
@@ -185,7 +192,7 @@ abstract class StbBotTools{
 
   private static function ObjToListener(
     object $Obj
-  ):StbDbListeners{
+  ):StbDbListeners|null{
     return match(get_class($Obj)){
       TgChatPhotoNew::class => StbDbListeners::ChatPhotoNew,
       TgChatTitle::class => StbDbListeners::Chat,
@@ -194,7 +201,9 @@ abstract class StbBotTools{
       TgInlineQuery::class => StbDbListeners::InlineQuery,
       TgInvoiceCheckout::class => StbDbListeners::InvoiceCheckout,
       TgInvoiceShipping::class => StbDbListeners::InvoiceShipping,
-      TgUserShared::class => StbDbListeners::RequestUser
+      TgPinnedMsg::class => StbDbListeners::PinnedMsg,
+      TgUserShared::class => StbDbListeners::RequestUser,
+      default => null
     };
   }
 
