@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.24.00
+//2023.02.24.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -61,7 +61,7 @@ abstract class StbBotTools{
         return;
       endif;
       $module = $Db->ListenerGet($listener);
-      if($listener === []):
+      if($module === []):
         return;
       endif;
       $module = $module[0]['module'];
