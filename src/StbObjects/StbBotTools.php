@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.02.23.01
+//2023.02.24.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -332,7 +332,9 @@ abstract class StbBotTools{
      * @var StbDatabase $Db
      */
     global $Db, $Webhook;
-    $Db->UserSeen($Webhook->Data->User);
+    if($Webhook->Data->User instanceof TgUser):
+      $Db->UserSeen($Webhook->Data->User);
+    endif;
     $Run = false;
     foreach($Db->ListenerGet(StbDbListeners::Text) as $listener):
       $Run = true;
