@@ -39,8 +39,8 @@
     "UserNull": "Não foi possível obter as informações do usuário"
   },
   "Stats": {
-    "Commands": "Comandos: (20 mais usados)",
-    "Logs": "Logs: (Últimos 20)",
+    "Commands": "Comandos: (10 mais usados)",
+    "Logs": "Logs: (Últimos 10)",
     "Used": "Total de usuários: %s"
   },
   "Add": "➕",

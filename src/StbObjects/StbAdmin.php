@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.05.01
+//2023.02.28.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
@@ -825,7 +825,7 @@ abstract class StbAdmin{
     $consult->Fields('event,count(event) as count');
     $consult->Group('event');
     $consult->Order('count desc');
-    $consult->Limit(20);
+    $consult->Limit(10);
     $consult->Run(Fetch: true);
     while(($event = $consult->Fetch()) !== false):
       $msg .= $event['count'] . ' - ' . $event['event'] . PHP_EOL;
