@@ -1,6 +1,6 @@
-332f203d2ef6d8c2b001676577d72ab13fa07c32  StbObjects\StbAdmin.php
+afdc0f02639ba4e7ad0629f0b5cb2c5487e7853e  StbObjects\StbAdmin.php
 f91a44fdc245b586b6f26ae5561138e6efb6f11b  StbObjects\StbAdminModules.php
-fd72422a6aeed430b1f887b50bff3b909220c6ed  StbObjects\StbBotTools.php
+9598973f3cac5674b9cc3320762aebdc429a2167  StbObjects\StbBotTools.php
 be943d502202bf9ff8bdf51663188f3b5affce2c  StbObjects\StbCronTools.php
 106155486d62ae2fc081a639bbff10fff1fc4b34  StbObjects\StbDatabase.php
 f8c03985ceea05890f609a5741617f602db2fa3a  StbObjects\StbDbAdminData.php
@@ -17,5 +17,5 @@ dbec8db3a62317c182520da2e5537248ae6ae577  StbObjects\StbLog.php
 9673a9ec658650e8dd743a84d1839ec54b2006a2  StbObjects\StbResquestChatId.php
 3952e47971ad03439c4521ec81994072ec5d52cd  basics.php
 0f70a4a06892dbc07443b936d6d4526a56a533f9  debug.php
-b20f947692e0ce42df83239dfc749d2b2fe7928e  language\en\system.json
-cd295a51da74eb21a7f6a7779b56e3acdbac27a1  language\pt-br\system.json
+55555e75b100ba535bef3eb26e6cb75000cdfb82  language\en\system.json
+4bc1db1a4126464310175030b773a8fe0c3e7e57  language\pt-br\system.json
