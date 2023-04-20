@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.04.09.00
+//2023.04.20.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -18,6 +18,7 @@ use ProtocolLive\TelegramBotLibrary\TblObjects\{
 };
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
+  TgAnimation,
   TgCallback,
   TgChat,
   TgChatTitle,
@@ -196,6 +197,7 @@ abstract class StbBotTools{
     object $Obj
   ):StbDbListeners|null{
     return match(get_class($Obj)){
+      TgAnimation::class => StbDbListeners::Animation,
       TgChatPhotoNew::class => StbDbListeners::ChatPhotoNew,
       TgChatTitle::class => StbDbListeners::Chat,
       TgDocument::class => StbDbListeners::Document,
