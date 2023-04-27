@@ -14,7 +14,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "ProtocolLive\\SimpleTelegramBot\\StbObjects\\": "src/StbObjects"
+      "ProtocolLive\\SimpleTelegramBot\\": "src/"
     },
     "files": [
       "src/basics.php",
