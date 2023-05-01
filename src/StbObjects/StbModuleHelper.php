@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.01.01
+//2023.05.01.02
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -101,11 +101,9 @@ abstract class StbModuleHelper{
   ):void{
     /**
      * @var StbDatabase $Db
-     * @var TgCallback $Webhook
      * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
      */
-    global $Db, $Bot, $Webhook, $Lang;
+    global $Db, $Bot;
     DebugTrace();
     $Pdo->beginTransaction();
 
