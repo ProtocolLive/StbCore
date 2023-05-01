@@ -1,15 +1,13 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.01.00
+//2023.05.01.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
-use ProtocolLive\TelegramBotLibrary\{
-  TelegramBotLibrary,
-  TgObjects\TgCallback
-};
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblException;
+use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
+use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 abstract class StbModuleHelper{
   /**
