@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.04.00
+//2023.05.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -416,17 +416,17 @@ final class StbDatabase{
   }
 
   public function UserSeen(
-    TgUser $User
+    TgUser|TgChat $User
   ):void{
     DebugTrace();
     $consult = $this->Db->InsertUpdate('chats');
     $consult->FieldAdd('chat_id', $User->Id, Types::Int);
     $consult->FieldAdd('created', time(), Types::Int);
     $consult->FieldAdd('name', $User->Name, Types::Str, Update: true);
-    $consult->FieldAdd('name2', $User->NameLast, Types::Str, Update: true);
+    $consult->FieldAdd('name2', $User->NameLast ?? null, Types::Str, Update: true);
     $consult->FieldAdd('nick', $User->Nick, Types::Str, Update: true);
     $consult->FieldAdd('lastseen', time(), Types::Int, Update: true);
-    $consult->FieldAdd('lang', $User->Language, Types::Str, Update: true);
+    $consult->FieldAdd('lang', $User->Language ?? null, Types::Str, Update: true);
     $consult->Run();
   }
 
