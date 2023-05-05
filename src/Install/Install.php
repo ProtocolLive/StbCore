@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.04.26.00
+//2023.05.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\{
@@ -231,8 +231,7 @@ class Install{
     );
     $consult->Add(
       'msg',
-      Formats::Text,
-      NotNull: true
+      Formats::Text
     );
     $consult->Run();
   }
