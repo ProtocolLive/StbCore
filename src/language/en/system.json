@@ -48,6 +48,7 @@
   "Cancel": "Cancelar",
   "DateTime": "m/d/Y h:i:s",
   "MyId": "Your ID is %s",
+  "MyIdChat": "\nChat ID: %s",
   "No": "❎",
   "Yes": "✅"
 }

@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.28.00
+//2023.05.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
@@ -1035,12 +1035,19 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
+    $msg = sprintf(
+      $Lang->Get('MyId'),
+      $Webhook->Data->User->Id,
+    );
+    if($Webhook->Data->Chat->Id !== $Webhook->Data->User->Id):
+      $msg .= sprintf(
+        $Lang->Get('MyIdChat'),
+        $Webhook->Data->Chat->Id,
+      );
+    endif;
     $Bot->TextSend(
       $Webhook->Data->User->Id,
-      sprintf(
-        $Lang->Get('MyId'),
-        $Webhook->Data->User->Id,
-      )
+      $msg
     );
     $Db->UsageLog($Webhook->Data->User->Id, 'id');
   }
