@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.05.00
+//2023.05.05.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -373,7 +373,7 @@ final class StbDatabase{
     $consult->FieldAdd('chat_id', $Id, Types::Int);
     $consult->FieldAdd('time', time(), Types::Int);
     $consult->FieldAdd('event', $Event, Types::Str);
-    $consult->FieldAdd('additional', $Additional, Types::Str);
+    $consult->FieldAdd('msg', $Additional, Types::Str);
     $consult->Run();
   }
 
