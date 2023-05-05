@@ -1,9 +1,10 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.05.00
+//2023.05.05.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use DateTimeZone;
 use ProtocolLive\PhpLiveDb\{
   Drivers,
   Formats,
@@ -323,7 +324,6 @@ class Install{
     );
     $consult->Run();
   }
-  
 
   public static function Step1():void{?>
     <!DOCTYPE html>
