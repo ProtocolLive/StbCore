@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.05.01
+//2023.05.05.02
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use DateTimeZone;
@@ -17,7 +17,21 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDbAdminPerm
 };
 
-class Install{
+final class Install{
+  private static function CopyRecursive(
+    string $From,
+    string $To
+  ):void{
+    foreach(glob($From . '/*') as $file):
+      if(is_dir($file)):
+        mkdir($To . '/' . basename($file), 0755, true);
+        self::CopyRecursive($file, $To . '/' . basename($file));
+      else:
+        copy($file, $To . '/' . basename($file));
+      endif;
+    endforeach;
+  }
+
   private static function CreateCallbackhash():void{
     global $PlDb;
     $consult = $PlDb->Create('callbackshash');
@@ -439,7 +453,7 @@ class Install{
       $DirBot = 'Bot-' . $_POST['name'] . '-' . md5(uniqid());
 
       mkdir($DirSystem . '/DirBot', 0755, true);
-      CopyRecursive(__DIR__ . '/DirBot', $DirSystem . '/DirBot');
+      self::CopyRecursive(__DIR__ . '/DirBot', $DirSystem . '/DirBot');
 
       $config = file_get_contents($DirSystem . '/DirBot/config.php');
       $config = str_replace('##DATE##', date('Y-m-d H:i:s'), $config);
