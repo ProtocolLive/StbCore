@@ -3,7 +3,8 @@
   "description": "Core files for SimpleTelegramBot",
   "type": "library",
   "require": {
-    "php": ">=8.1"
+    "php": ">=8.1",
+    "protocollive/funcoescomuns": "^2023.05"
   },
   "license": "MIT",
   "authors": [
