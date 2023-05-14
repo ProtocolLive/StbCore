@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.14.00
+//2023.05.14.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
@@ -122,7 +122,9 @@ abstract class StbAdminModules{
     );
   }
 
-  public static function Callback_InsModPic(string $Module):void{
+  public static function Callback_InsModPic(
+    string $Module
+  ):void{
     /**
      * @var TelegramBotLibrary $Bot
      * @var TgCallback $Webhook
@@ -231,7 +233,9 @@ abstract class StbAdminModules{
     );
   }
 
-  public static function Callback_UniModPic1(string $Module):void{
+  public static function Callback_UniModPic1(
+    string $Module
+  ):void{
     /**
      * @var TelegramBotLibrary $Bot
      * @var StbLanguageSys $Lang
@@ -268,7 +272,9 @@ abstract class StbAdminModules{
     );
   }
 
-  public static function Callback_UniModPic2(string $Module):void{
+  public static function Callback_UniModPic2(
+    string $Module
+  ):void{
     /**
      * @var TelegramBotLibrary $Bot
      * @var TgCallback $Webhook
