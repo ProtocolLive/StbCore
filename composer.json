@@ -16,10 +16,6 @@
   "autoload": {
     "psr-4": {
       "ProtocolLive\\SimpleTelegramBot\\": "src/"
-    },
-    "files": [
-      "src/basics.php",
-      "src/debug.php"
-    ]
+    }
   }
 }
