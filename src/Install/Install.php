@@ -1,9 +1,9 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.05.02
+//2023.05.19.00
 
-namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+namespace ProtocolLive\SimpleTelegramBot\Install;
 use DateTimeZone;
 use ProtocolLive\PhpLiveDb\{
   Drivers,
@@ -17,7 +17,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDbAdminPerm
 };
 
-final class Install{
+abstract class Install{
   private static function CopyRecursive(
     string $From,
     string $To
@@ -406,8 +406,8 @@ final class Install{
               <td>Database:</td>
               <td>
                 <select name="dbtype">
-                  <option value="sqlite">SQLite</option>
-                  <option value="mysql">MySQL</option>
+                  <option value="<?=Drivers::SqLite->value?>"><?=Drivers::SqLite->name?></option>
+                  <option value="<?=Drivers::MySql->value?>"><?=Drivers::MySql->name?></option>
                 </select>
               </td>
             </tr>
@@ -436,7 +436,8 @@ final class Install{
     </html><?php
   }
 
-  public static function Step2():void{?>
+  public static function Step2():void{
+    global $PlDb;?>
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -449,7 +450,7 @@ final class Install{
       <h1>SimpleTelegramBot Install</h1><?php
       $_POST = filter_input_array(INPUT_POST);
 
-      $DirSystem = dirname(__DIR__, 1);
+      $DirSystem = dirname(__DIR__, 5);
       $DirBot = 'Bot-' . $_POST['name'] . '-' . md5(uniqid());
 
       mkdir($DirSystem . '/DirBot', 0755, true);
@@ -481,7 +482,7 @@ final class Install{
       rename($DirSystem . '/DirBot/logs', $DirSystem . '/DirBot/logs-' . $temp);
       rename($DirSystem . '/DirBot', $DirSystem . '/' . $DirBot);
 
-      if($_POST['dbtype'] === 'mysql'):
+      if($_POST['dbtype'] === Drivers::MySql->value):
         $PlDb = new PhpLiveDb(
           $_POST['host'],
           $_POST['user'],
@@ -490,7 +491,7 @@ final class Install{
         );
       else:
         $PlDb = new PhpLiveDb(
-          "$DirSystem/$DirBot/db.db",
+          $DirSystem . '/' . $DirBot . '/db.db',
           Driver: Drivers::SqLite
         );
       endif;
@@ -511,7 +512,6 @@ final class Install{
       $consult->FieldAdd('perms', StbDbAdminPerm::All->value, Types::Int);
       $consult->Run();
 
-      rename(__DIR__, $DirSystem . '/install_' . uniqid());
       rename($DirSystem . '/index.php', $DirSystem . '/index_' . uniqid() . '.php');
 
       echo '✅ Install complete!';
