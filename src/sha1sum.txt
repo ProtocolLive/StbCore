@@ -13,7 +13,7 @@ da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\logs\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\modules\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\tools\index.htm
 6dc84b18d4c6ffe5042fd9ece8e62fada1695875  Install\DirBot\tools\scope.php
-f15a4a17b058c8380e908f79cc6eb0d48a176e5f  Install\Install.php
+2cb5e8cb5528fdc76e1752e72fb0fa254fd91c0d  Install\Install.php
 83e1980d7e1187ee72281e55a479f1a1a189fdc9  StbObjects\StbAdmin.php
 66f2edb30a65be0a666fefaf22e646f397650042  StbObjects\StbAdminModules.php
 173d29e4122a7ad7ba12dfd9bfc89fbabed7bb0e  StbObjects\StbBotTools.php
