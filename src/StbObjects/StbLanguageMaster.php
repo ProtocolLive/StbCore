@@ -1,10 +1,13 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.02.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use Exception;
 
+/**
+ * @version 2023.05.23.00
+ */
 abstract class StbLanguageMaster{
   protected string $Default;
   protected array $Translate;
@@ -32,6 +35,18 @@ abstract class StbLanguageMaster{
   ):array{
     DebugTrace();
     return $this->Translate[$Language]['Commands'];
+  }
+
+  /**
+   * @throws Exception
+   */
+  public function LanguageSet(
+    string $Language
+  ):void{
+    if(isset($this->Translate[$Language]) === false):
+      throw new Exception('Language not found');
+    endif;
+    $this->Default = $Language;
   }
 
   public function LanguagesGet():array{
