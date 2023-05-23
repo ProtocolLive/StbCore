@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.14.01
+//2023.05.23.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
@@ -146,7 +146,7 @@ abstract class StbAdminModules{
     $col = 0;
 
     require(DirModules . '/' . $Module . '/index.php');
-    if(method_exists($Module, 'Install') === false):
+    if(is_callable($Module . '::Install') === false):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -161,7 +161,7 @@ abstract class StbAdminModules{
       );
       return;
     endif;
-    if(method_exists($Module, 'Uninstall') === false):
+    if(is_callable($Module . '::Uninstall') === false):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -214,7 +214,7 @@ abstract class StbAdminModules{
       $Db->CallBackHashSet(self::Callback_UniModPic1(...), $Module)
     );
     StbModuleTools::Load($Module);
-    if(method_exists($Module, 'Plugin_Buttons')):
+    if(is_callable($Module . '::Plugin_Buttons')):
       call_user_func($Module . '::Plugin_Buttons', $mk);
     endif;
     $date = $Db->Modules($Module);

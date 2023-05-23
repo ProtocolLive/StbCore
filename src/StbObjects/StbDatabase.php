@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.05.01
+//2023.05.23.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -127,7 +127,7 @@ final class StbDatabase{
     $function = json_decode($result[0]['method'], true);
     $temp = explode('::', $function[0]);
     StbModuleTools::Load($temp[0]);
-    if(method_exists($temp[0], $temp[1])):
+    if(is_callable($function[0])):
       call_user_func_array(array_shift($function), $function);
       return true;
     else:
