@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.05.22.02
+//2023.05.22.03
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -170,6 +170,16 @@ abstract class StbBotTools{
       StbLog::Cron,
       'Time: ' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])
     );
+  }
+
+  public static function Entry():void{
+    ArgV();
+    $_GET['a'] ??= '';
+    if(isset($_SERVER['Cron'])):
+      self::Cron();
+    elseif(is_callable(__CLASS__ . '::Action_' . $_GET['a'])):
+      call_user_func(__CLASS__ . '::Action_' . $_GET['a']);
+    endif;
   }
 
   public static function Log(
