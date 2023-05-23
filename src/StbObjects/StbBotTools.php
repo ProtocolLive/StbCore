@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.05.22.03
+//2023.05.23.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -243,10 +243,10 @@ abstract class StbBotTools{
     $Text = false;
     $data = $Db->UserGet($Webhook->Data->User->Id);
     $lang = $data->Language ?? DefaultLanguage;
-    if(is_dir(DirUserCmds . '/' . $lang) === false):
+    if(is_dir(DirTextCmds . '/' . $lang) === false):
       $lang = DefaultLanguage;
     endif;
-    $File = DirUserCmds . '/' . $lang . '/' . $Command;
+    $File = DirTextCmds . '/' . $lang . '/' . $Command;
   
     foreach(['jpg', 'png', 'gif'] as $ext):
       $temp = $File . '.' . $ext;
