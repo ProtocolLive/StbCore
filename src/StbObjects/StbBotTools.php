@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.05.23.00
+//2023.05.23.01
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -37,7 +37,8 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgText,
   TgUpdateType,
   TgUser,
-  TgUserShared
+  TgUserShared,
+  TgVideo
 };
 
 abstract class StbBotTools{
