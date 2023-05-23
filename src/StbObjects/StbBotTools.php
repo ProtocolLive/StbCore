@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.05.23.01
+//2023.05.23.02
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -225,6 +225,7 @@ abstract class StbBotTools{
       TgSticker::class => StbDbListeners::Sticker,
       TgUserShared::class => StbDbListeners::UserShared,
       TgVideo::class => StbDbListeners::Video,
+      TgVideoNote::class => StbDbListeners::VideoNote,
       default => null
     };
   }
