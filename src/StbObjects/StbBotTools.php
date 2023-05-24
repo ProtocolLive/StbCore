@@ -1,7 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/FuncoesComuns
-//2023.05.23.04
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -18,31 +17,19 @@ use ProtocolLive\TelegramBotLibrary\TblObjects\{
 };
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
-  TgAnimation,
   TgCallback,
   TgChat,
-  TgChatTitle,
-  TgDocument,
-  TgGroupStatusMy,
-  TgInlineQuery,
-  TgInvoiceCheckout,
-  TgInvoiceShipping,
   TgParseMode,
-  TgPhoto,
-  TgPinnedMsg,
-  TgChatPhotoNew,
-  TgChatShared,
-  TgContact,
-  TgSticker,
+  TgObject,
   TgText,
   TgUpdateType,
-  TgUser,
-  TgUserShared,
-  TgVideo,
-  TgVideoNote,
-  TgVoice
+  TgUser
 };
+use TypeError;
 
+/**
+ * 2023.05.23.05
+ */
 abstract class StbBotTools{
 
   public static function Action_():void{
@@ -64,17 +51,24 @@ abstract class StbBotTools{
     elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
       self::Update_Text();
     else:
-      $listener = self::ObjToListener($Webhook);
-      if($listener === null):
+      if(($Webhook instanceof TgObject) === false):
         return;
       endif;
-      $module = $Db->ListenerGet($listener);
-      if($module === []):
+      $module = $Db->ListenerGet($Webhook);
+      if($module === null):
         return;
       endif;
-      $module = $module[0]['module'];
-      StbModuleTools::Load($module);
-      call_user_func($module . '::Listener_' . $listener->name);
+      $temp = explode('\\', get_class($Webhook));
+      if(strpos($module, '\\') === false):
+        StbModuleTools::Load($module);
+      elseif($temp[2] === 'StbObject'):
+        $temp = array_pop($temp);
+        $temp = substr($temp, 3);
+      else:
+        $temp = array_pop($temp);
+        $temp = substr($temp, 2);
+      endif;
+      call_user_func($module . '::Listener_' . array_pop($temp));
     endif;
   }
 
@@ -208,31 +202,6 @@ abstract class StbBotTools{
     file_put_contents(DirLogs . '/' . $file . '.log', $Msg, FILE_APPEND);
   }
 
-  private static function ObjToListener(
-    object $Obj
-  ):StbDbListeners|null{
-    return match(get_class($Obj)){
-      TgAnimation::class => StbDbListeners::Animation,
-      TgChatPhotoNew::class => StbDbListeners::ChatPhotoNew,
-      TgChatTitle::class => StbDbListeners::Chat,
-      TgChatShared::class => StbDbListeners::ChatShared,
-      TgContact::class => StbDbListeners::Contact,
-      TgDocument::class => StbDbListeners::Document,
-      TgGroupStatusMy::class => StbDbListeners::ChatMy,
-      TgInlineQuery::class => StbDbListeners::InlineQuery,
-      TgInvoiceCheckout::class => StbDbListeners::InvoiceCheckout,
-      TgInvoiceShipping::class => StbDbListeners::InvoiceShipping,
-      TgPhoto::class => StbDbListeners::Photo,
-      TgPinnedMsg::class => StbDbListeners::PinnedMsg,
-      TgSticker::class => StbDbListeners::Sticker,
-      TgUserShared::class => StbDbListeners::UserShared,
-      TgVideo::class => StbDbListeners::Video,
-      TgVideoNote::class => StbDbListeners::VideoNote,
-      TgVoice::class => StbDbListeners::Voice,
-      default => null
-    };
-  }
-
   public static function SendUserCmd(
     string $Command,
     string $EventAdditional = null
@@ -311,6 +280,7 @@ abstract class StbBotTools{
      */
     global $Webhook, $Db, $Bot, $Lang;
     $Db->UserSeen($Webhook->User);
+    $Lang->LanguageSet($Webhook->User->Language);
     if($Db->CallBackHashRun($Webhook->Callback) === false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
@@ -325,8 +295,9 @@ abstract class StbBotTools{
      * @var StbDatabase $Db
      * @var TblCmd $Webhook
      */
-    global $Bot, $Db, $Webhook;
+    global $Bot, $Db, $Webhook, $Lang;
     $Db->UserSeen($Webhook->Data->User);
+    $Lang->LanguageSet($Webhook->Data->User->Language);
   
     //In a group, with many bots, the commands have the target bot.
     //This block check the target and caches the bot name
@@ -362,20 +333,21 @@ abstract class StbBotTools{
       $Db->UserSeen($Webhook->Data->User);
     endif;
     $Run = false;
-    foreach($Db->ListenerGet(StbDbListeners::Text) as $listener):
+
+    $listener = $Db->ListenerGet(TgText::class, $Webhook->Data->Chat->Id);
+    if($listener !== null):
+      StbModuleTools::Load($listener);
+      call_user_func($listener . '::Listener_Text');
       $Run = true;
-      StbModuleTools::Load($listener['module']);
-      if(call_user_func($listener['module'] . '::Listener_Text') === false):
-        return;
-      endif;
-    endforeach;
-    foreach($Db->ListenerGet(StbDbListeners::Text, $Webhook->Data->Chat->Id) as $listener):
+    endif;
+
+    $listener = $Db->ListenerGet(TgText::class);
+    if($listener !== null):
+      StbModuleTools::Load($listener);
+      call_user_func($listener . '::Listener_Text');
       $Run = true;
-      StbModuleTools::Load($listener['module']);
-      if(call_user_func($listener['module'] . '::Listener_Text') === false):
-        return;
-      endif;
-    endforeach;
+    endif;
+
     if($Run === false
     and $Webhook->Data->Chat instanceof TgUser):
       StbBotTools::SendUserCmd('dontknow', $Webhook->Text);

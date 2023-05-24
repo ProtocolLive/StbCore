@@ -1,7 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.23.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -15,9 +14,15 @@ use ProtocolLive\PhpLiveDb\{
 };
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgChat,
+  TgGroupStatusMy,
+  TgInlineQuery,
+  TgObject,
   TgUser
 };
 
+/**
+ * @version 2023.05.23.01
+ */
 final class StbDatabase{
 
   public function __construct(
@@ -30,9 +35,9 @@ final class StbDatabase{
     int $User
   ):StbDbAdminData|false{
     DebugTrace();
-    $consult = $this->Db->Select('chats');
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $result = $consult->Run();
+    $result = $this->Db->Select('chats')
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
     if($result === []):
       return false;
     endif;
@@ -44,16 +49,16 @@ final class StbDatabase{
     int $Perms
   ):bool{
     DebugTrace();
-    $consult = $this->Db->Select('chats');
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $result = $consult->Run();
+    $result = $this->Db->Select('chats')
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
     if($result !== []):
       return false;
     endif;
-    $consult = $this->Db->Insert('chats');
-    $consult->FieldAdd('chat_id', $User, Types::Int);
-    $consult->FieldAdd('perms', $Perms, Types::Int);
-    $consult->FieldAdd('created', time(), Types::Int);
+    $consult = $this->Db->Insert('chats')
+    ->FieldAdd('chat_id', $User, Types::Int)
+    ->FieldAdd('perms', $Perms, Types::Int)
+    ->FieldAdd('created', time(), Types::Int);
     try{
       $consult->Run();
       return true;
@@ -69,10 +74,10 @@ final class StbDatabase{
     if($User === Admin):
       return false;
     endif;
-    $consult = $this->Db->Update('chatss');
-    $consult->FieldAdd('perms', StbDbAdminPerm::None->value, Types::Int);
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $consult->Run();
+    $this->Db->Update('chats')
+    ->FieldAdd('perms', StbDbAdminPerm::None->value, Types::Int)
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
     return true;
   }
 
@@ -84,9 +89,9 @@ final class StbDatabase{
     if($User === Admin):
       return false;
     endif;
-    $consult = $this->Db->Update('chats');
-    $consult->FieldAdd('perms', $Perms, Types::Int);
-    $consult->WhereAdd('chat_id', $User, Types::Int);
+    $consult = $this->Db->Update('chats')
+    ->FieldAdd('perms', $Perms, Types::Int)
+    ->WhereAdd('chat_id', $User, Types::Int);
     try{
       $consult->Run();
       return true;
@@ -100,14 +105,14 @@ final class StbDatabase{
    */
   public function Admins():array{
     DebugTrace();
-    $consult = $this->Db->Select('chats');
-    $consult->WhereAdd(
+    $result = $this->Db->Select('chats')
+    ->WhereAdd(
       'perms',
       StbDbAdminPerm::None->value,
       Types::Int,
       Operators::Bigger
-    );
-    $result = $consult->Run();
+    )
+    ->Run();
     foreach($result as &$admin):
       $admin = new StbDbAdminData($admin);
     endforeach;
@@ -118,15 +123,17 @@ final class StbDatabase{
     string $Hash
   ):bool{
     DebugTrace();
-    $consult = $this->Db->Select('callbackshash');
-    $consult->WhereAdd('hash', $Hash, Types::Str);
-    $result = $consult->Run();
+    $result = $this->Db->Select('callbackshash')
+    ->WhereAdd('hash', $Hash, Types::Str)
+    ->Run();
     if($result === []):
       return false;
     endif;
     $function = json_decode($result[0]['method'], true);
     $temp = explode('::', $function[0]);
-    StbModuleTools::Load($temp[0]);
+    if(strpos($temp[0], '\\') === false):
+      StbModuleTools::Load($temp[0]);
+    endif;
     if(is_callable($function[0])):
       call_user_func_array(array_shift($function), $function);
       return true;
@@ -147,10 +154,10 @@ final class StbDatabase{
     $Args[0] = F2s($Args[0]);
     $Args = json_encode($Args);
     $hash = sha1($Args);
-    $consult = $this->Db->InsertUpdate('callbackshash');
-    $consult->FieldAdd('hash', $hash, Types::Str, Update: true);
-    $consult->FieldAdd('method', $Args, Types::Str, Update: true);
-    $consult->Run(HtmlSafe: false);
+    $this->Db->InsertUpdate('callbackshash')
+    ->FieldAdd('hash', $hash, Types::Str, Update: true)
+    ->FieldAdd('method', $Args, Types::Str, Update: true)
+    ->Run(HtmlSafe: false);
     return $hash;
   }
 
@@ -158,10 +165,10 @@ final class StbDatabase{
     TgChat|TgUser $Chat
   ):bool{
     DebugTrace();
-    $consult = $this->Db->Insert('chats');
-    $consult->FieldAdd('chat_id', $Chat->Id, Types::Int);
-    $consult->FieldAdd('name', $Chat->Name, Types::Str);
-    $consult->FieldAdd('created', time(), Types::Int);
+    $consult = $this->Db->Insert('chats')
+    ->FieldAdd('chat_id', $Chat->Id, Types::Int)
+    ->FieldAdd('name', $Chat->Name, Types::Str)
+    ->FieldAdd('created', time(), Types::Int);
     try{
       $consult->Run();
       return true;
@@ -175,9 +182,9 @@ final class StbDatabase{
     string $Module
   ):bool{
     DebugTrace();
-    $consult = $this->Db->Insert('commands');
-    $consult->FieldAdd('command', $Command, Types::Str);
-    $consult->FieldAdd('module', $Module, Types::Str);
+    $consult = $this->Db->Insert('commands')
+    ->FieldAdd('command', $Command, Types::Str)
+    ->FieldAdd('module', $Module, Types::Str);
     try{
       $consult->Run();
       return true;
@@ -194,8 +201,8 @@ final class StbDatabase{
     if(is_string($Command)):
       $Command = [$Command];
     endif;
-    $consult = $this->Db->Delete('commands');
-    $consult->WhereAdd(1, Parenthesis: Parenthesis::Open);
+    $consult = $this->Db->Delete('commands')
+    ->WhereAdd(1, Parenthesis: Parenthesis::Open);
     foreach($Command as $id => $cmd):
       $consult->WhereAdd(
         'command',
@@ -205,8 +212,8 @@ final class StbDatabase{
         CustomPlaceholder: 'cmd' . $id
       );
     endforeach;
-    $consult->WhereAdd(2, Parenthesis: Parenthesis::Close);
-    $consult->Run();
+    $consult->WhereAdd(2, Parenthesis: Parenthesis::Close)
+    ->Run();
   }
 
   /**
@@ -233,7 +240,7 @@ final class StbDatabase{
    * @param int $User User ID to associate the listener. Not allowed in checkout and InlineQuery listeners
    */
   public function ListenerAdd(
-    StbDbListeners $Listener,
+    TgObject|string $Listener,
     string $Class,
     int $Chat = null
   ):bool{
@@ -244,10 +251,13 @@ final class StbDatabase{
     if($this->NoUserListener($Listener)):
       $Chat = null;
     endif;
-    $consult = $this->Db->InsertUpdate('listeners');
-    $consult->FieldAdd('listener', $Listener->name, Types::Str);
-    $consult->FieldAdd('chat_id', $Chat, Types::Str, Update: true);
-    $consult->FieldAdd('module', $Class, Types::Str, Update: true);
+    if($Listener instanceof TgObject):
+      $Listener = get_class($Listener);
+    endif;
+    $consult = $this->Db->InsertUpdate('listeners')
+    ->FieldAdd('listener', $Listener, Types::Str)
+    ->FieldAdd('chat_id', $Chat, Types::Str, Update: true)
+    ->FieldAdd('module', $Class, Types::Str, Update: true);
     try{
       $consult->Run();
       return true;
@@ -258,31 +268,35 @@ final class StbDatabase{
   }
 
   public function ListenerDel(
-    StbDbListeners $Listener,
+    TgObject|string $Listener,
     int $User = null
   ):void{
     DebugTrace();
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
-    $consult = $this->Db->Delete('listeners');
-    $consult->WhereAdd('listener', $Listener->name, Types::Str);
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $consult->Run();
+    if($Listener instanceof TgObject):
+      $Listener = get_class($Listener);
+    endif;
+    $this->Db->Delete('listeners')
+    ->WhereAdd('listener', $Listener, Types::Str)
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
   }
 
   public function ListenerGet(
-    StbDbListeners $Listener,
+    TgObject|string $Listener,
     int $User = null
-  ):array{
+  ):string|null{
     DebugTrace();
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
-    $consult = $this->Db->Select('listeners');
-    $consult->WhereAdd('listener', $Listener->name, Types::Str);
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    return $consult->Run();
+    $return = $this->Db->Select('listeners')
+    ->WhereAdd('listener', get_class($Listener), Types::Str)
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
+    return $return[0]['module'] ?? null;
   }
 
   public function ModuleInstall(
@@ -292,9 +306,9 @@ final class StbDatabase{
     if($this->ModuleRestricted($Module)):
       return false;
     endif;
-    $consult = $this->Db->Insert('modules');
-    $consult->FieldAdd('module', $Module, Types::Str);
-    $consult->FieldAdd('created', time(), Types::Int);
+    $consult = $this->Db->Insert('modules')
+    ->FieldAdd('module', $Module, Types::Str)
+    ->FieldAdd('created', time(), Types::Int);
     try{
       $consult->Run();
       return true;
@@ -338,25 +352,28 @@ final class StbDatabase{
     string $Module
   ):void{
     DebugTrace();
-    $consult = $this->Db->Delete('modules');
-    $consult->WhereAdd('module', $Module, Types::Str);
-    $consult->Run();
-    $consult = $this->Db->Delete('callbackshash');
-    $consult->WhereAdd(
+    $this->Db->Delete('modules')
+    ->WhereAdd('module', $Module, Types::Str)
+    ->Run();
+    $this->Db->Delete('callbackshash')
+    ->WhereAdd(
       'method',
       '%' . $Module . '%',
       Types::Str,
       Operators::Like
-    );
-    $consult->Run();
+    )
+    ->Run();
   }
 
   private function NoUserListener(
-    StbDbListeners $Listener
+    TgObject|string $Listener
   ):bool{
     DebugTrace();
-    if($Listener === StbDbListeners::InlineQuery
-    or $Listener === StbDbListeners::ChatMy):
+    if($Listener instanceof TgObject):
+      $Listener = get_class($Listener);
+    endif;
+    if($Listener === TgInlineQuery::class
+    or $Listener === TgGroupStatusMy::class):
       return true;
     else:
       return false;
@@ -369,24 +386,24 @@ final class StbDatabase{
     string $Additional = null
   ):void{
     DebugTrace();
-    $consult = $this->Db->Insert('sys_logs');
-    $consult->FieldAdd('chat_id', $Id, Types::Int);
-    $consult->FieldAdd('time', time(), Types::Int);
-    $consult->FieldAdd('event', $Event, Types::Str);
-    $consult->FieldAdd('msg', $Additional, Types::Str);
-    $consult->Run();
+    $this->Db->Insert('sys_logs')
+    ->FieldAdd('chat_id', $Id, Types::Int)
+    ->FieldAdd('time', time(), Types::Int)
+    ->FieldAdd('event', $Event, Types::Str)
+    ->FieldAdd('msg', $Additional, Types::Str)
+    ->Run();
   }
 
   public function UserEdit(
     TgUser $User
   ):bool{
     DebugTrace();
-    $consult = $this->Db->InsertUpdate('chats');
-    $consult->FieldAdd(':chat_id', $User->Id, Types::Int);
-    $consult->FieldAdd(':name', $User->Name, Types::Str, Update: true);
-    $consult->FieldAdd(':name2', $User->NameLast, Types::Str, Update: true);
-    $consult->FieldAdd(':nick', $User->Nick, Types::Str, Update: true);
-    $consult->FieldAdd(':lang', $User->Language, Types::Str, Update: true);
+    $consult = $this->Db->InsertUpdate('chats')
+    ->FieldAdd(':chat_id', $User->Id, Types::Int)
+    ->FieldAdd(':name', $User->Name, Types::Str, Update: true)
+    ->FieldAdd(':name2', $User->NameLast, Types::Str, Update: true)
+    ->FieldAdd(':nick', $User->Nick, Types::Str, Update: true)
+    ->FieldAdd(':lang', $User->Language, Types::Str, Update: true);
     try{
       $consult->Run();
       return true;
@@ -399,9 +416,9 @@ final class StbDatabase{
     int $Id
   ):TgUser|null{
     DebugTrace();
-    $consult = $this->Db->Select('chats');
-    $consult->WhereAdd('chat_id', $Id, Types::Int);
-    $result = $consult->Run();
+    $result = $this->Db->Select('chats')
+    ->WhereAdd('chat_id', $Id, Types::Int)
+    ->Run();
     if($result === []):
       return null;
     endif;
@@ -419,15 +436,15 @@ final class StbDatabase{
     TgUser|TgChat $User
   ):void{
     DebugTrace();
-    $consult = $this->Db->InsertUpdate('chats');
-    $consult->FieldAdd('chat_id', $User->Id, Types::Int);
-    $consult->FieldAdd('created', time(), Types::Int);
-    $consult->FieldAdd('name', $User->Name, Types::Str, Update: true);
-    $consult->FieldAdd('name2', $User->NameLast ?? null, Types::Str, Update: true);
-    $consult->FieldAdd('nick', $User->Nick, Types::Str, Update: true);
-    $consult->FieldAdd('lastseen', time(), Types::Int, Update: true);
-    $consult->FieldAdd('lang', $User->Language ?? null, Types::Str, Update: true);
-    $consult->Run();
+    $this->Db->InsertUpdate('chats')
+    ->FieldAdd('chat_id', $User->Id, Types::Int)
+    ->FieldAdd('created', time(), Types::Int)
+    ->FieldAdd('name', $User->Name, Types::Str, Update: true)
+    ->FieldAdd('name2', $User->NameLast ?? null, Types::Str, Update: true)
+    ->FieldAdd('nick', $User->Nick, Types::Str, Update: true)
+    ->FieldAdd('lastseen', time(), Types::Int, Update: true)
+    ->FieldAdd('lang', $User->Language ?? null, Types::Str, Update: true)
+    ->Run();
   }
 
   public function VariableDel(
@@ -437,14 +454,14 @@ final class StbDatabase{
     int $User = null
   ):void{
     DebugTrace();
-    $consult = $this->Db->Delete('variables');
-    $consult->WhereAdd('name', $Name, Types::Str);
+    $consult = $this->Db->Delete('variables')
+    ->WhereAdd('name', $Name, Types::Str);
     if($Value !== null):
       $consult->WhereAdd('value', $Value, Types::Str);
     endif;
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $consult->WhereAdd('module', $Module, Types::Str);
-    $consult->Run();
+    $consult->WhereAdd('chat_id', $User, Types::Int)
+    ->WhereAdd('module', $Module, Types::Str)
+    ->Run();
   }
 
   public function VariableGet(
@@ -453,11 +470,11 @@ final class StbDatabase{
     int $User = null
   ):string|null{
     DebugTrace();
-    $consult = $this->Db->Select('variables');
-    $consult->WhereAdd('name', $Name, Types::Str);
-    $consult->WhereAdd('module', $Module, Types::Str);
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $result = $consult->Run();
+    $result = $this->Db->Select('variables')
+    ->WhereAdd('name', $Name, Types::Str)
+    ->WhereAdd('module', $Module, Types::Str)
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
     if($result === []):
       return null;
     else:
@@ -471,11 +488,11 @@ final class StbDatabase{
     int $User = null
   ):string|null{
     DebugTrace();
-    $consult = $this->Db->Select('variables');
-    $consult->WhereAdd('value', $Value, Types::Str);
-    $consult->WhereAdd('module', $Module, Types::Str);
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $result = $consult->Run();
+    $result = $this->Db->Select('variables')
+    ->WhereAdd('value', $Value, Types::Str)
+    ->WhereAdd('module', $Module, Types::Str)
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
     if($result === []):
       return null;
     else:
@@ -492,24 +509,24 @@ final class StbDatabase{
   ):void{
     DebugTrace();
     //InsertUpdate don't work because null values
-    $consult = $this->Db->Select('variables');
-    $consult->WhereAdd('name', $Name, Types::Str);
-    $consult->WhereAdd('module', $Module, Types::Str);
-    $consult->WhereAdd('chat_id', $User, Types::Int);
-    $result = $consult->Run();
+    $result = $this->Db->Select('variables')
+    ->WhereAdd('name', $Name, Types::Str)
+    ->WhereAdd('module', $Module, Types::Str)
+    ->WhereAdd('chat_id', $User, Types::Int)
+    ->Run();
     if($result === []
     or $AllowDuplicatedName):
-      $consult = $this->Db->Insert('variables');
-      $consult->FieldAdd('name', $Name, Types::Str);
-      $consult->FieldAdd('chat_id', $User, Types::Int);
-      $consult->FieldAdd('module', $Module, Types::Str);
+      $consult = $this->Db->Insert('variables')
+      ->FieldAdd('name', $Name, Types::Str)
+      ->FieldAdd('chat_id', $User, Types::Int)
+      ->FieldAdd('module', $Module, Types::Str);
     else:
-      $consult = $this->Db->Update('variables');
-      $consult->WhereAdd('name', $Name, Types::Str);
-      $consult->WhereAdd('module', $Module, Types::Str);
-      $consult->WhereAdd('chat_id', $User, Types::Int);
+      $consult = $this->Db->Update('variables')
+      ->WhereAdd('name', $Name, Types::Str)
+      ->WhereAdd('module', $Module, Types::Str)
+      ->WhereAdd('chat_id', $User, Types::Int);
     endif;
-    $consult->FieldAdd('value', $Value, Types::Str);
-    $consult->Run();
+    $consult->FieldAdd('value', $Value, Types::Str)
+    ->Run();
   }
 }

@@ -1,7 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.19.00
 
 namespace ProtocolLive\SimpleTelegramBot\Install;
 use DateTimeZone;
@@ -17,6 +16,9 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDbAdminPerm
 };
 
+/**
+ * @version 2023.05.23.00
+ */
 abstract class Install{
   private static function CopyRecursive(
     string $From,
@@ -187,7 +189,7 @@ abstract class Install{
     $consult->Add(
       'listener',
       Formats::Varchar,
-      50,
+      255,
       NotNull: true
     );
     $consult->Add(

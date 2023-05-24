@@ -1,7 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.19.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
@@ -19,6 +18,9 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgUserShared
 };
 
+/**
+ * @version 2023.05.23.00
+ */
 abstract class StbAdmin{
   public static function Callback_Admin(
     int $Admin,
@@ -120,7 +122,7 @@ abstract class StbAdmin{
        * @var TgUserShared $Webhook
        */
       $Db->ListenerDel(
-        StbDbListeners::RequestUser,
+        TgRequestUser::class,
         $Webhook->Data->User->Id
       );
     endif;
@@ -142,15 +144,10 @@ abstract class StbAdmin{
       );
       return;
     endif;
-    $mk = new TblMarkupKeyboard(Resize: true);
-    $mk->Button(
-      0,
-      0,
-      $Lang->Get('Cancel')
-    );
+    $mk = new TblMarkupKeyboard(Resize: true, OneTime: true);
     $mk->ButtonRequestUser(
       0,
-      1,
+      0,
       $Lang->Get('AdminAddButton', Group: 'Admin'),
       StbResquestChatId::AdminAdd->value,
       false
@@ -165,7 +162,7 @@ abstract class StbAdmin{
       $Webhook->Data->Data->Id
     );
     $Db->ListenerAdd(
-      StbDbListeners::RequestUser,
+      TgUserShared::class,
       __CLASS__,
       $Webhook->User->Id
     );
@@ -426,7 +423,7 @@ abstract class StbAdmin{
       $Webhook->Data->User->Id
     );
     $Db->ListenerDel(
-      StbDbListeners::Text,
+      TgText::class,
       $Webhook->Data->User->Id
     );
     self::Callback_Admins();
@@ -575,7 +572,7 @@ abstract class StbAdmin{
       $Webhook->Data->User->Id
     );
     $Db->ListenerDel(
-      StbDbListeners::Text,
+      TgText::class,
       $Webhook->Data->User->Id
     );
     StbAdminCmd::Callback_Commands();
@@ -643,7 +640,7 @@ abstract class StbAdmin{
       $Webhook->Data->User->Id
     );
     $Db->ListenerDel(
-      StbDbListeners::Text,
+      TgText::class,
       $Webhook->Data->User->Id
     );
     StbAdminCmd::Callback_Cmd($temp);
@@ -692,7 +689,7 @@ abstract class StbAdmin{
     endif;
   }
 
-  public static function Listener_RequestUser():bool{
+  public static function Listener_TgRequestUser():bool{
     /**
      * @var TgUserShared $Webhook
      * @var TelegramBotLibrary $Bot
