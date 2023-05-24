@@ -28,7 +28,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use TypeError;
 
 /**
- * 2023.05.23.06
+ * 2023.05.24.00
  */
 abstract class StbBotTools{
 
@@ -339,14 +339,14 @@ abstract class StbBotTools{
     $listener = $Db->ListenerGet(TgText::class, $Webhook->Data->Chat->Id);
     if($listener !== null):
       StbModuleTools::Load($listener);
-      call_user_func($listener . '::Listener_Text');
+      call_user_func($listener . '::Listener');
       $Run = true;
     endif;
 
     $listener = $Db->ListenerGet(TgText::class);
     if($listener !== null):
       StbModuleTools::Load($listener);
-      call_user_func($listener . '::Listener_Text');
+      call_user_func($listener . '::Listener');
       $Run = true;
     endif;
 
