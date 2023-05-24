@@ -19,7 +19,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.23.00
+ * @version 2023.05.23.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -689,7 +689,16 @@ abstract class StbAdmin{
     endif;
   }
 
-  public static function Listener_TgRequestUser():bool{
+  public static function Listener():void{
+    global $Webhook;
+    if($Webhook instanceof TgUserShared):
+      self::Listener_UserShared();
+    elseif($Webhook instanceof TgText):
+      self::Listener_Text();
+    endif;
+  }
+
+  private static function Listener_UserShared():bool{
     /**
      * @var TgUserShared $Webhook
      * @var TelegramBotLibrary $Bot
@@ -705,7 +714,7 @@ abstract class StbAdmin{
     return false;
   }
 
-  public static function Listener_Text():void{
+  private static function Listener_Text():void{
     /**
      * @var TgText $Webhook
      * @var StbDatabase $Db
