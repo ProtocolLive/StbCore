@@ -21,7 +21,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.24.00
+ * @version 2023.05.24.01
  */
 final class StbDatabase{
 
@@ -326,11 +326,8 @@ final class StbDatabase{
     string $Module
   ):bool{
     DebugTrace();
-    return (
-      str_contains($Module, '\Stb')
-      or str_contains($Module, '\Tbl')
-      or str_contains($Module, '\Tg')
-    );
+    return str_starts_with($Module, 'ProtocolLive\SimpleTelegramBot')
+      or str_starts_with($Module, 'ProtocolLive\ProtocolBotLibrary');
   }
 
   /**
