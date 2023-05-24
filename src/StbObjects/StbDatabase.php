@@ -21,7 +21,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.23.01
+ * @version 2023.05.23.02
  */
 final class StbDatabase{
 
@@ -219,17 +219,23 @@ final class StbDatabase{
   /**
    * List all commands or check if a commands exists
    * @param string $Command
-   * @return array Return all commands or the respective module
+   * @return array|string|null{ Return all commands or the respective module
    */
   public function Commands(
     string $Command = null
-  ):array{
+  ):array|string|null{
     DebugTrace();
     $consult = $this->Db->Select('commands');
     if($Command !== null):
       $consult->WhereAdd('command', $Command, Types::Str);
     endif;
-    return $consult->Run();
+    $return = $consult->Run();
+    if($return === []):
+      return null;
+    elseif($Command !== null):
+      return $return[0]['module'];
+    endif;
+    return $return;
   }
 
   public function GetCustom():PDO{
@@ -292,8 +298,11 @@ final class StbDatabase{
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
+    if($Listener instanceof TgObject):
+      $Listener = get_class($Listener);
+    endif;
     $return = $this->Db->Select('listeners')
-    ->WhereAdd('listener', get_class($Listener), Types::Str)
+    ->WhereAdd('listener', $Listener, Types::Str)
     ->WhereAdd('chat_id', $User, Types::Int)
     ->Run();
     return $return[0]['module'] ?? null;
