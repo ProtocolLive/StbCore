@@ -28,7 +28,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use TypeError;
 
 /**
- * 2023.05.24.02
+ * 2023.05.24.03
  */
 abstract class StbBotTools{
 
@@ -44,6 +44,12 @@ abstract class StbBotTools{
       return;
     endif;
 
+    spl_autoload_register(function(string $Class){
+      $temp = explode('\\', $Class);
+      unset($temp[0], $temp[1]);
+      require(DirModules . '/'. implode('/', $temp) . '/index.php');
+    });
+
     if(get_class($Webhook) === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd();
     elseif($Webhook instanceof TgCallback):
@@ -57,9 +63,6 @@ abstract class StbBotTools{
       $module = $Db->ListenerGet($Webhook);
       if($module === null):
         return;
-      endif;
-      if(strpos($module, '\\') === false):
-        StbModuleTools::Load($module);
       endif;
       call_user_func($module . '::Listener');
     endif;
@@ -154,7 +157,6 @@ abstract class StbBotTools{
   }
 
   public static function Cron():void{
-    StbModuleTools::Load($_SERVER['Cron']);
     call_user_func($_SERVER['Cron'] . '::Cron');
     StbBotTools::Log(
       StbLog::Cron,
@@ -305,10 +307,7 @@ abstract class StbBotTools{
   
     //Module command
     $module = $Db->Commands($Webhook->Command);
-    if($module !== null):
-      if(strpos($module, '\\') === false):
-        StbModuleTools::Load($module);
-      endif;
+    if(is_callable($module . '::Command')):
       call_user_func($module . '::Command');
       return;
     endif;
@@ -331,14 +330,12 @@ abstract class StbBotTools{
 
     $listener = $Db->ListenerGet(TgText::class, $Webhook->Data->Chat->Id);
     if($listener !== null):
-      StbModuleTools::Load($listener);
       call_user_func($listener . '::Listener');
       $Run = true;
     endif;
 
     $listener = $Db->ListenerGet(TgText::class);
     if($listener !== null):
-      StbModuleTools::Load($listener);
       call_user_func($listener . '::Listener');
       $Run = true;
     endif;
