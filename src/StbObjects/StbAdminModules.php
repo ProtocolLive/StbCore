@@ -1,13 +1,15 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.23.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
+/**
+ * @version 2023.05.24.00
+ */
 abstract class StbAdminModules{
   public static function Callback_Modules():void{
     /**
@@ -213,7 +215,6 @@ abstract class StbAdminModules{
       $Lang->Get('UninstallButton', Group: 'Module'),
       $Db->CallBackHashSet(self::Callback_UniModPic1(...), $Module)
     );
-    StbModuleTools::Load($Module);
     if(is_callable($Module . '::Plugin_Buttons')):
       call_user_func($Module . '::Plugin_Buttons', $mk);
     endif;

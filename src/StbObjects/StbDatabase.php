@@ -21,7 +21,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.23.02
+ * @version 2023.05.24.00
  */
 final class StbDatabase{
 
@@ -130,10 +130,6 @@ final class StbDatabase{
       return false;
     endif;
     $function = json_decode($result[0]['method'], true);
-    $temp = explode('::', $function[0]);
-    if(strpos($temp[0], '\\') === false):
-      StbModuleTools::Load($temp[0]);
-    endif;
     if(is_callable($function[0])):
       call_user_func_array(array_shift($function), $function);
       return true;
