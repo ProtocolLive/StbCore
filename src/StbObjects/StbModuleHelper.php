@@ -1,7 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.01.02
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
@@ -9,11 +8,15 @@ use ProtocolLive\TelegramBotLibrary\TblObjects\TblException;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
+/**
+ * @version 2023.05.24.00
+ */
 abstract class StbModuleHelper{
   /**
    * Run this after the 'create table' block
    */
   protected static function InstallHelper(
+    string $Module,
     PDO $Pdo,
     array $Commands,
     bool $Commit = true
@@ -27,16 +30,16 @@ abstract class StbModuleHelper{
     global $Db, $Webhook, $Bot, $Lang;
     $Pdo->beginTransaction();
 
-    if($Db->ModuleInstall(self::ModName()) === false):
+    if($Db->ModuleInstall($Module) === false):
       self::MsgError($Pdo);
-      error_log('Fail to install module ' . self::ModName());
+      error_log('Fail to install module ' . $Module);
       return;
     endif;
 
     $cmds = $Bot->MyCmdGet();
     foreach($Commands as $cmd):
       $cmds->Add($cmd[0], $cmd[1]);
-      if($Db->CommandAdd($cmd[0], self::ModName()) === false):
+      if($Db->CommandAdd($cmd[0], $Module) === false):
         self::MsgError($Pdo);
         error_log('Fail to add the command ' . $cmd[0]);
         return;
@@ -67,17 +70,6 @@ abstract class StbModuleHelper{
     StbAdminModules::Callback_Modules();
   }
 
-  private static function ModName():string{
-    $temp = debug_backtrace();
-    return $temp[2]['class'];
-  }
-
-  protected static function ModTable(
-    string $Table
-  ):string{
-    return 'module_' . self::ModName() . '_' . $Table;
-  }
-
   protected static function MsgError(
     PDO $Pdo
   ):void{
@@ -95,6 +87,7 @@ abstract class StbModuleHelper{
    * Run this before the 'drop table' block
    */
   protected static function UninstallHelper(
+    string $Module,
     PDO $Pdo,
     array $Commands,
     bool $Commit = true
@@ -107,7 +100,7 @@ abstract class StbModuleHelper{
     DebugTrace();
     $Pdo->beginTransaction();
 
-    $Db->ModuleUninstall(self::ModName());
+    $Db->ModuleUninstall($Module);
 
     $cmds = $Bot->MyCmdGet();
     foreach($Commands as $cmd):
