@@ -19,7 +19,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.23.01
+ * @version 2023.05.24.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -646,12 +646,7 @@ abstract class StbAdmin{
     StbAdminCmd::Callback_Cmd($temp);
   }
 
-  public static function Command_admin():void{
-    DebugTrace();
-    self::Callback_AdminMenu();
-  }
-
-  public static function Command_id():void{
+  public static function CmdId():void{
     /**
      * @var TelegramBotLibrary $Bot
      * @var TblCmd $Webhook
@@ -677,6 +672,15 @@ abstract class StbAdmin{
     $Db->UsageLog($Webhook->Data->User->Id, 'id');
   }
 
+  public static function Command():void{
+    global $Webhook;
+    DebugTrace();
+    call_user_func(match($Webhook->Command){
+      'admin' => self::Callback_AdminMenu(...),
+      'id' => self::CmdId(...)
+    });
+  }
+
   private static function JumpLineCheck(
     int &$Line,
     int &$Col,
@@ -691,11 +695,11 @@ abstract class StbAdmin{
 
   public static function Listener():void{
     global $Webhook;
-    if($Webhook instanceof TgUserShared):
-      self::Listener_UserShared();
-    elseif($Webhook instanceof TgText):
-      self::Listener_Text();
-    endif;
+    DebugTrace();
+    call_user_func(match(get_class($Webhook)){
+      TgUserShared::class => self::Listener_UserShared(...),
+      TgText::class => self::Listener_Text(...)
+    });
   }
 
   private static function Listener_UserShared():bool{
