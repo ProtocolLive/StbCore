@@ -25,12 +25,11 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbAdmin,
-  StbDbAdminPerm,
-  StbStringsDb
+  StbDbAdminPerm
 };
 
 /**
- * @version 2023.05.25.02
+ * @version 2023.05.25.03
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -151,48 +150,6 @@ abstract class Install{
     ->Run();
   }
 
-  private static function CreateEventslogs():void{
-    global $PlDb;
-    DebugTrace();
-    $PlDb->Create(Tables::LogUpdates)
-    ->Add(
-      LogUpdates::Id,
-      Formats::Int,
-      Unsigned: true,
-      NotNull: true,
-      Primary: true,
-      AutoIncrement: true
-    )
-    ->Add(
-      LogUpdates::Time,
-      Formats::Int,
-      Unsigned: true,
-      NotNull: true,
-    )
-    ->Add(
-      LogUpdates::Chat,
-      Formats::IntBig,
-      NotNull: true,
-      RefTable: Tables::Chats,
-      RefField: Chats::Id,
-      RefDelete: RefTypes::Cascade,
-      RefUpdate: RefTypes::Cascade
-    )
-    ->Add(
-      LogUpdates::Event,
-      Formats::Varchar,
-      50,
-      NotNull: true,
-    )
-    ->Add(
-      LogUpdates::Additional,
-      Formats::Varchar,
-      50
-    )
-    ->Unique([LogUpdates::Time, LogUpdates::Chat])
-    ->Run();
-  }
-
   private static function CreateListeners():void{
     global $PlDb;
     DebugTrace();
@@ -270,6 +227,48 @@ abstract class Install{
       LogTexts::Msg,
       Formats::Text
     )
+    ->Run();
+  }
+
+  private static function CreateLogUpdates():void{
+    global $PlDb;
+    DebugTrace();
+    $PlDb->Create(Tables::LogUpdates)
+    ->Add(
+      LogUpdates::Id,
+      Formats::Int,
+      Unsigned: true,
+      NotNull: true,
+      Primary: true,
+      AutoIncrement: true
+    )
+    ->Add(
+      LogUpdates::Time,
+      Formats::Int,
+      Unsigned: true,
+      NotNull: true,
+    )
+    ->Add(
+      LogUpdates::Chat,
+      Formats::IntBig,
+      NotNull: true,
+      RefTable: Tables::Chats,
+      RefField: Chats::Id,
+      RefDelete: RefTypes::Cascade,
+      RefUpdate: RefTypes::Cascade
+    )
+    ->Add(
+      LogUpdates::Event,
+      Formats::Varchar,
+      50,
+      NotNull: true,
+    )
+    ->Add(
+      LogUpdates::Additional,
+      Formats::Varchar,
+      50
+    )
+    ->Unique([LogUpdates::Time, LogUpdates::Chat])
     ->Run();
   }
 
@@ -529,7 +528,7 @@ abstract class Install{
       self::CreateModules();
       self::CreateCommands();
       self::CreateListeners();
-      self::CreateEventslogs();
+      self::CreateLogUpdates();
       self::CreateLogTexts();
       self::CreateParams();
       self::CreateVariables();
