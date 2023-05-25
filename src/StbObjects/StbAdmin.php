@@ -4,8 +4,10 @@
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
-use ProtocolLive\SimpleTelegramBot\NoStr\Fields\Chats;
-use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogTexts;
+use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
+  Chats,
+  LogTexts
+};
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
@@ -22,7 +24,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.25.00
+ * @version 2023.05.25.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -38,17 +40,20 @@ abstract class StbAdmin{
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
     if($Webhook instanceof TgCallback):
-      $id = $Webhook->User->Id;
+      $chat = $Webhook->User->Id;
     else:
-      $id = $Webhook->Data->User->Id;
+      $chat = $Webhook->Data->User->Id;
     endif;
-    if(StbBotTools::AdminCheck($id, StbDbAdminPerm::Admins) === null):
+    $chat = $Db->ChatGet($chat);
+    if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
     endif;
+
+    $Admin = $Db->ChatGet($Admin);
     $line = 0;
     $col = 0;
     $mk = new TblMarkupInline();
@@ -59,7 +64,7 @@ abstract class StbAdmin{
       $Db->CallBackHashSet(self::Callback_Admins(...))
     );
     self::JumpLineCheck($line, $col, 2);
-    if($Admin !== Admin):
+    if($Admin->Id !== Admin):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -71,13 +76,12 @@ abstract class StbAdmin{
       );
       self::JumpLineCheck($line, $col, 2);
     endif;
-    $admin = $Db->Admin($Admin);
     foreach(StbDbAdminPerm::cases() as $perm):
       if($perm === StbDbAdminPerm::All
       or $perm === StbDbAdminPerm::None):
         continue;
       endif;
-      $value = $admin->Perms & $perm->value;
+      $value = $Admin->Permission & $perm->value;
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -91,35 +95,35 @@ abstract class StbAdmin{
       );
       self::JumpLineCheck($line, $col, 2);
     endforeach;
-    $AdminName = $admin->Name;
-    if($admin->NameLast !== null):
-      $AdminName .= ' ' . $admin->NameLast;
+    $AdminName = $Admin->Name;
+    if($Admin->NameLast !== null):
+      $AdminName .= ' ' . $Admin->NameLast;
     endif;
-    if($admin->Nick !== null):
-      $AdminName .= ' (' . $admin->Nick . ')';
+    if($Admin->Nick !== null):
+      $AdminName .= ' (' . $Admin->Nick . ')';
     endif;
+
+    $msg = sprintf(
+      $Lang->Get('Admin', Group: 'Admin'),
+      $AdminName,
+      date($Lang->Get('DateTime'), $Admin->Created)
+    );
+
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
         $Webhook->Data->Data->Chat->Id,
         $Webhook->Data->Data->Id,
-        sprintf(
-          $Lang->Get('Admin', Group: 'Admin'),
-          $AdminName,
-          date($Lang->Get('DateTime'), $admin->Creation)
-        ),
+        $msg,
         Markup: $mk
       );
     else:
       $Bot->TextSend(
         $Webhook->Data->Chat->Id,
-        sprintf(
-          $Lang->Get('Admin', Group: 'Admin'),
-          $AdminName,
-          date($Lang->Get('DateTime'), $admin->Creation)
-        ),
+        $msg,
         Markup: $mk
       );
     endif;
+
     if($ListenerDel):
       /**
        * @var TgUserShared $Webhook
@@ -140,13 +144,15 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
+    $chat = $Db->ChatGet($Webhook->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
     endif;
+
     $mk = new TblMarkupKeyboard(Resize: true, OneTime: true);
     $mk->ButtonRequestUser(
       0,
@@ -182,14 +188,15 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
-    or $Id === Admin):
+    $chat = $Db->ChatGet($Webhook->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
     endif;
+
     $mk = new TblMarkupInline;
     $mk->ButtonCallback(
       0,
@@ -228,15 +235,15 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
-    or $Id === Admin):
+    $chat = $Db->ChatGet($Webhook->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
     endif;
-    $Db->AdminEdit($Id, StbDbAdminPerm::None->value);
+    $Db->ChatEdit($Id, StbDbAdminPerm::None->value);
     self::Callback_Admins();
   }
 
@@ -250,18 +257,18 @@ abstract class StbAdmin{
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
     if($Webhook instanceof TblCmd):
-      $id = $Webhook->Data->User->Id;
+      $chat = $Webhook->Data->User->Id;
     else:
-      $id = $Webhook->User->Id;
+      $chat = $Webhook->User->Id;
     endif;
-    $user = StbBotTools::AdminCheck($id);
-    if($user === null):
+    $chat = $Db->ChatGet($chat);
+    if($chat === null):
       return;
     endif;
     $mk = new TblMarkupInline;
     $line = 0;
     $col = 0;
-    if($user->Perms & StbDbAdminPerm::Admins->value):
+    if($chat->Permission & StbDbAdminPerm::Admins->value):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -270,7 +277,7 @@ abstract class StbAdmin{
       );
       self::JumpLineCheck($line, $col);
     endif;
-    if($user->Perms & StbDbAdminPerm::Modules->value):
+    if($chat->Permission & StbDbAdminPerm::Modules->value):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -280,7 +287,7 @@ abstract class StbAdmin{
       self::JumpLineCheck($line, $col);
     endif;
     //Updates
-    if($id === Admin):
+    if($chat->Id === Admin):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -290,7 +297,7 @@ abstract class StbAdmin{
       self::JumpLineCheck($line, $col);
     endif;
     //Commands
-    if($user->Perms & StbDbAdminPerm::Cmds->value):
+    if($chat->Permission & StbDbAdminPerm::Cmds->value):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -300,7 +307,7 @@ abstract class StbAdmin{
       self::JumpLineCheck($line, $col);
     endif;
     //Stats
-    if($user->Perms & StbDbAdminPerm::Stats->value):
+    if($chat->Permission & StbDbAdminPerm::Stats->value):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -337,22 +344,23 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null
-    or $Admin === Admin):
+    $chat = $Db->ChatGet($Webhook->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
     endif;
-    $admin = $Db->Admin($Admin);
+
+    $Admin = $Db->ChatGet($Admin);
     if($Grant):
-      $Perm = $admin->Perms | $Perm;
+      $Perm = $Admin->Permission | $Perm;
     else:
-      $Perm = $admin->Perms & ~$Perm;
+      $Perm = $Admin->Permission & ~$Perm;
     endif;
-    $Db->AdminEdit($Admin, $Perm);
-    self::Callback_Admin($Admin);
+    $Db->ChatEdit($Admin->Id, $Perm);
+    self::Callback_Admin($Admin->Id);
   }
 
   public static function Callback_Admins():void{
@@ -364,13 +372,15 @@ abstract class StbAdmin{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Admins) === null):
+    $chat = $Db->ChatGet($Webhook->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
     endif;
+
     $mk = new TblMarkupInline();
     $mk->ButtonCallback(
       0,
@@ -551,7 +561,8 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
       return;
     endif;
     $temp = $Db->VariableGet(
@@ -590,7 +601,8 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
       return;
     endif;
     $Db->VariableSet(
@@ -619,7 +631,8 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db, $Bot;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->Data->User->Id, StbDbAdminPerm::Cmds) === null):
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
       return;
     endif;
     $temp = $Db->VariableGet(
@@ -705,20 +718,19 @@ abstract class StbAdmin{
     });
   }
 
-  private static function Listener_UserShared():bool{
+  private static function Listener_UserShared():void{
     /**
      * @var TgUserShared $Webhook
      * @var TelegramBotLibrary $Bot
      */
     global $Webhook, $Bot, $Db, $Lang;
-    $Db->ChatAdd($Bot->ChatGet($Webhook->UserId));
+    $Db->ChatEdit($Bot->ChatGet($Webhook->UserId));
     self::Callback_Admin($Webhook->UserId, true);
     $Bot->TextSend(
       $Webhook->Data->User->Id,
       $Lang->Get('AdminAddPerms', Group: 'Admin'),
       Markup: new TblMarkupRemove
     );
-    return false;
   }
 
   private static function Listener_Text():void{

@@ -3,12 +3,13 @@
 //https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use ProtocolLive\SimpleTelegramBot\Datas\ChatData;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.05.24.00
+ * @version 2023.05.25.00
  */
 abstract class StbAdminModules{
   public static function Callback_Modules():void{
@@ -132,10 +133,12 @@ abstract class StbAdminModules{
      * @var TgCallback $Webhook
      * @var StbLanguageSys $Lang
      * @var StbDatabase $Db
+     * @var ChatData $chat
      */
     global $Bot, $Webhook, $Lang, $Db;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
+    $chat = $Db->ChatGet($Webhook->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Modules->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')

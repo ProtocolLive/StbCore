@@ -3,10 +3,9 @@
 //https://github.com/ProtocolLive/FuncoesComuns
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDatabase,
-  StbDbAdminData,
-  StbDbAdminPerm,
   StbLog
 };
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
@@ -28,7 +27,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use TypeError;
 
 /**
- * 2023.05.25.01
+ * 2023.05.25.02
  */
 abstract class StbBotTools{
 
@@ -129,26 +128,6 @@ abstract class StbBotTools{
     }
   }
 
-  /**
-   * Check if the user permission match and return the user if true
-   */
-  public static function AdminCheck(
-    int $Id,
-    StbDbAdminPerm $Level = StbDbAdminPerm::All
-  ):StbDbAdminData|null{
-    /**
-     * @var StbDatabase $Db
-     */
-    global $Db;
-    $user = $Db->Admin($Id);
-    if($user === false
-    or ($user->Perms & $Level->value) === false):
-      return null;
-    else:
-      return $user;
-    endif;
-  }
-
   public static function Cron():void{
     call_user_func($_SERVER['Cron'] . '::Cron');
     StbBotTools::Log(
@@ -212,8 +191,7 @@ abstract class StbBotTools{
     DebugTrace();
     $Photo = false;
     $Text = false;
-    $data = $Db->UserGet($Webhook->Data->User->Id);
-    $lang = $data->Language ?? DefaultLanguage;
+    $lang = $Webhook->Data->User->Language ?? DefaultLanguage;
     if(is_dir(DirTextCmds . '/' . $lang) === false):
       $lang = DefaultLanguage;
     endif;
@@ -276,7 +254,7 @@ abstract class StbBotTools{
      * @var StbLanguageSys $Lang
      */
     global $Webhook, $Db, $Bot, $Lang;
-    $Db->UserSeen($Webhook->User);
+    $Db->ChatEdit($Webhook->User);
     $Lang->LanguageSet($Webhook->User->Language);
     if($Db->CallBackHashRun($Webhook->Callback) === false):
       $Bot->CallbackAnswer(
@@ -293,8 +271,8 @@ abstract class StbBotTools{
      * @var TblCmd $Webhook
      */
     global $Bot, $Db, $Webhook, $Lang;
-    $Db->UserSeen($Webhook->Data->User);
-    $Lang->LanguageSet($Webhook->Data->User->Language);
+    $Db->ChatEdit($Webhook->Data->User);
+    $Lang->LanguageSet($Webhook->Data->User->Language ?? DefaultLanguage);
   
     //In a group, with many bots, the commands have the target bot.
     //This block check the target and caches the bot name
@@ -326,7 +304,7 @@ abstract class StbBotTools{
      */
     global $Db, $Webhook;
     if($Webhook->Data->User instanceof TgUser):
-      $Db->UserSeen($Webhook->Data->User);
+      $Db->ChatEdit($Webhook->Data->User);
     endif;
     $Run = false;
 

@@ -12,6 +12,7 @@ use ProtocolLive\PhpLiveDb\{
   PhpLiveDb,
   Types
 };
+use ProtocolLive\SimpleTelegramBot\Datas\ChatData;
 use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   CallbackHash,
   Chats,
@@ -31,7 +32,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.25.03
+ * @version 2023.05.25.04
  */
 final class StbDatabase{
 
@@ -41,77 +42,8 @@ final class StbDatabase{
     DebugTrace();
   }
 
-  public function Admin(
-    int $User
-  ):StbDbAdminData|false{
-    DebugTrace();
-    $result = $this->Db->Select(Tables::Chats)
-    ->WhereAdd(Chats::Id, $User, Types::Int)
-    ->Run();
-    if($result === []):
-      return false;
-    endif;
-    return new StbDbAdminData($result[0]);
-  }
-
-  public function AdminAdd(
-    int $User,
-    int $Perms
-  ):bool{
-    DebugTrace();
-    $result = $this->Db->Select(Tables::Chats)
-    ->WhereAdd(Chats::Id, $User, Types::Int)
-    ->Run();
-    if($result !== []):
-      return false;
-    endif;
-    $consult = $this->Db->Insert(Tables::Chats)
-    ->FieldAdd(Chats::Id, $User, Types::Int)
-    ->FieldAdd(Chats::Permission, $Perms, Types::Int)
-    ->FieldAdd(Chats::Created, time(), Types::Int);
-    try{
-      $consult->Run();
-      return true;
-    }catch(PDOException){
-      return false;
-    }
-  }
-
-  public function AdminDel(
-    int $User
-  ):bool{
-    DebugTrace();
-    if($User === Admin):
-      return false;
-    endif;
-    $this->Db->Update(Tables::Chats)
-    ->FieldAdd(Chats::Permission, StbDbAdminPerm::None->value, Types::Int)
-    ->WhereAdd(Chats::Id, $User, Types::Int)
-    ->Run();
-    return true;
-  }
-
-  public function AdminEdit(
-    int $User,
-    int $Perms
-  ):bool{
-    DebugTrace();
-    if($User === Admin):
-      return false;
-    endif;
-    $consult = $this->Db->Update(Tables::Chats)
-    ->FieldAdd(Chats::Permission, $Perms, Types::Int)
-    ->WhereAdd(Chats::Id, $User, Types::Int);
-    try{
-      $consult->Run();
-      return true;
-    }catch(PDOException){
-      return false;
-    }
-  }
-
   /**
-   * @return StbDbAdminData[]
+   * @return ChatData[]
    */
   public function Admins():array{
     DebugTrace();
@@ -124,7 +56,7 @@ final class StbDatabase{
     )
     ->Run();
     foreach($result as &$admin):
-      $admin = new StbDbAdminData($admin);
+      $admin = new ChatData($admin);
     endforeach;
     return $result;
   }
@@ -167,20 +99,42 @@ final class StbDatabase{
     return $hash;
   }
 
-  public function ChatAdd(
-    TgChat|TgUser $Chat
+  /**
+   * Pass $Chat as integer to only edit permissions
+   */
+  public function ChatEdit(
+    int|TgUser|TgChat $Chat,
+    int $Permissions = null
   ):bool{
     DebugTrace();
-    $consult = $this->Db->Insert(Tables::Chats)
-    ->FieldAdd(Chats::Id, $Chat->Id, Types::Int)
-    ->FieldAdd(Chats::Name, $Chat->Name, Types::Str)
-    ->FieldAdd(Chats::Created, time(), Types::Int);
+    $consult = $this->Db->InsertUpdate(Tables::Chats);
+    if(is_int($Chat)):
+      $consult->FieldAdd(Chats::Permission, $Permissions, Types::Int, Update: true);
+    else:
+      $consult->FieldAdd(Chats::Id, $Chat->Id, Types::Int)
+      ->FieldAdd(Chats::Created, time(), Types::Int)
+      ->FieldAdd(Chats::Name, $Chat->Name, Types::Str, Update: true)
+      ->FieldAdd(Chats::NameLast, $Chat->NameLast, Types::Str, Update: true)
+      ->FieldAdd(Chats::Nick, $Chat->Nick, Types::Str, Update: true)
+      ->FieldAdd(Chats::Language, $Chat->Language, Types::Str, Update: true)
+      ->FieldAdd(Chats::LastSeen, time(), Types::Int, Update: true);
+    endif;
     try{
       $consult->Run();
       return true;
     }catch(PDOException){
       return false;
     }
+  }
+
+  public function ChatGet(
+    int|TgUser|TgChat $Chat
+  ):ChatData|null{
+    DebugTrace();
+    $return = $this->Db->Select(Tables::Chats)
+    ->WhereAdd(Chats::Id, $Chat->Id ?? $Chat, Types::Int)
+    ->Run();
+    return $return === [] ? null : new ChatData($return[0]);
   }
 
   public function CommandAdd(
@@ -417,59 +371,6 @@ final class StbDatabase{
     ->FieldAdd(LogTexts::Time, time(), Types::Int)
     ->FieldAdd(LogTexts::Event, $Event, Types::Str)
     ->FieldAdd(LogTexts::Msg, $Additional, Types::Str)
-    ->Run();
-  }
-
-  public function UserEdit(
-    TgUser $User
-  ):bool{
-    DebugTrace();
-    $consult = $this->Db->InsertUpdate(Tables::Chats)
-    ->FieldAdd(Chats::Id, $User->Id, Types::Int)
-    ->FieldAdd(Chats::Name, $User->Name, Types::Str, Update: true)
-    ->FieldAdd(Chats::NameLast, $User->NameLast, Types::Str, Update: true)
-    ->FieldAdd(Chats::Nick, $User->Nick, Types::Str, Update: true)
-    ->FieldAdd(Chats::Language, $User->Language, Types::Str, Update: true);
-    try{
-      $consult->Run();
-      return true;
-    }catch(PDOException){
-      return false;
-    }
-  }
-
-  public function UserGet(
-    int $Id
-  ):TgUser|null{
-    DebugTrace();
-    $result = $this->Db->Select(Tables::Chats)
-    ->WhereAdd(Chats::Id, $Id, Types::Int)
-    ->Run();
-    if($result === []):
-      return null;
-    endif;
-    $return = [
-      'id' => $result[0][Chats::Id->value],
-      'first_name' => $result[0][Chats::Name->value],
-      'last_name' => $result[0][Chats::NameLast->value],
-      'username' => $result[0][Chats::Nick->value],
-      'language_code' => $result[0][Chats::Language->value]
-    ];
-    return new TgUser($return);
-  }
-
-  public function UserSeen(
-    TgUser|TgChat $User
-  ):void{
-    DebugTrace();
-    $this->Db->InsertUpdate(Tables::Chats)
-    ->FieldAdd('chat_id', $User->Id, Types::Int)
-    ->FieldAdd(Chats::Created, time(), Types::Int)
-    ->FieldAdd(Chats::Name, $User->Name, Types::Str, Update: true)
-    ->FieldAdd(Chats::NameLast, $User->NameLast ?? null, Types::Str, Update: true)
-    ->FieldAdd(Chats::Nick, $User->Nick, Types::Str, Update: true)
-    ->FieldAdd(Chats::LastSeen, time(), Types::Int, Update: true)
-    ->FieldAdd(Chats::Language, $User->Language ?? null, Types::Str, Update: true)
     ->Run();
   }
 
