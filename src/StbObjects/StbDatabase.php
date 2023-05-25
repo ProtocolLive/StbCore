@@ -21,7 +21,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.25.00
+ * @version 2023.05.25.01
  */
 final class StbDatabase{
 
@@ -402,7 +402,7 @@ final class StbDatabase{
     string $Additional = null
   ):void{
     DebugTrace();
-    $this->Db->Insert('text_logs')
+    $this->Db->Insert('log_texts')
     ->FieldAdd('chat_id', $Id, Types::Int)
     ->FieldAdd('time', time(), Types::Int)
     ->FieldAdd('event', $Event, Types::Str)

@@ -17,7 +17,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
 };
 
 /**
- * @version 2023.05.25.00
+ * @version 2023.05.25.01
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -214,9 +214,9 @@ abstract class Install{
     $consult->Run();
   }
 
-  private static function CreateLogs():void{
+  private static function CreateLogTexts():void{
     global $PlDb;
-    $consult = $PlDb->Create('text_logs');
+    $consult = $PlDb->Create('log_texts');
     $consult->Add(
       'log_id',
       Formats::Int,
@@ -505,7 +505,7 @@ abstract class Install{
       self::CreateCommands();
       self::CreateListeners();
       self::CreateEventslogs();
-      self::CreateLogs();
+      self::CreateLogTexts();
       self::CreateParams();
       self::CreateVariables();
 
