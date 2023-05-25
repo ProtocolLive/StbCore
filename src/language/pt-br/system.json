@@ -8,7 +8,7 @@
     "UninstallButton": "Desinstalar"
   },
   "Admin": {
-    "Admin": "Administrador: %1$s\nAdicionado: %2$s",
+    "Admin": "Usuário: %1$s\nDesde: %2$s",
     "AdminAdd": "Clique no botão abaixo para escolher um usuário",
     "AdminAddButton": "Escolher usuário",
     "AdminAddPerms": "Defina as permissões acima ☝️",
