@@ -28,7 +28,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use TypeError;
 
 /**
- * 2023.05.24.03
+ * 2023.05.25.00
  */
 abstract class StbBotTools{
 
@@ -43,13 +43,6 @@ abstract class StbBotTools{
     if($Webhook === null):
       return;
     endif;
-
-    spl_autoload_register(function(string $Class){
-      $temp = explode('\\', $Class);
-      unset($temp[0], $temp[1]);
-      require(DirModules . '/'. implode('/', $temp) . '/index.php');
-    });
-
     if(get_class($Webhook) === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd();
     elseif($Webhook instanceof TgCallback):
@@ -165,6 +158,7 @@ abstract class StbBotTools{
   }
 
   public static function Entry():void{
+    self::ModuleAutoload();
     ArgV();
     $_GET['a'] ??= '';
     if(isset($_SERVER['Cron'])):
@@ -195,6 +189,14 @@ abstract class StbBotTools{
       $file = 'cron';
     endif;
     file_put_contents(DirLogs . '/' . $file . '.log', $Msg, FILE_APPEND);
+  }
+
+  private static function ModuleAutoload():void{
+    spl_autoload_register(function(string $Class){
+      $temp = explode('\\', $Class);
+      unset($temp[0], $temp[1]);
+      require(DirModules . '/'. implode('/', $temp) . '/index.php');
+    });
   }
 
   public static function SendUserCmd(
@@ -344,6 +346,5 @@ abstract class StbBotTools{
     and $Webhook->Data->Chat instanceof TgUser):
       StbBotTools::SendUserCmd('dontknow', $Webhook->Text);
     endif;
-    return;
   }
 }
