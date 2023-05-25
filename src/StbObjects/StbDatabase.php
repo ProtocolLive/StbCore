@@ -31,7 +31,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.25.02
+ * @version 2023.05.25.03
  */
 final class StbDatabase{
 
@@ -239,7 +239,7 @@ final class StbDatabase{
     if($return === []):
       return null;
     elseif($Command !== null):
-      return $return[0][Commands::Module];
+      return $return[0][Commands::Module->value];
     endif;
     return $return;
   }
