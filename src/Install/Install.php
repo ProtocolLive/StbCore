@@ -17,7 +17,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
 };
 
 /**
- * @version 2023.05.23.00
+ * @version 2023.05.24.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -458,7 +458,7 @@ abstract class Install{
       mkdir($DirSystem . '/DirBot', 0755, true);
       self::CopyRecursive(__DIR__ . '/DirBot', $DirSystem . '/DirBot');
 
-      $config = file_get_contents($DirSystem . '/DirBot/config.php');
+      $config = file_get_contents($DirSystem . '/DirBot/config.txt');
       $config = str_replace('##DATE##', date('Y-m-d H:i:s'), $config);
       $config = str_replace('##TIMEZONE##', $_POST['timezone'], $config);
       $config = str_replace('##TOKEN##', $_POST['token'], $config);
@@ -480,6 +480,7 @@ abstract class Install{
       $temp = md5(uniqid());
       $config = str_replace('##DIRLOGS##', $temp, $config);
       file_put_contents($DirSystem . '/DirBot/config.php', $config);
+      unlink($DirSystem . '/DirBot/config.txt');
 
       rename($DirSystem . '/DirBot/logs', $DirSystem . '/DirBot/logs-' . $temp);
       rename($DirSystem . '/DirBot', $DirSystem . '/' . $DirBot);
