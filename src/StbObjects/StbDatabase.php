@@ -21,7 +21,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.24.01
+ * @version 2023.05.24.02
  */
 final class StbDatabase{
 
@@ -235,6 +235,7 @@ final class StbDatabase{
   }
 
   public function GetCustom():PDO{
+    DebugTrace();
     return $this->Db->GetCustom();
   }
 
@@ -298,7 +299,20 @@ final class StbDatabase{
       $Listener = get_class($Listener);
     endif;
     $return = $this->Db->Select('listeners')
-    ->WhereAdd('listener', $Listener, Types::Str)
+    ->WhereAdd(
+      'listener',
+      $Listener,
+      Types::Str,
+      Parenthesis: Parenthesis::Open
+    )
+    ->WhereAdd(
+      'listener',
+      TgObject::class,
+      Types::Str,
+      AndOr: AndOr::Or,
+      Parenthesis: Parenthesis::Close,
+      CustomPlaceholder: 'l2'
+    )
     ->WhereAdd('chat_id', $User, Types::Int)
     ->Run();
     return $return[0]['module'] ?? null;
