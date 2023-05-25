@@ -3,13 +3,12 @@
 //https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
-use PDO;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblException;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.05.24.00
+ * @version 2023.05.25.00
  */
 abstract class StbModuleHelper{
   /**
@@ -17,8 +16,7 @@ abstract class StbModuleHelper{
    */
   protected static function InstallHelper(
     string $Module,
-    PDO $Pdo,
-    array $Commands,
+    array $Commands = [],
     bool $Commit = true
   ):void{
     /**
@@ -28,10 +26,11 @@ abstract class StbModuleHelper{
      * @var StbLanguageSys $Lang
      */
     global $Db, $Webhook, $Bot, $Lang;
-    $Pdo->beginTransaction();
+    $pdo = $Db->GetCustom();
+    $pdo->beginTransaction();
 
     if($Db->ModuleInstall($Module) === false):
-      self::MsgError($Pdo);
+      self::MsgError();
       error_log('Fail to install module ' . $Module);
       return;
     endif;
@@ -40,7 +39,7 @@ abstract class StbModuleHelper{
     foreach($Commands as $cmd):
       $cmds->Add($cmd[0], $cmd[1]);
       if($Db->CommandAdd($cmd[0], $Module) === false):
-        self::MsgError($Pdo);
+        self::MsgError();
         error_log('Fail to add the command ' . $cmd[0]);
         return;
       endif;
@@ -48,7 +47,7 @@ abstract class StbModuleHelper{
     try{
       $Bot->MyCmdSet($cmds);
     }catch(TblException){
-      self::MsgError($Pdo);
+      self::MsgError();
       error_log('Fail to add the commands');
       return;
     }
@@ -58,24 +57,21 @@ abstract class StbModuleHelper{
       sprintf($Lang->Get('InstallOk', Group: 'Module'))
     );
     if($Commit):
-      $Pdo->commit();
+      $pdo->commit();
       StbAdminModules::Callback_Modules();
     endif;
   }
 
-  protected static function InstallHelper2(
-    PDO $Pdo
-  ){
-    $Pdo->Commit();
+  protected static function InstallHelper2(){
+    global $Db;
+    $Db->GetCustom()->Commit();
     StbAdminModules::Callback_Modules();
   }
 
-  protected static function MsgError(
-    PDO $Pdo
-  ):void{
-    global $Bot, $Webhook, $Lang;
+  protected static function MsgError():void{
+    global $Bot, $Webhook, $Lang, $Db;
     DebugTrace();
-    $Pdo->rollBack();
+    $Db->GetCustom()->rollBack();
     $Bot->CallbackAnswer(
       $Webhook->Id,
       sprintf($Lang->Get('Fail', Group: 'Module'))
@@ -88,8 +84,7 @@ abstract class StbModuleHelper{
    */
   protected static function UninstallHelper(
     string $Module,
-    PDO $Pdo,
-    array $Commands,
+    array $Commands = [],
     bool $Commit = true
   ):void{
     /**
@@ -98,7 +93,8 @@ abstract class StbModuleHelper{
      */
     global $Db, $Bot;
     DebugTrace();
-    $Pdo->beginTransaction();
+    $pdo = $Db->GetCustom();
+    $pdo->beginTransaction();
 
     $Db->ModuleUninstall($Module);
 
@@ -109,12 +105,12 @@ abstract class StbModuleHelper{
     try{
       $Bot->MyCmdSet($cmds);
     }catch(TblException){
-      self::MsgError($Pdo);
+      self::MsgError();
       return;
     }
 
     if($Commit):
-      $Pdo->commit();
+      $pdo->commit();
     endif;
   }
 }
