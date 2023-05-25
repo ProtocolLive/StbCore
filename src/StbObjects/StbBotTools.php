@@ -28,7 +28,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use TypeError;
 
 /**
- * 2023.05.25.00
+ * 2023.05.25.01
  */
 abstract class StbBotTools{
 
@@ -53,7 +53,7 @@ abstract class StbBotTools{
       if(($Webhook instanceof TgObject) === false):
         return;
       endif;
-      $module = $Db->ListenerGet($Webhook);
+      $module = $Db->ListenerGet($Webhook, $Webhook->Data->User->Id) ?? $Db->ListenerGet($Webhook);
       if($module === null):
         return;
       endif;
