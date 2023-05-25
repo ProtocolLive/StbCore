@@ -11,19 +11,33 @@ use ProtocolLive\PhpLiveDb\{
   RefTypes,
   Types
 };
+use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
+  CallbackHash,
+  Chats,
+  Commands,
+  Listeners,
+  LogTexts,
+  LogUpdates,
+  Modules,
+  Params,
+  Variables
+};
+use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbAdmin,
-  StbDbAdminPerm
+  StbDbAdminPerm,
+  StbStringsDb
 };
 
 /**
- * @version 2023.05.25.01
+ * @version 2023.05.25.02
  */
 abstract class Install{
   private static function CopyRecursive(
     string $From,
     string $To
   ):void{
+    DebugTrace();
     foreach(glob($From . '/*') as $file):
       if(is_dir($file)):
         mkdir($To . '/' . basename($file), 0755, true);
@@ -36,87 +50,90 @@ abstract class Install{
 
   private static function CreateCallbackhash():void{
     global $PlDb;
-    $consult = $PlDb->Create('callbackshash');
-    $consult->Add(
-      'hash',
+    DebugTrace();
+    $PlDb->Create(Tables::CallbackHash)
+    ->Add(
+      CallbackHash::Hash,
       Formats::Varchar,
       40,
       NotNull: true,
       Primary: true
-    );
-    $consult->Add(
-      'method',
+    )
+    ->Add(
+      CallbackHash::Method,
       Formats::Varchar,
       255,
       NotNull: true
-    );
-    $consult->Run();
+    )
+    ->Run();
   }
 
   private static function CreateChats():void{
     global $PlDb;
-    $consult = $PlDb->Create('chats');
-    $consult->Add(
-      'chat_id',
+    DebugTrace();
+    $PlDb->Create(Tables::Chats)
+    ->Add(
+      Chats::Id,
       Formats::IntBig,
       NotNull: true,
       Primary: true
-    );
-    $consult->Add(
-      'name',
+    )
+    ->Add(
+      Chats::Name,
       Formats::Varchar,
       50,
       Default: '-',
       NotNull: true
-    );
-    $consult->Add(
-      'name2',
+    )
+    ->Add(
+      Chats::NameLast,
       Formats::Varchar,
       50
-    );
-    $consult->Add(
-      'nick',
+    )
+    ->Add(
+      Chats::Nick,
       Formats::Varchar,
       50
-    );
-    $consult->Add(
-      'lang',
+    )
+    ->Add(
+      Chats::Language,
       Formats::Varchar,
       5
-    );
-    $consult->Add(
-      'perms',
+    )
+    ->Add(
+      Chats::Permission,
       Formats::IntTiny,
       Unsigned: true,
       Default: 0,
       NotNull: true
-    );
-    $consult->Add(
-      'created',
+    )
+    ->Add(
+      Chats::Created,
       Formats::Int,
       Unsigned: true,
       NotNull: true
-    );
-    $consult->Add(
-      'lastseen',
+    )
+    ->Add(
+      Chats::LastSeen,
       Formats::Int,
       Unsigned: true
-    );
-    $consult->Run();
+    )
+    ->Run();
   }
 
   private static function CreateCommands():void{
     global $PlDb;
-    $consult = $PlDb->Create('commands');
-    $consult->Add(
-      'command',
+    DebugTrace();
+    $PlDb->Create(Tables::Commands)
+    ->Add(
+      Commands::Name,
       Formats::Varchar,
       50,
       NotNull: true,
       Primary: true
-    );
-    $consult->Add(
-      'module',
+    )
+    ->Add(
+      Commands::Module,
       Formats::Varchar,
       255,
       NotNull: true,
@@ -124,224 +141,231 @@ abstract class Install{
       RefField: 'module',
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
-    );
+    )
+    ->Run();
+    $consult = $PlDb->Insert(Tables::Commands)
+    ->FieldAdd(Commands::Module, StbAdmin::class, Types::Str)
+    ->FieldAdd(Commands::Name, 'admin', Types::Str);
     $consult->Run();
-    $consult = $PlDb->Insert('commands');
-    $consult->FieldAdd('module', StbAdmin::class, Types::Str);
-    $consult->FieldAdd('command', 'admin', Types::Str);
-    $consult->Run();
-    $consult->FieldAdd('command', 'id', Types::Str);
-    $consult->Run();
+    $consult->FieldAdd(Commands::Name, 'id', Types::Str)
+    ->Run();
   }
 
   private static function CreateEventslogs():void{
     global $PlDb;
-    $consult = $PlDb->Create('sys_eventslog');
-    $consult->Add(
-      'log_id',
+    DebugTrace();
+    $PlDb->Create(Tables::LogUpdates)
+    ->Add(
+      LogUpdates::Id,
       Formats::Int,
       Unsigned: true,
       NotNull: true,
       Primary: true,
       AutoIncrement: true
-    );
-    $consult->Add(
-      'time',
+    )
+    ->Add(
+      LogUpdates::Time,
       Formats::Int,
       Unsigned: true,
       NotNull: true,
-    );
-    $consult->Add(
-      'chat_id',
+    )
+    ->Add(
+      LogUpdates::Chat,
       Formats::IntBig,
       NotNull: true,
-      RefTable: 'chats',
-      RefField: 'chat_id',
+      RefTable: Tables::Chats,
+      RefField: Chats::Id,
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
-    );
-    $consult->Add(
-      'event',
+    )
+    ->Add(
+      LogUpdates::Event,
       Formats::Varchar,
       50,
       NotNull: true,
-    );
-    $consult->Add(
-      'additional',
+    )
+    ->Add(
+      LogUpdates::Additional,
       Formats::Varchar,
       50
-    );
-    $consult->Unique(['time', 'chat_id']);
-    $consult->Run();
+    )
+    ->Unique([LogUpdates::Time, LogUpdates::Chat])
+    ->Run();
   }
 
   private static function CreateListeners():void{
     global $PlDb;
-    $consult = $PlDb->Create('listeners');
-    $consult->Add(
-      'listener_id',
+    DebugTrace();
+    $PlDb->Create(Tables::Listeners)
+    ->Add(
+      Listeners::Id,
       Formats::Int,
       Unsigned: true,
       NotNull: true,
       Primary: true,
       AutoIncrement: true
-    );
-    $consult->Add(
-      'listener',
+    )
+    ->Add(
+      Listeners::Name,
       Formats::Varchar,
       255,
       NotNull: true
-    );
-    $consult->Add(
-      'chat_id',
+    )
+    ->Add(
+      Listeners::Chat,
       Formats::IntBig,
-      RefTable: 'chats',
-      RefField: 'chat_id',
+      RefTable: Tables::Chats,
+      RefField: Chats::Id,
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
-    );
-    $consult->Add(
-      'module',
+    )
+    ->Add(
+      Listeners::Module,
       Formats::Varchar,
       255,
       NotNull: true,
-      RefTable: 'modules',
-      RefField: 'module',
+      RefTable: Tables::Modules,
+      RefField: Modules::Name,
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
-    );
-    $consult->Unique(['listener', 'chat_id']);
-    $consult->Run();
+    )
+    ->Unique([Listeners::Name, Listeners::Chat])
+    ->Run();
   }
 
   private static function CreateLogTexts():void{
     global $PlDb;
-    $consult = $PlDb->Create('log_texts');
-    $consult->Add(
-      'log_id',
+    DebugTrace();
+    $PlDb->Create(Tables::LogTexts)
+    ->Add(
+      LogTexts::Id,
       Formats::Int,
       Unsigned: true,
       NotNull: true,
       Primary: true,
       AutoIncrement: true
-    );
-    $consult->Add(
-      'time',
+    )
+    ->Add(
+      LogTexts::Time,
       Formats::Int,
       Unsigned: true,
       NotNull: true
-    );
-    $consult->Add(
-      'chat_id',
+    )
+    ->Add(
+      LogTexts::Chat,
       Formats::IntBig,
       NotNull: true,
-      RefTable: 'chats',
-      RefField: 'chat_id',
+      RefTable: Tables::Chats,
+      RefField: Chats::Id,
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
-    );
-    $consult->Add(
-      'event',
+    )
+    ->Add(
+      LogTexts::Event,
       Formats::Varchar,
       50,
       NotNull: true
-    );
-    $consult->Add(
-      'msg',
+    )
+    ->Add(
+      LogTexts::Msg,
       Formats::Text
-    );
-    $consult->Run();
+    )
+    ->Run();
   }
 
   private static function CreateModules():void{
     global $PlDb;
-    $consult = $PlDb->Create('modules');
-    $consult->Add(
-      'module',
+    DebugTrace();
+    $PlDb->Create(Tables::Modules)
+    ->Add(
+      Modules::Name,
       Formats::Varchar,
       255,
       NotNull: true,
       Primary: true
-    );
-    $consult->Add(
-      'created',
+    )
+    ->Add(
+      Modules::Created,
       Formats::Int,
       Unsigned: true,
       NotNull: true
-    );
-    $consult->Run();
-    $consult = $PlDb->Insert('modules');
-    $consult->FieldAdd('module', StbAdmin::class, Types::Str);
-    $consult->FieldAdd('created', time(), Types::Int);
-    $consult->Run();
+    )
+    ->Run();
+    $PlDb->Insert(Tables::Modules)
+    ->FieldAdd(Modules::Name, StbAdmin::class, Types::Str)
+    ->FieldAdd(Modules::Created, time(), Types::Int)
+    ->Run();
   }
 
   private static function CreateParams():void{
     global $PlDb;
-    $consult = $PlDb->Create('sys_params');
-    $consult->Add(
-      'name',
+    DebugTrace();
+    $PlDb->Create(Tables::Params)
+    ->Add(
+      Params::Name,
       Formats::Varchar,
       50,
       NotNull: true,
       Primary: true
-    );
-    $consult->Add(
-      'value',
+    )
+    ->Add(
+      Params::Value,
       Formats::Varchar,
       50,
       NotNull: true
-    );
-    $consult->Run();
-    $consult = $PlDb->Insert('sys_params');
-    $consult->FieldAdd('name', 'DbVersion', Types::Str);
-    $consult->FieldAdd('value', '1.0.0', Types::Str);
-    $consult->Run();
+    )
+    ->Run();
+    $PlDb->Insert(Tables::Params)
+    ->FieldAdd(Params::Name, 'DbVersion', Types::Str)
+    ->FieldAdd(Params::Value, '1.0.0', Types::Str)
+    ->Run();
   }
 
   private static function CreateVariables():void{
     global $PlDb;
-    $consult = $PlDb->Create('variables');
-    $consult->Add(
-      'var_id',
+    DebugTrace();
+    $PlDb->Create(Tables::Variables)
+    ->Add(
+      Variables::Id,
       Formats::Int,
       Unsigned: true,
       Primary: true,
       AutoIncrement: true
-    );
-    $consult->Add(
-      'name',
+    )
+    ->Add(
+      Variables::Name,
       Formats::Varchar,
       50,
       NotNull: true
-    );
-    $consult->Add(
-      'value',
+    )
+    ->Add(
+      Variables::Value,
       Formats::Varchar,
       255,
       NotNull: true
-    );
-    $consult->Add(
-      'module',
+    )
+    ->Add(
+      Variables::Module,
       Formats::Varchar,
       255,
-      RefTable: 'modules',
-      RefField: 'module',
+      RefTable: Tables::Modules,
+      RefField: Modules::Name,
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
-    );
-    $consult->Add(
-      'chat_id',
+    )
+    ->Add(
+      Variables::Chat,
       Formats::IntBig,
-      RefTable: 'chats',
-      RefField: 'chat_id',
+      RefTable: Tables::Chats,
+      RefField: Chats::Id,
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
-    );
-    $consult->Run();
+    )
+    ->Run();
   }
 
-  public static function Step1():void{?>
+  public static function Step1():void{
+    DebugTrace();?>
     <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -439,7 +463,8 @@ abstract class Install{
   }
 
   public static function Step2():void{
-    global $PlDb;?>
+    global $PlDb;
+    DebugTrace();?>
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -509,11 +534,11 @@ abstract class Install{
       self::CreateParams();
       self::CreateVariables();
 
-      $consult = $PlDb->Insert('chats');
-      $consult->FieldAdd('chat_id', $_POST['admin'], Types::Int);
-      $consult->FieldAdd('created', time(), Types::Int);
-      $consult->FieldAdd('perms', StbDbAdminPerm::All->value, Types::Int);
-      $consult->Run();
+      $PlDb->Insert(Tables::Chats)
+      ->FieldAdd(Chats::Id, $_POST['admin'], Types::Int)
+      ->FieldAdd(Chats::Created, time(), Types::Int)
+      ->FieldAdd(Chats::Permission, StbDbAdminPerm::All->value, Types::Int)
+      ->Run();
 
       rename($DirSystem . '/index.php', $DirSystem . '/index_' . uniqid() . '.php');
 

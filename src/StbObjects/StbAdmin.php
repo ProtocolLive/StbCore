@@ -4,6 +4,9 @@
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
+use ProtocolLive\SimpleTelegramBot\NoStr\Fields\Chats;
+use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogTexts;
+use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
   TblMarkupInline,
@@ -19,7 +22,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.24.00
+ * @version 2023.05.25.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -437,44 +440,44 @@ abstract class StbAdmin{
      * @var StbLanguageSys $Lang
      */
     global $PlDb, $Bot, $Webhook, $Lang;
-    $consult = $PlDb->Select('chats');
-    $consult->Fields('count(*) as count');
-    $chats = $consult->Run();
+    $chats = $PlDb->Select(Tables::Chats)
+    ->Fields('count(*) as count')
+    ->Run();
     $msg = sprintf(
       '<b>' . $Lang->Get('Used', Group: 'Stats') . '</b>' . PHP_EOL,
       $chats[0]['count']
     );
     $msg .= PHP_EOL;
     $msg .= '<b>' . $Lang->Get('Commands', Group: 'Stats') . '</b>' . PHP_EOL;
-    $consult = $PlDb->Select('sys_logs');
-    $consult->Fields('event,count(event) as count');
-    $consult->Group('event');
-    $consult->Order('count desc');
-    $consult->Limit(10);
+    $consult = $PlDb->Select(Tables::LogTexts)
+    ->Fields(LogTexts::Event->value . ',count(' . LogTexts::Event->value . ') as count')
+    ->Group(LogTexts::Event->value)
+    ->Order('count desc')
+    ->Limit(10);
     $consult->Run(Fetch: true);
     while(($event = $consult->Fetch()) !== false):
-      $msg .= $event['count'] . ' - ' . $event['event'] . PHP_EOL;
+      $msg .= $event['count'] . ' - ' . $event[LogTexts::Event->value] . PHP_EOL;
     endwhile;
     $msg .= PHP_EOL;
     $msg .= '<b>' . $Lang->Get('Logs', Group: 'Stats') . '</b>' . PHP_EOL;
-    $consult = $PlDb->Select('sys_logs');
-    $consult->JoinAdd('chats', 'chat_id');
-    $consult->Order('time desc');
-    $consult->Limit(10);
+    $consult = $PlDb->Select(Tables::LogTexts)
+    ->JoinAdd(Tables::Chats, Chats::Id)
+    ->Order(LogTexts::Time->value . ' desc')
+    ->Limit(10);
     $consult->Run(Fetch: true);
     while(($log = $consult->Fetch()) !== false):
       $msg .= date('Y/m/d H:i:s', $log['time']) . ' - ';
-      $msg .= $log['event'] . ' ';
-      if($log['additional'] !== null):
-        $msg .= $log['additional'];
+      $msg .= $log[LogTexts::Event->value] . ' ';
+      if($log[LogTexts::Msg->value] !== null):
+        $msg .= $log[LogTexts::Msg->value];
       endif;
       $msg .= PHP_EOL;
-      $msg .= $log['chat_id'] . ', ';
-      if($log['nick'] !== null):
+      $msg .= $log[LogTexts::Chat->value] . ', ';
+      if($log[Chats::Nick->value] !== null):
         $msg .= '@' . $log['nick'] . ', ';
       endif;
-      $msg .= '<a href="tg://user?id=' . $log['chat_id'] . '">' . $log['name'] . ' ';
-      if($log['name2'] !== null):
+      $msg .= '<a href="tg://user?id=' . $log[LogTexts::Chat->value] . '">' . $log[Chats::Name->value] . ' ';
+      if($log[Chats::NameLast->value] !== null):
         $msg .= $log['name2'];
       endif;
       $msg .= '</a>' . PHP_EOL;
