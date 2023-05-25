@@ -5,9 +5,9 @@
 namespace ProtocolLive\SimpleTelegramBot\NoStr\Fields;
 
 /**
- * @version 2023.05.25.00
+ * @version 2023.05.25.01
  */
 enum Commands:string{
-  case Command = 'command';
+  case Name = 'command';
   case Module = Modules::Name->value;
 }
