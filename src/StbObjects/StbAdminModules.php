@@ -9,9 +9,23 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.05.25.00
+ * @version 2023.05.26.00
  */
 abstract class StbAdminModules{
+  private static function Acesso():bool{
+    global $Db, $Webhook, $Bot, $Lang;
+    DebugTrace();
+    $chat = $Db->ChatGet($Webhook->User->Id);
+    if(($chat->Permission & StbDbAdminPerm::Modules->value) == false):
+      $Bot->CallbackAnswer(
+        $Webhook->Id,
+        $Lang->Get('Denied', Group: 'Errors')
+      );
+      return false;
+    endif;
+    return true;
+  }
+
   public static function Callback_Modules():void{
     /**
      * @var TelegramBotLibrary $Bot
@@ -21,14 +35,9 @@ abstract class StbAdminModules{
      */
     global $Bot, $Db, $Lang, $Webhook;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
-      $Bot->CallbackAnswer(
-        $Webhook->Id,
-        $Lang->Get('Denied', Group: 'Errors')
-      );
+    if(self::Acesso() === false):
       return;
     endif;
-
     $mods = $Db->Modules();
     $mk = new TblMarkupInline;
     $line = 0;
@@ -80,11 +89,7 @@ abstract class StbAdminModules{
      */
     global $Bot, $Db, $Lang, $Webhook;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
-      $Bot->CallbackAnswer(
-        $Webhook->Id,
-        $Lang->Get('Denied', Group: 'Errors')
-      );
+    if(self::Acesso() === false):
       return;
     endif;
 
@@ -137,12 +142,7 @@ abstract class StbAdminModules{
      */
     global $Bot, $Webhook, $Lang, $Db;
     DebugTrace();
-    $chat = $Db->ChatGet($Webhook->User->Id);
-    if(($chat->Permission & StbDbAdminPerm::Modules->value) == false):
-      $Bot->CallbackAnswer(
-        $Webhook->Id,
-        $Lang->Get('Denied', Group: 'Errors')
-      );
+    if(self::Acesso() === false):
       return;
     endif;
 
@@ -195,11 +195,7 @@ abstract class StbAdminModules{
      */
     global $Bot, $Db, $Lang, $Webhook;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
-      $Bot->CallbackAnswer(
-        $Webhook->Id,
-        $Lang->Get('Denied', Group: 'Errors')
-      );
+    if(self::Acesso() === false):
       return;
     endif;
 
@@ -248,11 +244,7 @@ abstract class StbAdminModules{
      */
     global $Bot, $Lang, $Webhook, $Db;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
-      $Bot->CallbackAnswer(
-        $Webhook->Id,
-        $Lang->Get('Denied', Group: 'Errors')
-      );
+    if(self::Acesso() === false):
       return;
     endif;
 
@@ -287,11 +279,7 @@ abstract class StbAdminModules{
      */
     global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Modules) === null):
-      $Bot->CallbackAnswer(
-        $Webhook->Id,
-        $Lang->Get('Denied', Group: 'Errors')
-      );
+    if(self::Acesso() === false):
       return;
     endif;
     require(DirModules . '/' . $Module . '/index.php');
