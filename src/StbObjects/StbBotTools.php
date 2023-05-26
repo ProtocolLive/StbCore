@@ -27,7 +27,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use TypeError;
 
 /**
- * 2023.05.25.03
+ * 2023.05.25.04
  */
 abstract class StbBotTools{
 
@@ -121,7 +121,7 @@ abstract class StbBotTools{
     $Webhook = new TblWebhook($BotData);
     try{
       $Webhook->Set(
-        $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'],
+        ($_GET['server'] ?? $_SERVER['SERVER_NAME']) . $_SERVER['SCRIPT_NAME'],
         Updates: TgUpdateType::cases(),
         TokenWebhook: $BotData->TokenWebhook
       );
