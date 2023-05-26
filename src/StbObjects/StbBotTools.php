@@ -3,7 +3,6 @@
 //https://github.com/ProtocolLive/FuncoesComuns
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
-use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDatabase,
   StbLog
@@ -18,6 +17,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
+  TgInlineQuery,
   TgParseMode,
   TgObject,
   TgText,
@@ -27,7 +27,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use TypeError;
 
 /**
- * 2023.05.25.02
+ * 2023.05.25.03
  */
 abstract class StbBotTools{
 
@@ -52,7 +52,12 @@ abstract class StbBotTools{
       if(($Webhook instanceof TgObject) === false):
         return;
       endif;
-      $module = $Db->ListenerGet($Webhook, $Webhook->Data->User->Id) ?? $Db->ListenerGet($Webhook);
+      if($Webhook instanceof TgInlineQuery):
+        $id = $Webhook->User->Id;
+      else:
+        $id = $Webhook->Data->User->Id;
+      endif;
+      $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
       if($module === null):
         return;
       endif;
