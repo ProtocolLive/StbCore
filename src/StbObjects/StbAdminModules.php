@@ -9,7 +9,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.05.26.00
+ * @version 2023.05.26.01
  */
 abstract class StbAdminModules{
   private static function Acesso():bool{
@@ -93,19 +93,22 @@ abstract class StbAdminModules{
       return;
     endif;
 
-    $mk = new TblMarkupInline;
-    $line = 0;
-    $col = 0;
-
     $modules = [];
     foreach(glob(DirModules . '/*', GLOB_ONLYDIR) as $file):
-      $modules[] = basename($file);
+      $temp = $file . '/info.json';
+      if(is_file($temp)):
+        $temp = json_decode(file_get_contents($temp), true);
+        $modules[] = $temp['class'];
+      endif;
     endforeach;
     $modules = array_diff($modules, array_column($Db->Modules(), 'module'));
 
+    $line = 1;
+    $col = 0;
+    $mk = new TblMarkupInline;
     $mk->ButtonCallback(
-      $line,
-      $col++,
+      0,
+      0,
       $Lang->Get('Back'),
       $Db->CallBackHashSet(self::Callback_Modules(...))
     );
@@ -146,11 +149,9 @@ abstract class StbAdminModules{
       return;
     endif;
 
-    $mk = new TblMarkupInline;
     $line = 0;
     $col = 0;
-
-    require(DirModules . '/' . $Module . '/index.php');
+    $mk = new TblMarkupInline;
     if(is_callable($Module . '::Install') === false):
       $mk->ButtonCallback(
         $line,
