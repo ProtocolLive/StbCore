@@ -9,7 +9,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.05.26.01
+ * @version 2023.05.28.00
  */
 abstract class StbAdminModules{
   private static function Acesso():bool{
@@ -94,11 +94,13 @@ abstract class StbAdminModules{
     endif;
 
     $modules = [];
-    foreach(glob(DirModules . '/*', GLOB_ONLYDIR) as $file):
-      $temp = $file . '/info.json';
-      if(is_file($temp)):
-        $temp = json_decode(file_get_contents($temp), true);
-        $modules[] = $temp['class'];
+    foreach(glob(DirModules . '/*', GLOB_ONLYDIR) as $module):
+      $module = $module . '/index.php';
+      if(is_file($module)):
+        $module = file_get_contents($module);
+        preg_match('/namespace (.*);/', $module, $namespace);
+        preg_match('/class (.*)[ \r]/', $module, $class);
+        $modules[] = $namespace[1] . '\\' . $class[1];
       endif;
     endforeach;
     $modules = array_diff($modules, array_column($Db->Modules(), 'module'));
