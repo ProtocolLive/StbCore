@@ -29,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
 };
 
 /**
- * @version 2023.05.25.03
+ * @version 2023.05.29.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -249,26 +249,11 @@ abstract class Install{
       NotNull: true,
     )
     ->Add(
-      LogUpdates::Chat,
-      Formats::IntBig,
-      NotNull: true,
-      RefTable: Tables::Chats,
-      RefField: Chats::Id,
-      RefDelete: RefTypes::Cascade,
-      RefUpdate: RefTypes::Cascade
-    )
-    ->Add(
       LogUpdates::Event,
       Formats::Varchar,
       50,
       NotNull: true,
     )
-    ->Add(
-      LogUpdates::Additional,
-      Formats::Varchar,
-      50
-    )
-    ->Unique([LogUpdates::Time, LogUpdates::Chat])
     ->Run();
   }
 
