@@ -30,9 +30,10 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgObject,
   TgUser
 };
+use UnitEnum;
 
 /**
- * @version 2023.05.25.04
+ * @version 2023.05.28.00
  */
 final class StbDatabase{
 
@@ -375,12 +376,15 @@ final class StbDatabase{
   }
 
   public function VariableDel(
-    string $Name,
+    string|UnitEnum $Name,
     string $Value = null,
     string $Module = null,
     int $User = null
   ):void{
     DebugTrace();
+    if($Name instanceof UnitEnum):
+      $Name = $Name->value ?? $Name->name;
+    endif;
     $consult = $this->Db->Delete(Tables::Variables)
     ->WhereAdd(Variables::Name, $Name, Types::Str);
     if($Value !== null):
@@ -391,31 +395,17 @@ final class StbDatabase{
     ->Run();
   }
 
-  public function VariableGet(
-    string $Name,
+  public function VariableGetName(
+    string|UnitEnum $Value,
     string $Module = null,
     int $User = null
   ):string|null{
     DebugTrace();
-    $result = $this->Db->Select(Tables::Variables)
-    ->WhereAdd(Variables::Name, $Name, Types::Str)
-    ->WhereAdd(Variables::Module, $Module, Types::Str)
-    ->WhereAdd(Variables::Chat, $User, Types::Int)
-    ->Run();
-    if($result === []):
-      return null;
-    else:
-      return $result[0][Variables::Value->value];
+    if($Value instanceof UnitEnum):
+      $Value = $Value->value ?? $Value->name;
     endif;
-  }
-
-  public function VariableGet2(
-    string $Value,
-    string $Module = null,
-    int $User = null
-  ):string|null{
-    DebugTrace();
     $result = $this->Db->Select(Tables::Variables)
+    ->Fields(Variables::Name->value)
     ->WhereAdd(Variables::Value, $Value, Types::Str)
     ->WhereAdd(Variables::Module, $Module, Types::Str)
     ->WhereAdd(Variables::Chat, $User, Types::Int)
@@ -427,14 +417,57 @@ final class StbDatabase{
     endif;
   }
 
+  public function VariableGetChat(
+    string|UnitEnum $Name,
+    string $Module = null
+  ):string|array|null{
+    DebugTrace();
+    if($Name instanceof UnitEnum):
+      $Name = $Name->value ?? $Name->name;
+    endif;
+    $result = $this->Db->Select(Tables::Variables)
+    ->Fields(Variables::Chat->value)
+    ->WhereAdd(Variables::Name, $Name, Types::Str)
+    ->WhereAdd(Variables::Module, $Module, Types::Str)
+    ->Run();
+    if($result === []):
+      return null;
+    endif;
+    return isset($result[1]) ? array_column($result, Variables::Chat->value) : $result[0][Variables::Chat->value];
+  }
+
+  public function VariableGetValue(
+    string|UnitEnum $Name,
+    string $Module = null,
+    int $User = null
+  ):string|array|null{
+    DebugTrace();
+    if($Name instanceof UnitEnum):
+      $Name = $Name->value ?? $Name->name;
+    endif;
+    $result = $this->Db->Select(Tables::Variables)
+    ->Fields(Variables::Value->value)
+    ->WhereAdd(Variables::Name, $Name, Types::Str)
+    ->WhereAdd(Variables::Module, $Module, Types::Str)
+    ->WhereAdd(Variables::Chat, $User, Types::Int)
+    ->Run();
+    if($result === []):
+      return null;
+    endif;
+    return isset($result[1]) ? array_column($result, Variables::Value->value) : $result[0][Variables::Value->value];
+  }
+
   public function VariableSet(
-    string $Name,
+    string|UnitEnum $Name,
     string|int|float $Value,
     string $Module = null,
     int $User = null,
     bool $AllowDuplicatedName = false
   ):void{
     DebugTrace();
+    if($Name instanceof UnitEnum):
+      $Name = $Name->value ?? $Name->name;
+    endif;
     //InsertUpdate don't work because null values
     $result = $this->Db->Select(Tables::Variables)
     ->WhereAdd(Variables::Name, $Name, Types::Str)
