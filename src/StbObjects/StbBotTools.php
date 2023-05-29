@@ -3,6 +3,9 @@
 //https://github.com/ProtocolLive/FuncoesComuns
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use ProtocolLive\PhpLiveDb\Types;
+use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogUpdates;
+use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDatabase,
   StbLog
@@ -11,6 +14,7 @@ use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
   TblData,
   TblException,
+  TblLog,
   TblWebhook
 };
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
@@ -24,10 +28,11 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgUpdateType,
   TgUser
 };
+use ReflectionClass;
 use TypeError;
 
 /**
- * 2023.05.25.04
+ * 2023.05.29.01
  */
 abstract class StbBotTools{
 
@@ -235,6 +240,23 @@ abstract class StbBotTools{
     else:
       return false;
     endif;
+  }
+
+  public static function TblLog(
+    int $Type,
+    string $Msg
+  ):void{
+    global $PlDb;
+    DebugTrace();
+    $constants = new ReflectionClass(TblLog::class);
+    $constants = $constants->getConstants();
+    $constants = array_flip($constants);
+    $Type = $constants[$Type];
+    $PlDb->Insert(Tables::LogUpdates)
+    ->FieldAdd(LogUpdates::Time, time(), Types::Int)
+    ->FieldAdd(LogUpdates::Type, $Type, Types::Str)
+    ->FieldAdd(LogUpdates::Update, $Msg, Types::Str)
+    ->Run(HtmlSafe: false);
   }
 
   /**
