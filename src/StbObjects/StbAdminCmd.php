@@ -1,7 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.05.23.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
@@ -14,6 +13,9 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgText
 };
 
+/**
+ * @version 2023.06.12.00
+ */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
     string $Cmd
@@ -27,11 +29,12 @@ abstract class StbAdminCmd{
     global $Webhook, $Bot, $Lang, $Db;
     DebugTrace();
     if($Webhook instanceof TgCallback):
-      $id = $Webhook->User->Id;
+      $temp = $Webhook->User->Id;
     else:
-      $id = $Webhook->Data->User->Id;
+      $temp = $Webhook->Data->User->Id;
     endif;
-    if(StbBotTools::AdminCheck($id, StbDbAdminPerm::Cmds) === null):
+    $temp = $Db->ChatGet($Webhook->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $description = $Bot->MyCmdGet()->Get($Cmd);
@@ -88,7 +91,8 @@ abstract class StbAdminCmd{
      */
     global $Webhook, $Db, $Bot;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    $temp = $Db->ChatGet($Webhook->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $mk = new TblMarkupInline;
@@ -126,7 +130,8 @@ abstract class StbAdminCmd{
      * @var StbDatabase $Db
      */
     global $Webhook, $Bot, $Db;
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    $temp = $Db->ChatGet($Webhook->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $cmds = $Bot->MyCmdGet();
@@ -143,9 +148,10 @@ abstract class StbAdminCmd{
      * @var TgCallback $Webhook
      * @var TelegramBotLibrary $Bot
      */
-    global $Webhook, $Bot;
+    global $Webhook, $Bot, $Db;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    $temp = $Db->ChatGet($Webhook->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $CmdsNew = new TblCommands;
@@ -178,24 +184,25 @@ abstract class StbAdminCmd{
      */
     global $Webhook, $Db, $Bot, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    $temp = $Db->ChatGet($Webhook->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $Db->ListenerAdd(
-      StbDbListeners::Text,
-      __CLASS__,
+      TgText::class,
+      StbAdmin::class,
       $Webhook->User->Id
     );
     $Db->VariableSet(
       StbDbVariables::Action->name,
       StbDbVariables::CmdEdit->name,
-      __CLASS__,
+      StbAdmin::class,
       $Webhook->User->Id
     );
     $Db->VariableSet(
       StbDbVariables::CmdName->name,
       $Cmd,
-      __CLASS__,
+      StbAdmin::class,
       $Webhook->User->Id
     );
     $mk = new TblMarkupInline;
@@ -225,17 +232,17 @@ abstract class StbAdminCmd{
     $Db->VariableDel(
       StbDbVariables::Action->name,
       null,
-      __CLASS__,
+      StbAdmin::class,
       $Webhook->User->Id
     );
     $Db->VariableDel(
       StbDbVariables::CmdName->name,
       null,
-      __CLASS__,
+      StbAdmin::class,
       $Webhook->User->Id
     );
     $Db->ListenerDel(
-      StbDbListeners::Text,
+      TgText::class,
       $Webhook->User->Id
     );
     self::Callback_Cmd($Cmd);
@@ -250,7 +257,8 @@ abstract class StbAdminCmd{
      */
     global $Db, $Webhook, $Bot, $Lang;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    $temp = $Db->ChatGet($Webhook->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $Bot->TextEdit(
@@ -259,14 +267,14 @@ abstract class StbAdminCmd{
       $Lang->Get('CommandName', Group: 'Admin')
     );
     $Db->ListenerAdd(
-      StbDbListeners::Text,
-      __CLASS__,
+      TgText::class,
+      StbAdmin::class,
       $Webhook->User->Id
     );
     $Db->VariableSet(
-      StbDbVariables::Action->name,
+      StbDbVariables::Action,
       StbDbVariables::CmdAddName->name,
-      __CLASS__,
+      StbAdmin::class,
       $Webhook->User->Id
     );
   }
@@ -277,10 +285,12 @@ abstract class StbAdminCmd{
     /**
      * @var TgCallback $Webhook
      * @var TelegramBotLibrary $Bot
+     * @var StbDatabase $Db
      */
-    global $Webhook, $Bot;
+    global $Webhook, $Bot, $Db;
     DebugTrace();
-    if(StbBotTools::AdminCheck($Webhook->User->Id, StbDbAdminPerm::Cmds) === null):
+    $temp = $Db->ChatGet($Webhook->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $CmdsNew = new TblCommands;
@@ -324,7 +334,12 @@ abstract class StbAdminCmd{
     else:
       $temp = $Webhook->Data->User->Id;
     endif;
-    if(StbBotTools::AdminCheck($temp, StbDbAdminPerm::Cmds) === null):
+    if(get_class($Webhook) === TgText::class):
+      $temp = $Db->ChatGet($Webhook->Data->User->Id);
+    else:
+      $temp = $Db->ChatGet($Webhook->User->Id);
+    endif;
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $mk = new TblMarkupInline;
@@ -335,7 +350,7 @@ abstract class StbAdminCmd{
       $line,
       0,
       '🔙',
-      $Db->CallBackHashSet(StbAdmin::Command_admin(...))
+      $Db->CallBackHashSet(StbAdmin::Callback_AdminMenu(...))
     );
     $mk->ButtonCallback(
       $line++,
