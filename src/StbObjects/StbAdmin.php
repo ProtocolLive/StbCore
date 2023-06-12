@@ -24,7 +24,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.05.25.01
+ * @version 2023.06.12.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -565,8 +565,8 @@ abstract class StbAdmin{
     if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
       return;
     endif;
-    $temp = $Db->VariableGet(
-      StbDbVariables::CmdName->name,
+    $temp = $Db->VariableGetValue(
+      StbDbVariables::CmdName,
       __CLASS__,
       $Webhook->Data->User->Id
     );
@@ -606,13 +606,13 @@ abstract class StbAdmin{
       return;
     endif;
     $Db->VariableSet(
-      StbDbVariables::CmdName->name,
+      StbDbVariables::CmdName,
       trim($Webhook->Text),
       __CLASS__,
       $Webhook->Data->User->Id
     );
     $Db->VariableSet(
-      StbDbVariables::Action->name,
+      StbDbVariables::Action,
       StbDbVariables::CmdAddDescription->name,
       __CLASS__,
       $Webhook->Data->User->Id
@@ -635,8 +635,8 @@ abstract class StbAdmin{
     if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
       return;
     endif;
-    $temp = $Db->VariableGet(
-      StbDbVariables::CmdName->name,
+    $temp = $Db->VariableGetValue(
+      StbDbVariables::CmdName,
       __CLASS__,
       $Webhook->Data->User->Id
     );
@@ -691,10 +691,10 @@ abstract class StbAdmin{
   public static function Command():void{
     global $Webhook;
     DebugTrace();
-    call_user_func(match($Webhook->Command){
-      'admin' => self::Callback_AdminMenu(...),
-      'id' => self::CmdId(...)
-    });
+    match($Webhook->Command){
+      'admin' => self::Callback_AdminMenu(),
+      'id' => self::CmdId()
+    };
   }
 
   private static function JumpLineCheck(
@@ -712,10 +712,10 @@ abstract class StbAdmin{
   public static function Listener():void{
     global $Webhook;
     DebugTrace();
-    call_user_func(match(get_class($Webhook)){
-      TgUserShared::class => self::Listener_UserShared(...),
-      TgText::class => self::Listener_Text(...)
-    });
+    match(get_class($Webhook)){
+      TgUserShared::class => self::Listener_UserShared(),
+      TgText::class => self::Listener_Text()
+    };
   }
 
   private static function Listener_UserShared():void{
@@ -740,8 +740,8 @@ abstract class StbAdmin{
      */
     global $Webhook, $Db;
     DebugTrace();
-    $temp = $Db->VariableGet(
-      StbDbVariables::Action->name,
+    $temp = $Db->VariableGetValue(
+      StbDbVariables::Action,
       __CLASS__,
       $Webhook->Data->User->Id
     );
