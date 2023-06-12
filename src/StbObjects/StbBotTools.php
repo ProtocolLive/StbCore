@@ -3,6 +3,7 @@
 //https://github.com/ProtocolLive/FuncoesComuns
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use Exception;
 use ProtocolLive\PhpLiveDb\Types;
 use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogUpdates;
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
@@ -32,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * 2023.05.29.01
+ * 2023.06.12.00
  */
 abstract class StbBotTools{
 
@@ -299,7 +300,9 @@ abstract class StbBotTools{
      */
     global $Bot, $Db, $Webhook, $Lang;
     $Db->ChatEdit($Webhook->Data->User);
-    $Lang->LanguageSet($Webhook->Data->User->Language ?? DefaultLanguage);
+    try{
+      $Lang->LanguageSet($Webhook->Data->User->Language);
+    }catch(Exception){}
   
     //In a group, with many bots, the commands have the target bot.
     //This block check the target and caches the bot name
