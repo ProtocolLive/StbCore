@@ -24,7 +24,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2023.06.12.00
+ * @version 2023.10.10.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -526,7 +526,6 @@ abstract class StbAdmin{
       $Db->CallBackHashSet(self::Callback_AdminMenu(...))
     );
     $stb = file_get_contents('https://raw.githubusercontent.com/ProtocolLive/SimpleTelegramBot/main/sha1sum.txt');
-    $stb = str_replace("\n", "\r\n", $stb);
     $stb = file_get_contents(DirSystem . '/sha1sum.txt') === $stb;
     if($stb):
       $stb = $Lang->Get('Yes');
@@ -534,7 +533,6 @@ abstract class StbAdmin{
       $stb = $Lang->Get('No');
     endif;
     $tbl = file_get_contents('https://raw.githubusercontent.com/ProtocolLive/TelegramBotLibrary/main/src/sha1sum.txt');
-    $tbl = str_replace("\n", "\r\n", $tbl);
     $tbl = file_get_contents(DirSystem . '/vendor/protocollive/telegrambotlibrary/src/sha1sum.txt') === $tbl;
     if($tbl):
       $tbl = $Lang->Get('Yes');
