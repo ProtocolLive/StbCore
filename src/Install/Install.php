@@ -29,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
 };
 
 /**
- * @version 2023.05.29.01
+ * @version 2023.11.20.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -467,7 +467,7 @@ abstract class Install{
       $_POST = filter_input_array(INPUT_POST);
 
       $DirSystem = dirname(__DIR__, 5);
-      $DirBot = 'Bot-' . $_POST['name'] . '-' . md5(uniqid());
+      $DirBot = 'Bot-' . trim($_POST['name']) . '-' . md5(uniqid());
 
       mkdir($DirSystem . '/DirBot', 0755, true);
       self::CopyRecursive(__DIR__ . '/DirBot', $DirSystem . '/DirBot');
@@ -475,10 +475,10 @@ abstract class Install{
       $config = file_get_contents($DirSystem . '/DirBot/config.txt');
       $config = str_replace('##DATE##', date('Y-m-d H:i:s'), $config);
       $config = str_replace('##TIMEZONE##', $_POST['timezone'], $config);
-      $config = str_replace('##TOKEN##', $_POST['token'], $config);
+      $config = str_replace('##TOKEN##', trim($_POST['token']), $config);
       $config = str_replace('##TESTSERVER##', $_POST['testserver'], $config);
       $config = str_replace('##LANGUAGE##', $_POST['language'], $config);
-      $config = str_replace('##ADMIN##', $_POST['admin'], $config);
+      $config = str_replace('##ADMIN##', trim($_POST['admin']), $config);
       $config = str_replace('##TOKENWEBHOOK##', hash('sha256', uniqid()), $config);
 
       if($_POST['dbtype'] === 'mysql'):
@@ -486,10 +486,10 @@ abstract class Install{
       else:
         $config = str_replace('##DBTYPE##', 'Drivers::SqLite', $config);
       endif;
-      $config = str_replace('##DBHOST##', $_POST['host'], $config);
-      $config = str_replace('##DBUSER##', $_POST['user'], $config);
-      $config = str_replace('##DBPWD##', $_POST['pwd'], $config);
-      $config = str_replace('##DBNAME##', $_POST['db'], $config);
+      $config = str_replace('##DBHOST##', trim($_POST['host']), $config);
+      $config = str_replace('##DBUSER##', trim($_POST['user']), $config);
+      $config = str_replace('##DBPWD##', trim($_POST['pwd']), $config);
+      $config = str_replace('##DBNAME##', trim($_POST['db']), $config);
 
       $temp = md5(uniqid());
       $config = str_replace('##DIRLOGS##', $temp, $config);
