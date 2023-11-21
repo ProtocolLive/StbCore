@@ -3,16 +3,18 @@
 //https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use PDO;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblException;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.11.21.00
+ * @version 2023.11.21.01
  */
 abstract class StbModuleHelper{
   /**
    * Run this after the 'create table' block to begin the transaction
+   * @param string $Module Use the complete name, with namespace. Better use \_\_CLASS__ constant
    */
   protected static function InstallHelper(
     string $Module,
@@ -84,12 +86,14 @@ abstract class StbModuleHelper{
 
   /**
    * Run this before the 'drop table' block to begin the transaction
+   * @param bool $Commit Use false when you need to remove module tables or/and listeners. Don't forget the commit!
+   * @return PDO|null Return the PDO object if $Commit is false
    */
   protected static function UninstallHelper(
     string $Module,
     array $Commands = [],
     bool $Commit = true
-  ):void{
+  ):PDO|null{
     /**
      * @var StbDatabase $Db
      * @var TelegramBotLibrary $Bot
@@ -109,11 +113,14 @@ abstract class StbModuleHelper{
       $Bot->MyCmdSet($cmds);
     }catch(TblException){
       self::MsgError();
-      return;
+      return null;
     }
 
     if($Commit):
       $pdo->commit();
+      return null;
+    else:
+      return $pdo;
     endif;
   }
 }
