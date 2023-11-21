@@ -15,7 +15,7 @@ da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\logs\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\modules\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\tools\index.htm
 f6bc75351f3c9eb9efd5fe88043e76536e6f0d2f  Install\DirBot\tools\scope.php
-7bbc56748a01b1fad555fecd7eb07800b8b432d0  Install\Install.php
+3fe2e1d59e98f5fac3d9b8f1e7696c4f95cdb546  Install\Install.php
 87a205fe2b533bb3660c02039fbf0e20c3bda481  NoStr\Fields\CallbackHash.php
 7636237b6c453930e0b3022b0063a6e91694feef  NoStr\Fields\Chats.php
 5eec041beaaeb9e84ed62b1e03c3dd85c9acd225  NoStr\Fields\Commands.php
