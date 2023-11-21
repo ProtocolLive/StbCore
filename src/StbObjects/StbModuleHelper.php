@@ -8,11 +8,11 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.05.25.00
+ * @version 2023.11.21.00
  */
 abstract class StbModuleHelper{
   /**
-   * Run this after the 'create table' block
+   * Run this after the 'create table' block to begin the transaction
    */
   protected static function InstallHelper(
     string $Module,
@@ -62,6 +62,9 @@ abstract class StbModuleHelper{
     endif;
   }
 
+  /**
+   * Run this in the end to commit
+   */
   protected static function InstallHelper2(){
     global $Db;
     $Db->GetCustom()->Commit();
@@ -80,7 +83,7 @@ abstract class StbModuleHelper{
   }
 
   /**
-   * Run this before the 'drop table' block
+   * Run this before the 'drop table' block to begin the transaction
    */
   protected static function UninstallHelper(
     string $Module,
