@@ -40,7 +40,7 @@ bd3a858a199f4a31c6f499a8269a894dd82681e3  StbObjects\StbAdminModules.php
 56def8312e125cb8f326fcea55bf00631956eef3  StbObjects\StbLanguageModule.php
 699d1ce995c56e7493161b9c8fcf1cdc61465131  StbObjects\StbLanguageSys.php
 63219c1ec76d6adbf9bcd75a6950da554913a004  StbObjects\StbLog.php
-bb3f1ae5df46e06ded094825647c63f53e72ec1f  StbObjects\StbModuleHelper.php
+72170c9f5ebebd0ecaf1b40e6a958a2a44e3e523  StbObjects\StbModuleHelper.php
 ad775436ac3f32076444db0d07c6fba685abe961  StbObjects\StbResquestChatId.php
 20ae8b0199fe067427c74fc0478d595e65107f47  language\en\system.json
 d5d264edeb44d1664241b6bb008cea9d1cd94716  language\pt-br\system.json
