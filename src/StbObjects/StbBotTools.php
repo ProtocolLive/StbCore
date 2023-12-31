@@ -33,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * 2023.06.12.00
+ * 2023.12.31.00
  */
 abstract class StbBotTools{
 
@@ -55,7 +55,8 @@ abstract class StbBotTools{
     elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
       self::Update_Text();
     else:
-      if(($Webhook instanceof TgObject) === false):
+      if($Webhook instanceof TgObject === false
+      or isset($Webhook->Data) === false): //like TgChatBoost
         return;
       endif;
       if($Webhook instanceof TgInlineQuery):
