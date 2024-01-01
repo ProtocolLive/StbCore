@@ -16,15 +16,15 @@ use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblMarkupRemove
 };
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
+use ProtocolLive\TelegramBotLibrary\TgEnums\TgParseMode;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
-  TgParseMode,
   TgText,
   TgUsersShared
 };
 
 /**
- * @version 2024.01.01.00
+ * @version 2024.01.01.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
