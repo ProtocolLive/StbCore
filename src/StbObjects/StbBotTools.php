@@ -35,7 +35,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * 2024.01.01.01
+ * @version 2024.01.01.02
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -338,22 +338,17 @@ abstract class StbBotTools{
     if($Webhook->Data->User instanceof TgUser):
       $Db->ChatEdit($Webhook->Data->User);
     endif;
-    $Run = false;
-
     $listener = $Db->ListenerGet(TgText::class, $Webhook->Data->Chat->Id);
     if($listener !== null):
       call_user_func($listener . '::Listener');
-      $Run = true;
+      return;
     endif;
-
     $listener = $Db->ListenerGet(TgText::class);
     if($listener !== null):
       call_user_func($listener . '::Listener');
-      $Run = true;
+      return;
     endif;
-
-    if($Run === false
-    and $Webhook->Data->Chat instanceof TgUser):
+    if($Webhook->Data->Chat instanceof TgUser):
       StbBotTools::SendUserCmd('dontknow', $Webhook->Text);
     endif;
   }
