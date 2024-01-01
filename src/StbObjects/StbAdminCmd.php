@@ -14,7 +14,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.01.01.00
+ * @version 2024.01.01.01
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -265,11 +265,6 @@ abstract class StbAdminCmd{
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
-    $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
-      $Lang->Get('CommandName', Group: 'Admin')
-    );
     $Db->ListenerAdd(
       TgText::class,
       StbAdmin::class,
@@ -280,6 +275,11 @@ abstract class StbAdminCmd{
       StbDbVariables::CmdAddName->name,
       StbAdmin::class,
       $Webhook->User->Id
+    );
+    $Bot->TextEdit(
+      $Webhook->Data->Data->Chat->Id,
+      $Webhook->Data->Data->Id,
+      $Lang->Get('CommandName', Group: 'Admin')
     );
   }
 
