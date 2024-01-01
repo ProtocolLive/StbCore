@@ -23,17 +23,17 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   Variables
 };
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
+use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgChat,
   TgGroupStatusMy,
   TgInlineQuery,
-  TgObject,
   TgUser
 };
 use UnitEnum;
 
 /**
- * @version 2023.05.28.00
+ * @version 2024.01.01.00
  */
 final class StbDatabase{
 
@@ -208,7 +208,7 @@ final class StbDatabase{
    * @param int $User User ID to associate the listener. Not allowed in checkout and InlineQuery listeners
    */
   public function ListenerAdd(
-    TgObject|string $Listener,
+    TgEventInterface|string $Listener,
     string $Class,
     int $Chat = null
   ):bool{
@@ -219,7 +219,7 @@ final class StbDatabase{
     if($this->NoUserListener($Listener)):
       $Chat = null;
     endif;
-    if($Listener instanceof TgObject):
+    if($Listener instanceof TgEventInterface):
       $Listener = get_class($Listener);
     endif;
     $consult = $this->Db->InsertUpdate(Tables::Listeners)
@@ -236,14 +236,14 @@ final class StbDatabase{
   }
 
   public function ListenerDel(
-    TgObject|string $Listener,
+    TgEventInterface|string $Listener,
     int $User = null
   ):void{
     DebugTrace();
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
-    if($Listener instanceof TgObject):
+    if($Listener instanceof TgEventInterface):
       $Listener = get_class($Listener);
     endif;
     $this->Db->Delete(Tables::Listeners)
@@ -253,14 +253,14 @@ final class StbDatabase{
   }
 
   public function ListenerGet(
-    TgObject|string $Listener,
+    TgEventInterface|string $Listener,
     int $User = null
   ):string|null{
     DebugTrace();
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
-    if($Listener instanceof TgObject):
+    if($Listener instanceof TgEventInterface):
       $Listener = get_class($Listener);
     endif;
     $return = $this->Db->Select(Tables::Listeners)
@@ -272,7 +272,7 @@ final class StbDatabase{
     )
     ->WhereAdd(
       Listeners::Name,
-      TgObject::class,
+      TgEventInterface::class,
       Types::Str,
       AndOr: AndOr::Or,
       Parenthesis: Parenthesis::Close,
@@ -347,10 +347,10 @@ final class StbDatabase{
   }
 
   private function NoUserListener(
-    TgObject|string $Listener
+    TgEventInterface|string $Listener
   ):bool{
     DebugTrace();
-    if($Listener instanceof TgObject):
+    if($Listener instanceof TgEventInterface):
       $Listener = get_class($Listener);
     endif;
     if($Listener === TgInlineQuery::class

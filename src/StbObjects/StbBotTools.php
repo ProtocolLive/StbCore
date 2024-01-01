@@ -23,11 +23,11 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\{
   TgParseMode,
   TgUpdateType
 };
+use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
   TgInlineQuery,
-  TgObject,
   TgText,
   TgUser
 };
@@ -35,7 +35,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * 2024.01.01.00
+ * 2024.01.01.01
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -56,7 +56,7 @@ abstract class StbBotTools{
     elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
       self::Update_Text();
     else:
-      if($Webhook instanceof TgObject === false
+      if($Webhook instanceof TgEventInterface === false
       or isset($Webhook->Data) === false): //like TgChatBoost
         return;
       endif;
