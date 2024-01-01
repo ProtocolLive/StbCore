@@ -20,11 +20,11 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgParseMode,
   TgText,
-  TgUserShared
+  TgUsersShared
 };
 
 /**
- * @version 2023.10.10.00
+ * @version 2024.01.01.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -129,7 +129,7 @@ abstract class StbAdmin{
        * @var TgUserShared $Webhook
        */
       $Db->ListenerDel(
-        TgRequestUser::class,
+        TgUsersShared::class,
         $Webhook->Data->User->Id
       );
     endif;
@@ -171,7 +171,7 @@ abstract class StbAdmin{
       $Webhook->Data->Data->Id
     );
     $Db->ListenerAdd(
-      TgUserShared::class,
+      TgUsersShared::class,
       __CLASS__,
       $Webhook->User->Id
     );
@@ -711,7 +711,7 @@ abstract class StbAdmin{
     global $Webhook;
     DebugTrace();
     match(get_class($Webhook)){
-      TgUserShared::class => self::Listener_UserShared(),
+      TgUsersShared::class => self::Listener_UserShared(),
       TgText::class => self::Listener_Text()
     };
   }
