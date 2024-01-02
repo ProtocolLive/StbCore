@@ -27,7 +27,9 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
+  TgChatBoost,
   TgInlineQuery,
+  TgReactionUpdate,
   TgText,
   TgUser
 };
@@ -35,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.01.02
+ * @version 2024.01.02.00
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -56,11 +58,12 @@ abstract class StbBotTools{
     elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
       self::Update_Text();
     else:
-      if($Webhook instanceof TgEventInterface === false
-      or isset($Webhook->Data) === false): //like TgChatBoost
+      if($Webhook instanceof TgEventInterface === false):
         return;
       endif;
-      if($Webhook instanceof TgInlineQuery):
+      if($Webhook instanceof TgInlineQuery
+      or $Webhook instanceof TgChatBoost
+      or $Webhook instanceof TgReactionUpdate):
         $id = $Webhook->User->Id;
       else:
         $id = $Webhook->Data->User->Id;
