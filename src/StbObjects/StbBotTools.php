@@ -37,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.03.00
+ * @version 2024.01.03.01
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -53,27 +53,31 @@ abstract class StbBotTools{
     endif;
     if(get_class($Webhook) === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd();
-    elseif($Webhook instanceof TgCallback):
-      self::Update_Callback();
-    elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
-      self::Update_Text();
-    else:
-      if($Webhook instanceof TgReactionUpdate
-      and $Webhook->User === null):
-        $id = null;
-      elseif($Webhook instanceof TgInlineQuery
-      or $Webhook instanceof TgChatBoost
-      or $Webhook instanceof TgReactionUpdate):
-        $id = $Webhook->User->Id;
-      else:
-        $id = $Webhook->Data->User->Id;
-      endif;
-      $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
-      if($module === null):
-        return;
-      endif;
-      call_user_func($module . '::Listener');
+      return;
     endif;
+    if($Webhook instanceof TgCallback):
+      self::Update_Callback();
+      return;
+    endif;
+    if(get_class($Webhook) === TgText::class)://prevent TgTextEdited
+      self::Update_Text();
+      return;
+    endif;
+    if($Webhook instanceof TgReactionUpdate
+    and $Webhook->User === null):
+      $id = null;
+    elseif($Webhook instanceof TgInlineQuery
+    or $Webhook instanceof TgChatBoost
+    or $Webhook instanceof TgReactionUpdate):
+      $id = $Webhook->User->Id;
+    else:
+      $id = $Webhook->Data->User->Id;
+    endif;
+    $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
+    if($module === null):
+      return;
+    endif;
+    call_user_func($module . '::Listener');
   }
 
   public static function Action_WebhookDel():void{
