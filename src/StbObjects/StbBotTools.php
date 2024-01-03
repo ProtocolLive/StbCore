@@ -23,11 +23,11 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\{
   TgParseMode,
   TgUpdateType
 };
-use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
   TgChatBoost,
+  TgGameStart,
   TgInlineQuery,
   TgReactionUpdate,
   TgText,
@@ -37,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.03.01
+ * @version 2024.01.03.02
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -63,12 +63,10 @@ abstract class StbBotTools{
       self::Update_Text();
       return;
     endif;
-    if($Webhook instanceof TgReactionUpdate
-    and $Webhook->User === null):
-      $id = null;
-    elseif($Webhook instanceof TgInlineQuery
+    if($Webhook instanceof TgInlineQuery
     or $Webhook instanceof TgChatBoost
-    or $Webhook instanceof TgReactionUpdate):
+    or $Webhook instanceof TgReactionUpdate
+    or $Webhook instanceof TgGameStart):
       $id = $Webhook->User->Id;
     else:
       $id = $Webhook->Data->User->Id;
