@@ -4,7 +4,7 @@
   "type": "library",
   "require": {
     "php": ">=8.1",
-    "protocollive/funcoescomuns": "^2023.05"
+    "protocollive/funcoescomuns": "*"
   },
   "license": "MIT",
   "authors": [
