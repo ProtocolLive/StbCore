@@ -37,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.02.01
+ * @version 2024.01.03.00
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -58,9 +58,6 @@ abstract class StbBotTools{
     elseif(get_class($Webhook) === TgText::class)://prevent TgTextEdited
       self::Update_Text();
     else:
-      if($Webhook instanceof TgEventInterface === false):
-        return;
-      endif;
       if($Webhook instanceof TgReactionUpdate
       and $Webhook->User === null):
         $id = null;
