@@ -26,10 +26,6 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\{
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
-  TgChatBoost,
-  TgGameStart,
-  TgInlineQuery,
-  TgReactionUpdate,
   TgText,
   TgUser
 };
@@ -37,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.03.04
+ * @version 2024.01.03.05
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -63,18 +59,8 @@ abstract class StbBotTools{
       self::Update_Text();
       return;
     endif;
-    $id = null;
-    if($Webhook instanceof TgInlineQuery
-    or $Webhook instanceof TgChatBoost
-    or $Webhook instanceof TgReactionUpdate
-    or $Webhook instanceof TgGameStart):
-      //iF because anonymous TgReactionUpdate and giveaway boost
-      if(isset($Webhook->User)):
-        $id = $Webhook->User->Id;
-      endif;
-    else:
-      $id = $Webhook->Data->User->Id;
-    endif;
+    //Some updates don't have TgMessageData
+    $id = $Webhook->Data->User->Id ?? $Webhook->User->Id ?? null;
     $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
     if($module === null):
       return;
