@@ -37,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.03.03
+ * @version 2024.01.03.04
  */
 abstract class StbBotTools{
   public static function Action_():void{
@@ -68,7 +68,8 @@ abstract class StbBotTools{
     or $Webhook instanceof TgChatBoost
     or $Webhook instanceof TgReactionUpdate
     or $Webhook instanceof TgGameStart):
-      if(isset($Webhook->User))://because anonymous TgReactionUpdate
+      //iF because anonymous TgReactionUpdate and giveaway boost
+      if(isset($Webhook->User)):
         $id = $Webhook->User->Id;
       endif;
     else:
