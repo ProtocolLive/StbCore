@@ -30,7 +30,7 @@ f6bc75351f3c9eb9efd5fe88043e76536e6f0d2f  Install\DirBot\tools\scope.php
 0a829eaeeba496b2eb2537a164ba460790802cbe  StbObjects\StbAdmin.php
 b9d65d24e70588946ab5188651e5b4b934bb1396  StbObjects\StbAdminCmd.php
 bd3a858a199f4a31c6f499a8269a894dd82681e3  StbObjects\StbAdminModules.php
-1d64abb3b7caf803000eec9d4d747f5ea45221e0  StbObjects\StbBotTools.php
+e2cef33ceb54e25009c9c156c40f913075c5e260  StbObjects\StbBotTools.php
 80f9c6d737c1a03e8f14b080dec671df137a465d  StbObjects\StbCronTools.php
 06886762f19e30bfda2db480187e0b8a2c4eb930  StbObjects\StbDatabase.php
 4d9165ee25705edf8a5ebdf48feffb9a2e5246e6  StbObjects\StbDbAdminPerm.php
