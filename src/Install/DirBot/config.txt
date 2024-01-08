@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2024.01.01.00
+//2024.01.08.00
 
 use ProtocolLive\PhpLiveDb\Drivers;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblLog;
@@ -9,50 +9,88 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\TgInvoiceCurrencies;
 
 //Installation date: ##DATE##
 
-//Token given by @BotFather
-//Type: string
+/**
+ * Token given by @BotFather
+ * Type: string
+ */
 const Token = '##TOKEN##';
 
-//Token created for authenticate the webhook
-//Type: string
-//Default: null
-const TokenWebhook = '##TOKENWEBHOOK##';
+/**
+ * Token created for authenticate the webhook
+ * Type: string
+ * Default: null
+ */
+const TokenWebhook = const TokenWebhook = '##TOKENWEBHOOK##';
 
-//Main admin
-//Type: int
+/**
+ * Main admin
+ * Type: int
+ */
 const Admin = ##ADMIN##;
 
-//Default language
-//Type: string
-//Default: en
+/**
+ * Default language
+ * Type: string
+ * Default: en
+ */
 const DefaultLanguage = '##LANGUAGE##';
 
-//Use the test server
-//Type: bool
-//Default: false
+/**
+ * Use the test server
+ * Type: bool
+ * Default: false
+ */
 const TestServer = ##TESTSERVER##;
 
-//Type: string
-//Default: UTC
+/**
+ * Type: string
+ * Default: UTC
+ */
 const Timezone = '##TIMEZONE##';
 
-//Use the log constants of the class TelegramBot or/and the constants defined to bot
-//Tips: & and, | or, ^ xor
-//Type: TblLog
-//Default: TblLog::All
+/**
+ * Use the log constants of the class TelegramBot or/and the constants defined to bot
+ * Tips: & and, | or, ^ xor
+ * Type: TblLog
+ * Default: TblLog::All
+ */
 const Log = TblLog::Webhook | TblLog::Send | TblLog::Response;
 
-//Default currency
-//Type: TgInvoiceCurrencies
-//Default: TgInvoiceCurrencies::USD
+/**
+ * Default currency
+ * Type: TgInvoiceCurrencies
+ * Default: TgInvoiceCurrencies::USD
+ */
 const DefaultCurrency = TgInvoiceCurrencies::USD;
 
-//Database config
+/**
+ * Database type
+ * Type: Drivers
+ */
 const DbType = ##DBTYPE##;
+/**
+ * Database host
+ * Type: string
+ */
 const DbHost = '##DBHOST##';
+/**
+ * Database user
+ * Type: string
+ */
 const DbUser = '##DBUSER##';
+/**
+ * Database password
+ * Type: string
+ */
 const DbPwd = '##DBPWD##';
+/**
+ * Database name
+ * Type: string
+ */
 const DbName = '##DBNAME##';
 
-//Internal config. DO NOT CHANGE
+/**
+ * Directory where the logs will be saved
+ */
+//DON'T CHANGE
 const DirLogs = __DIR__ . '/logs-##DIRLOGS##';
