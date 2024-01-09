@@ -8,7 +8,7 @@ da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\TextCmds\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\TextCmds\pt-br\index.htm
 a6bd1dbe6c6fe7249552f794d0b78ba5618e0188  Install\DirBot\TextCmds\pt-br\start.txt
 673be2874cd1daaf48768fe60ce464d7254e9caa  Install\DirBot\TextCmds\pt-br\unknown.txt
-149c4cfda26f7ed6c9608366fc8d2f83e008ccf5  Install\DirBot\config.txt
+bb569a03bb4e4cc5bc143ec37a690f203d370ddb  Install\DirBot\config.txt
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\index.htm
 aa83f13c264218d72234718579fcbb873f534ec1  Install\DirBot\index.php
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\logs\index.htm
@@ -29,7 +29,7 @@ f6bc75351f3c9eb9efd5fe88043e76536e6f0d2f  Install\DirBot\tools\scope.php
 8fc58696269b0598a5f22c2ed9cbc36e24e3a4f4  StbInterfaces\StbModuleInterface.php
 0a829eaeeba496b2eb2537a164ba460790802cbe  StbObjects\StbAdmin.php
 b9d65d24e70588946ab5188651e5b4b934bb1396  StbObjects\StbAdminCmd.php
-bd3a858a199f4a31c6f499a8269a894dd82681e3  StbObjects\StbAdminModules.php
+e10f8308f776f0b7dfaa0b016ffee06f694113f0  StbObjects\StbAdminModules.php
 49f9ce52f24d5ee88f42b261e44abbbe5e710acf  StbObjects\StbBotTools.php
 80f9c6d737c1a03e8f14b080dec671df137a465d  StbObjects\StbCronTools.php
 06886762f19e30bfda2db480187e0b8a2c4eb930  StbObjects\StbDatabase.php
