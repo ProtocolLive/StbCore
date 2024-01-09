@@ -9,7 +9,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.05.28.00
+ * @version 2024.01.08.00
  */
 abstract class StbAdminModules{
   private static function Acesso():bool{
@@ -63,7 +63,7 @@ abstract class StbAdminModules{
       $mk->ButtonCallback(
         $line,
         $col++,
-        basename($mod['module']),
+        str_replace('ProtocolLive\StbModules\\', '', $mod['module']),
         $Db->CallBackHashSet(self::Callback_Mod(...), $mod['module'])
       );
       if($col === 4):
@@ -98,9 +98,8 @@ abstract class StbAdminModules{
       $module = $module . '/index.php';
       if(is_file($module)):
         $module = file_get_contents($module);
-        preg_match('/namespace (.*);/', $module, $namespace);
-        preg_match('/class (.*)[ \r]/', $module, $class);
-        $modules[] = $namespace[1] . '\\' . $class[1];
+        preg_match('/class (.*)[{ \r\n]/', $module, $class);
+        $modules[] = 'ProtocolLive\StbModules\\' . trim($class[1]);
       endif;
     endforeach;
     $modules = array_diff($modules, array_column($Db->Modules(), 'module'));
@@ -118,7 +117,7 @@ abstract class StbAdminModules{
       $mk->ButtonCallback(
         $line,
         $col++,
-        $mod,
+        str_replace('ProtocolLive\StbModules\\', '', $mod),
         $Db->CallBackHashSet(self::Callback_InsModPic(...), $mod)
       );
       if($col === 4):
