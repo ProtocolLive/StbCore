@@ -25,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.01.12.01
+ * @version 2024.01.12.02
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -148,14 +148,13 @@ abstract class StbAdmin{
       );
       return;
     endif;
-
     $mk = new TblMarkupKeyboard(Resize: true, OneTime: true);
     $mk->ButtonRequestUser(
       0,
       0,
       $Lang->Get('AdminAddButton', Group: 'Admin'),
-      StbResquestChatId::AdminAdd->value,
-      false
+      Id: StbResquestChatId::AdminAdd->value,
+      Bot: false
     );
     $Bot->TextSend(
       $Webhook->User->Id,
