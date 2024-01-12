@@ -33,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.12.01
+ * @version 2024.01.12.02
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -64,7 +64,7 @@ abstract class StbBotTools{
     if($module === null):
       return;
     endif;
-    call_user_func($module . '::Listener');
+    call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang);
   }
 
   public static function Action_WebhookDel(
