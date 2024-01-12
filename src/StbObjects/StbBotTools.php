@@ -33,30 +33,29 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.03.05
+ * @version 2024.01.12.00
  */
 abstract class StbBotTools{
-  public static function Action_():void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var StbDatabase $Db
-     */
-    global $Bot, $Webhook, $Db;
+  public static function Action_(
+    TelegramBotLibrary $Bot,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
     $Webhook = $Bot->WebhookGet();
     if($Webhook === null):
       return;
     endif;
     if(get_class($Webhook) === TblCmd::class)://prevent TblCmdEdited
-      self::Update_Cmd();
+      self::Update_Cmd($Bot, $Db, $Webhook, $Lang);
       return;
     endif;
     if($Webhook instanceof TgCallback):
-      self::Update_Callback();
+      self::Update_Callback($Bot, $Webhook, $Db, $Lang);
       return;
     endif;
     if(get_class($Webhook) === TgText::class)://prevent TgTextEdited
-      self::Update_Text();
+      self::Update_Text($Bot, $Webhook, $Db);
       return;
     endif;
     //Some updates don't have TgMessageData
@@ -68,11 +67,10 @@ abstract class StbBotTools{
     call_user_func($module . '::Listener');
   }
 
-  public static function Action_WebhookDel():void{
-    /**
-    * @var TblData $BotData
-    */
-    global $BotData;
+  public static function Action_WebhookDel(
+    TblData $BotData
+  ):void{
+    DebugTrace();
     $Webhook = new TblWebhook($BotData);
     try{
       $Webhook->Del();
@@ -81,11 +79,10 @@ abstract class StbBotTools{
     }
   }
 
-  public static function Action_WebhookGet():void{
-    /**
-     * @var TblData $BotData
-     */
-    global $BotData;
+  public static function Action_WebhookGet(
+    TblData $BotData
+  ):void{
+    DebugTrace();
     $Webhook = new TblWebhook($BotData);
     $temp = $Webhook->Get();
     echo 'URL: ' . $temp['url'] . '<br>';
@@ -116,11 +113,10 @@ abstract class StbBotTools{
     endif;
   }
 
-  public static function Action_WebhookSet():void{
-    /**
-     * @var TblData $BotData
-     */
-    global $BotData;
+  public static function Action_WebhookSet(
+    TblData $BotData
+  ):void{
+    DebugTrace();
     $Webhook = new TblWebhook($BotData);
     try{
       $Webhook->Set(
@@ -136,34 +132,44 @@ abstract class StbBotTools{
     }
   }
 
-  public static function Cron():void{
+  public static function Cron(
+    TblData $BotData
+  ):void{
+    DebugTrace();
     call_user_func($_SERVER['Cron'] . '::Cron');
     StbBotTools::Log(
+      $BotData,
       StbLog::Cron,
       'Time: ' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])
     );
   }
 
-  public static function Entry():void{
+  /**
+   * @param TblData $BotData Used with cron
+   */
+  public static function Entry(
+    TelegramBotLibrary $Bot,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
+    TblData $BotData = null
+  ):void{
+    DebugTrace();
     self::ModuleAutoload();
     ArgV();
     $_GET['a'] ??= '';
     if(isset($_SERVER['Cron'])):
-      self::Cron();
+      self::Cron($BotData);
     elseif(is_callable(__CLASS__ . '::Action_' . $_GET['a'])):
-      call_user_func(__CLASS__ . '::Action_' . $_GET['a']);
+      call_user_func(__CLASS__ . '::Action_' . $_GET['a'], $Bot, $Db, $Lang);
     endif;
   }
 
   public static function Log(
+    TblData $BotData,
     int $Type,
     string $Msg,
     bool $NewLine = true
   ):void{
-    /**
-     * @var TblData TblBotData
-     */
-    global $BotData;
     DebugTrace();
     if(($BotData->Log & $Type) === false):
       return;
@@ -179,7 +185,9 @@ abstract class StbBotTools{
   }
 
   private static function ModuleAutoload():void{
+    DebugTrace();
     spl_autoload_register(function(string $Class){
+      DebugTrace();
       $temp = explode('\\', $Class);
       unset($temp[0], $temp[1]);
       require(DirModules . '/'. implode('/', $temp) . '/index.php');
@@ -187,15 +195,12 @@ abstract class StbBotTools{
   }
 
   public static function SendUserCmd(
+    TelegramBotLibrary $Bot,
+    TblCmd|TgText $Webhook,
+    StbDatabase $Db,
     string $Command,
     string $EventAdditional = null
   ):bool{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var TblCmd $Webhook
-     * @var StbDatabase $Db
-     */
-    global $Bot, $Webhook, $Db;
     DebugTrace();
     $Photo = false;
     $Text = false;
@@ -263,6 +268,7 @@ abstract class StbBotTools{
   public static function Tgchat2Tguser(
     TgChat $Chat
   ):TgUser{
+    DebugTrace();
     return new TgUser([
       'id' => $Chat->Id,
       'first_name' => $Chat->Name,
@@ -271,17 +277,17 @@ abstract class StbBotTools{
     ]);
   }
 
-  private static function Update_Callback():void{
-    /**
-     * @var TgCallback $Webhook
-     * @var StbDatabase $Db
-     * @var TelegramBotLibrary $bot
-     * @var StbLanguageSys $Lang
-     */
-    global $Webhook, $Db, $Bot, $Lang;
+  private static function Update_Callback(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
+    DebugTrace();
     $Db->ChatEdit($Webhook->User);
     $Lang->LanguageSet($Webhook->User->Language);
-    if($Db->CallBackHashRun($Webhook->Callback) === false):
+    $return = $Db->CallBackHashRun($Bot, $Webhook, $Db, $Lang);
+    if($return === false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('ButtonWithoutAction', Group: 'Errors')
@@ -289,13 +295,13 @@ abstract class StbBotTools{
     endif;
   }
 
-  private static function Update_Cmd():void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var StbDatabase $Db
-     * @var TblCmd $Webhook
-     */
-    global $Bot, $Db, $Webhook, $Lang;
+  private static function Update_Cmd(
+    TelegramBotLibrary $Bot,
+    StbDatabase $Db,
+    TblCmd $Webhook,
+    StbLanguageSys $Lang
+  ):void{
+    DebugTrace();
     $Db->ChatEdit($Webhook->Data->User);
     try{
       $Lang->LanguageSet($Webhook->Data->User->Language);
@@ -315,21 +321,21 @@ abstract class StbBotTools{
     //Module command
     $module = $Db->Commands($Webhook->Command);
     if(is_callable($module . '::Command')):
-      call_user_func($module . '::Command');
+      call_user_func($module . '::Command', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;
   
-    if(StbBotTools::SendUserCmd($Webhook->Command) === false):
-      StbBotTools::SendUserCmd('unknown');
+    if(StbBotTools::SendUserCmd($Bot, $Webhook, $Db,$Webhook->Command) === false):
+      StbBotTools::SendUserCmd($Bot, $Webhook, $Db, 'unknown');
     endif;
   }
 
-  private static function Update_Text():void{
-    /**
-     * @var TgText $Webhook
-     * @var StbDatabase $Db
-     */
-    global $Db, $Webhook;
+  private static function Update_Text(
+    TelegramBotLibrary $Bot,
+    TgText $Webhook,
+    StbDatabase $Db
+  ):void{
+    DebugTrace();
     if($Webhook->Data->User instanceof TgUser):
       $Db->ChatEdit($Webhook->Data->User);
     endif;
@@ -344,7 +350,7 @@ abstract class StbBotTools{
       return;
     endif;
     if($Webhook->Data->Chat instanceof TgUser):
-      StbBotTools::SendUserCmd('dontknow', $Webhook->Text);
+      StbBotTools::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text);
     endif;
   }
 }
