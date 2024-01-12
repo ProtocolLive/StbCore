@@ -23,8 +23,10 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   Variables
 };
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
+use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
+  TgCallback,
   TgChat,
   TgGroupStatusMy,
   TgInlineQuery,
@@ -33,7 +35,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.01.01.00
+ * @version 2024.01.12.00
  */
 final class StbDatabase{
 
@@ -63,18 +65,24 @@ final class StbDatabase{
   }
 
   public function CallBackHashRun(
-    string $Hash
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
   ):bool{
     DebugTrace();
     $result = $this->Db->Select(Tables::CallbackHash)
-    ->WhereAdd(CallbackHash::Hash, $Hash, Types::Str)
+    ->WhereAdd(CallbackHash::Hash, $Webhook->Callback, Types::Str)
     ->Run();
     if($result === []):
       return false;
     endif;
     $function = json_decode($result[0][CallbackHash::Method->value], true);
     if(is_callable($function[0])):
-      call_user_func_array(array_shift($function), $function);
+      call_user_func_array(
+        array_shift($function),
+        array_merge([$Bot, $Webhook, $Db, $Lang], $function)
+      );
       return true;
     else:
       return false;
