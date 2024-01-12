@@ -11,6 +11,7 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
+  TblException,
   TblMarkupInline,
   TblMarkupKeyboard,
   TblMarkupRemove
@@ -24,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.01.12.00
+ * @version 2024.01.12.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -161,10 +162,13 @@ abstract class StbAdmin{
       $Lang->Get('AdminAdd', Group: 'Admin'),
       Markup: $mk
     );
-    $Bot->MessageDelete(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id
-    );
+    try{
+      //Somes times, got the error "Bad Request: message can't be deleted for everyone". I don't know why
+      $Bot->MessageDelete(
+        $Webhook->Data->Data->Chat->Id,
+        $Webhook->Data->Data->Id
+      );
+    }catch(TblException){}
     $Db->ListenerAdd(
       TgUsersShared::class,
       __CLASS__,
