@@ -9,7 +9,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2023.11.21.01
+ * @version 2024.01.12.00
  */
 abstract class StbModuleHelper{
   /**
@@ -17,22 +17,19 @@ abstract class StbModuleHelper{
    * @param string $Module Use the complete name, with namespace. Better use \_\_CLASS__ constant
    */
   protected static function InstallHelper(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Module,
     array $Commands = [],
     bool $Commit = true
   ):void{
-    /**
-     * @var StbDatabase $Db
-     * @var TgCallback $Webhook
-     * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
-     */
-    global $Db, $Webhook, $Bot, $Lang;
-    $pdo = $Db->GetCustom();
-    $pdo->beginTransaction();
+    DebugTrace();
+    $Db->GetCustom()->beginTransaction();
 
     if($Db->ModuleInstall($Module) === false):
-      self::MsgError();
+      self::MsgError($Bot, $Webhook, $Db, $Lang);
       error_log('Fail to install module ' . $Module);
       return;
     endif;
@@ -41,7 +38,7 @@ abstract class StbModuleHelper{
     foreach($Commands as $cmd):
       $cmds->Add($cmd[0], $cmd[1]);
       if($Db->CommandAdd($cmd[0], $Module) === false):
-        self::MsgError();
+        self::MsgError($Bot, $Webhook, $Db, $Lang);
         error_log('Fail to add the command ' . $cmd[0]);
         return;
       endif;
@@ -49,39 +46,52 @@ abstract class StbModuleHelper{
     try{
       $Bot->MyCmdSet($cmds);
     }catch(TblException){
-      self::MsgError();
+      self::MsgError($Bot, $Webhook, $Db, $Lang);
       error_log('Fail to add the commands');
       return;
     }
 
-    $Bot->CallbackAnswer(
-      $Webhook->Id,
-      sprintf($Lang->Get('InstallOk', Group: 'Module'))
-    );
     if($Commit):
-      $pdo->commit();
-      StbAdminModules::Callback_Modules();
+      $Db->GetCustom()->commit();
+      $Bot->CallbackAnswer(
+        $Webhook->Id,
+        sprintf($Lang->Get('InstallOk', Group: 'Module'))
+      );
+      StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
     endif;
   }
 
   /**
    * Run this in the end to commit
    */
-  protected static function InstallHelper2(){
-    global $Db;
-    $Db->GetCustom()->Commit();
-    StbAdminModules::Callback_Modules();
+  protected static function InstallHelper2(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ){
+    DebugTrace();
+    $Db->GetCustom()->commit();
+    $Bot->CallbackAnswer(
+      $Webhook->Id,
+      sprintf($Lang->Get('InstallOk', Group: 'Module'))
+    );
+    StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
   }
 
-  protected static function MsgError():void{
-    global $Bot, $Webhook, $Lang, $Db;
+  protected static function MsgError(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
     $Db->GetCustom()->rollBack();
     $Bot->CallbackAnswer(
       $Webhook->Id,
       sprintf($Lang->Get('Fail', Group: 'Module'))
     );
-    StbAdminModules::Callback_Modules();
+    StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
   }
 
   /**
@@ -90,18 +100,16 @@ abstract class StbModuleHelper{
    * @return PDO|null Return the PDO object if $Commit is false
    */
   protected static function UninstallHelper(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Module,
     array $Commands = [],
     bool $Commit = true
-  ):PDO|null{
-    /**
-     * @var StbDatabase $Db
-     * @var TelegramBotLibrary $Bot
-     */
-    global $Db, $Bot;
+  ):null{
     DebugTrace();
-    $pdo = $Db->GetCustom();
-    $pdo->beginTransaction();
+    $Db->GetCustom()->beginTransaction();
 
     $Db->ModuleUninstall($Module);
 
@@ -112,15 +120,33 @@ abstract class StbModuleHelper{
     try{
       $Bot->MyCmdSet($cmds);
     }catch(TblException){
-      self::MsgError();
+      self::MsgError($Bot, $Webhook, $Db, $Lang);
       return null;
     }
 
     if($Commit):
-      $pdo->commit();
+      $Db->GetCustom()->commit();
+      $Bot->CallbackAnswer(
+        $Webhook->Id,
+        sprintf($Lang->Get('UninstallOk', Group: 'Module'))
+      );
+      StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
       return null;
-    else:
-      return $pdo;
     endif;
+  }
+
+  protected static function UninstallHelper2(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
+    DebugTrace();
+    $Db->GetCustom()->Commit();
+    $Bot->CallbackAnswer(
+      $Webhook->Id,
+      sprintf($Lang->Get('UninstallOk', Group: 'Module'))
+    );
+    StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
   }
 }

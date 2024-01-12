@@ -5,7 +5,8 @@
     "InstallPick": "Choose a module to install:",
     "Module": "Module: %1$s\nInstallation: %2$s",
     "Modules": "🧩 Modules installed:",
-    "UninstallButton": "Uninstall"
+    "UninstallButton": "Uninstall",
+    "UninstallOk": "✅ Uninstall done"
   },
   "Admin": {
     "Admin": "User: %1$s\nSince: %2$s",

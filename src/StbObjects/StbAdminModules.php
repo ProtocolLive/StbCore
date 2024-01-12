@@ -3,17 +3,20 @@
 //https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
-use ProtocolLive\SimpleTelegramBot\Datas\ChatData;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.01.08.00
+ * @version 2024.01.12.00
  */
 abstract class StbAdminModules{
-  private static function Acesso():bool{
-    global $Db, $Webhook, $Bot, $Lang;
+  private static function Access(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):bool{
     DebugTrace();
     $chat = $Db->ChatGet($Webhook->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Modules->value) == false):
@@ -26,16 +29,14 @@ abstract class StbAdminModules{
     return true;
   }
 
-  public static function Callback_Modules():void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var StbDatabase $Db
-     * @var StbLanguageSys $Lang
-     * @var TgCallback $Webhook
-     */
-    global $Bot, $Db, $Lang, $Webhook;
+  public static function Callback_Modules(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
-    if(self::Acesso() === false):
+    if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
       return;
     endif;
     $mods = $Db->Modules();
@@ -80,16 +81,14 @@ abstract class StbAdminModules{
     );
   }
 
-  public static function Callback_ModuleAdd():void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var StbDatabase $Db
-     * @var StbLanguageSys $Lang
-     * @var TgCallback $Webhook
-     */
-    global $Bot, $Db, $Lang, $Webhook;
+  public static function Callback_ModuleAdd(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
-    if(self::Acesso() === false):
+    if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
       return;
     endif;
 
@@ -135,18 +134,14 @@ abstract class StbAdminModules{
   }
 
   public static function Callback_InsModPic(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Module
   ):void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var TgCallback $Webhook
-     * @var StbLanguageSys $Lang
-     * @var StbDatabase $Db
-     * @var ChatData $chat
-     */
-    global $Bot, $Webhook, $Lang, $Db;
     DebugTrace();
-    if(self::Acesso() === false):
+    if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
       return;
     endif;
 
@@ -187,17 +182,14 @@ abstract class StbAdminModules{
   }
 
   public static function Callback_Mod(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Module
   ):void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var StbDatabase $Db
-     * @var StbLanguageSys $Lang
-     * @var TgCallback $Webhook
-     */
-    global $Bot, $Db, $Lang, $Webhook;
     DebugTrace();
-    if(self::Acesso() === false):
+    if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
       return;
     endif;
 
@@ -225,7 +217,7 @@ abstract class StbAdminModules{
       $Webhook->Data->Data->Id,
       sprintf(
         $Lang->Get('Module', Group: 'Module'),
-        $Module,
+        str_replace('ProtocolLive\StbModules\\', '', $Module),
         date(
           $Lang->Get('DateTime'),
           $date[0]['created']
@@ -236,17 +228,14 @@ abstract class StbAdminModules{
   }
 
   public static function Callback_UniModPic1(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Module
   ):void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
-     * @var TgCallback $Webhook
-     * @var StbDatabase $Db
-     */
-    global $Bot, $Lang, $Webhook, $Db;
     DebugTrace();
-    if(self::Acesso() === false):
+    if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
       return;
     endif;
 
@@ -271,20 +260,16 @@ abstract class StbAdminModules{
   }
 
   public static function Callback_UniModPic2(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Module
   ):void{
-    /**
-     * @var TelegramBotLibrary $Bot
-     * @var TgCallback $Webhook
-     * @var StbDatabase $Db
-     * @var StbLanguageSys $Lang
-     */
-    global $Bot, $Webhook, $Db, $Lang;
     DebugTrace();
-    if(self::Acesso() === false):
+    if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
       return;
     endif;
-    require(DirModules . '/' . $Module . '/index.php');
     call_user_func($Module . '::Uninstall', $Bot, $Webhook, $Db, $Lang);
   }
 }
