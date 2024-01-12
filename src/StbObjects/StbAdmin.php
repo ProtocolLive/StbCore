@@ -25,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.01.12.02
+ * @version 2024.01.12.03
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -605,13 +605,21 @@ abstract class StbAdmin{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    $Db->ChatEdit($Bot->ChatGet($Webhook->Users[0]->Id));
-    self::Callback_Admin($Bot, $Webhook, $Db, $Lang, $Webhook->Users[0]->Id, true);
-    $Bot->TextSend(
-      $Webhook->Data->User->Id,
-      $Lang->Get('AdminAddPerms', Group: 'Admin'),
-      Markup: new TblMarkupRemove
-    );
+    try{
+      $Db->ChatEdit($Bot->ChatGet($Webhook->Users[0]));
+      self::Callback_Admin($Bot, $Webhook, $Db, $Lang, $Webhook->Users[0], true);
+      $Bot->TextSend(
+        $Webhook->Data->User->Id,
+        $Lang->Get('AdminAddPerms', Group: 'Admin'),
+        Markup: new TblMarkupRemove
+      );
+    }catch(TblException){
+      $Bot->TextSend(
+        $Webhook->Data->User->Id,
+        $Lang->Get('AdminNeedStart', Group: 'Admin'),
+        Markup: new TblMarkupRemove
+      );
+    }
   }
 
   private static function Listener_Text(
