@@ -8,7 +8,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.01.12.00
+ * @version 2024.01.12.01
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -209,7 +209,7 @@ abstract class StbAdminModules{
       $Db->CallBackHashSet(self::Callback_UniModPic1(...), $Module)
     );
     if(is_callable($Module . '::Plugin_Buttons')):
-      call_user_func($Module . '::Plugin_Buttons', $mk);
+      call_user_func($Module . '::Plugin_Buttons', $Db, $mk);
     endif;
     $date = $Db->Modules($Module);
     $Bot->TextEdit(
