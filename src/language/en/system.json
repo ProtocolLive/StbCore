@@ -14,6 +14,7 @@
     "AdminAddPerms": "Set the permissions above ☝️",
     "AdminDel": "Confirm delete this administrator?",
     "AdminMenu": "⚙️ Administration menu",
+    "AdminNeedStart": "⚠️ The selected user don't start the bot yet",
     "Admins": "🎖️ Administrators:",
     "AdminsButton": "🎖️ Administrators",
     "Command": "Command:%1$s\nDescription: %2$s",
