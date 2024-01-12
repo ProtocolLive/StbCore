@@ -33,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.12.00
+ * @version 2024.01.12.01
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -145,7 +145,7 @@ abstract class StbBotTools{
   }
 
   /**
-   * @param TblData $BotData Used with cron
+   * @param TblData $BotData Used with cron and webhook
    */
   public static function Entry(
     TelegramBotLibrary $Bot,
@@ -159,6 +159,8 @@ abstract class StbBotTools{
     $_GET['a'] ??= '';
     if(isset($_SERVER['Cron'])):
       self::Cron($BotData);
+    elseif(str_contains($_GET['a'], 'Webhook')):
+      call_user_func(__CLASS__ . '::Action_' . $_GET['a'], $BotData);
     elseif(is_callable(__CLASS__ . '::Action_' . $_GET['a'])):
       call_user_func(__CLASS__ . '::Action_' . $_GET['a'], $Bot, $Db, $Lang);
     endif;
