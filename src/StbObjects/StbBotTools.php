@@ -33,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.12.03
+ * @version 2024.01.12.04
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -337,7 +337,8 @@ abstract class StbBotTools{
   private static function Update_Text(
     TelegramBotLibrary $Bot,
     TgText $Webhook,
-    StbDatabase $Db
+    StbDatabase $Db,
+    StbLanguageSys $Lang
   ):void{
     DebugTrace();
     if($Webhook->Data->User instanceof TgUser):
@@ -345,12 +346,12 @@ abstract class StbBotTools{
     endif;
     $listener = $Db->ListenerGet(TgText::class, $Webhook->Data->Chat->Id);
     if($listener !== null):
-      call_user_func($listener . '::Listener');
+      call_user_func($listener . '::Listener', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;
     $listener = $Db->ListenerGet(TgText::class);
     if($listener !== null):
-      call_user_func($listener . '::Listener');
+      call_user_func($listener . '::Listener', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;
     if($Webhook->Data->Chat instanceof TgUser):
