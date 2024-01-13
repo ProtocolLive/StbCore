@@ -33,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.12.04
+ * @version 2024.01.12.05
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -55,7 +55,7 @@ abstract class StbBotTools{
       return;
     endif;
     if(get_class($Webhook) === TgText::class)://prevent TgTextEdited
-      self::Update_Text($Bot, $Webhook, $Db);
+      self::Update_Text($Bot, $Webhook, $Db, $Lang);
       return;
     endif;
     //Some updates don't have TgMessageData
