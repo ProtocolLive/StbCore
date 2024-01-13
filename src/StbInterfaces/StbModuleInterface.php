@@ -7,13 +7,17 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDatabase,
   StbLanguageSys
 };
-use ProtocolLive\TelegramBotLibrary\TblObjects\TblCmd;
+use ProtocolLive\TelegramBotLibrary\TblObjects\{
+  TblCmd,
+  TblData,
+  TblMarkupInline
+};
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.01.12.00
+ * @version 2024.01.12.01
  */
 interface StbModuleInterface{
   public static function Command(
@@ -21,6 +25,12 @@ interface StbModuleInterface{
     TblCmd $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
+  ):void;
+
+  public static function Cron(
+    TelegramBotLibrary $Bot,
+    StbDatabase $Db,
+    TblData $BotData
   ):void;
 
   public static function Install(
@@ -35,6 +45,11 @@ interface StbModuleInterface{
     TgEventInterface $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
+  ):void;
+
+  public static function Plugin_Buttons(
+    StbDatabase $Db,
+    TblMarkupInline $Markup
   ):void;
 
   public static function Uninstall(
