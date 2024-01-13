@@ -35,7 +35,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.01.12.00
+ * @version 2024.01.13.00
  */
 final class StbDatabase{
 
@@ -370,13 +370,13 @@ final class StbDatabase{
   }
 
   public function UsageLog(
-    int $Id,
+    int $ChatId,
     string $Event,
     string $Additional = null
   ):void{
     DebugTrace();
     $this->Db->Insert(Tables::LogTexts->value)
-    ->FieldAdd(LogTexts::Chat, $Id, Types::Int)
+    ->FieldAdd(LogTexts::Chat, $ChatId, Types::Int)
     ->FieldAdd(LogTexts::Time, time(), Types::Int)
     ->FieldAdd(LogTexts::Event, $Event, Types::Str)
     ->FieldAdd(LogTexts::Msg, $Additional, Types::Str)
