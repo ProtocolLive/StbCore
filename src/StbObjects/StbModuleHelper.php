@@ -9,12 +9,34 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.01.12.00
+ * @version 2024.01.13.00
  */
 abstract class StbModuleHelper{
+  private static array $InstallCommands = [];
+
   /**
-   * Run this after the 'create table' block to begin the transaction
-   * @param string $Module Use the complete name, with namespace. Better use \_\_CLASS__ constant
+   * Run this function before InstallHelper. We recommend to create a method to define the commands. That way, this method can be run with install and uninstall.
+   * @param string $Module If null, the command is an txt 
+   */
+  protected static function InstallCmd(
+    string $Name,
+    string $Description = null,
+    string $Module = null,
+    bool $Public = true
+  ):void{
+    self::$InstallCommands[] = (object)[
+      'Name' => $Name,
+      'Description' => $Description,
+      'Module' => $Module,
+      'Public' => $Public
+    ];
+  }
+
+  /**
+   * Execute this after the 'create table' block (The create query has a transaction of its own).
+   * If the module has commands, run InstallCmd first
+   * @param string $Module Use \_\_CLASS__ constant
+   * @param array $Commands Command to be added to Telegram menu
    */
   protected static function InstallHelper(
     TelegramBotLibrary $Bot,
@@ -22,7 +44,6 @@ abstract class StbModuleHelper{
     StbDatabase $Db,
     StbLanguageSys $Lang,
     string $Module,
-    array $Commands = [],
     bool $Commit = true
   ):void{
     DebugTrace();
@@ -35,12 +56,16 @@ abstract class StbModuleHelper{
     endif;
 
     $cmds = $Bot->MyCmdGet();
-    foreach($Commands as $cmd):
-      $cmds->Add($cmd[0], $cmd[1]);
-      if($Db->CommandAdd($cmd[0], $Module) === false):
-        self::MsgError($Bot, $Webhook, $Db, $Lang);
-        error_log('Fail to add the command ' . $cmd[0]);
-        return;
+    foreach(self::$InstallCommands as $cmd):
+      if($cmd->Public):
+        $cmds->Add($cmd->Name, $cmd->Description);
+      endif;
+      if($cmd->Module !== null):
+        if($Db->CommandAdd($cmd->Name, $Module) === false):
+          self::MsgError($Bot, $Webhook, $Db, $Lang);
+          error_log('Fail to add the command ' . $cmd->Name);
+          return;
+        endif;
       endif;
     endforeach;
     try{
@@ -95,7 +120,7 @@ abstract class StbModuleHelper{
   }
 
   /**
-   * Run this before the 'drop table' block to begin the transaction
+   * Run this before the 'drop table' block to begin the transaction. For commands and listeners, don't need the UninstallHelper2 because the cascade foreign key
    * @param bool $Commit Use false when you need to remove module tables or/and listeners. Don't forget the commit!
    * @return PDO|null Return the PDO object if $Commit is false
    */
@@ -105,7 +130,6 @@ abstract class StbModuleHelper{
     StbDatabase $Db,
     StbLanguageSys $Lang,
     string $Module,
-    array $Commands = [],
     bool $Commit = true
   ):null{
     DebugTrace();
@@ -114,8 +138,10 @@ abstract class StbModuleHelper{
     $Db->ModuleUninstall($Module);
 
     $cmds = $Bot->MyCmdGet();
-    foreach($Commands as $cmd):
-      $cmds->Del($cmd[0]);
+    foreach(self::$InstallCommands as $cmd):
+      if($cmd->Public):
+        $cmds->Del($cmd->Name);
+      endif;
     endforeach;
     try{
       $Bot->MyCmdSet($cmds);
