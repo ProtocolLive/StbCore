@@ -33,7 +33,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.12.05
+ * @version 2024.01.14.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -196,6 +196,26 @@ abstract class StbBotTools{
       unset($temp[0], $temp[1]);
       require(DirModules . '/'. implode('/', $temp) . '/index.php');
     });
+  }
+
+  /**
+   * Method to be user in set_error_handler and set_exception_handler. This method warns bot admin about the error
+   */
+  public static function OnError(
+    mixed ...$Args
+  ):void{
+    global $Bot;
+    $log = print_r($Args, true);
+    $msg = 'An error occurred:' . PHP_EOL;
+    if(strlen($log) < TgLimits::Text):
+      $msg .= '<pre><code>' . $log . '</code></pre>';
+    endif;
+    $Bot->TextSend(
+      Admin,
+      $msg,
+      ParseMode: TgParseMode::Html
+    );
+    Handler(...$Args);
   }
 
   public static function SendUserCmd(
