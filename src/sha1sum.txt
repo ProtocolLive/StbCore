@@ -30,7 +30,7 @@ f6bc75351f3c9eb9efd5fe88043e76536e6f0d2f  Install\DirBot\tools\scope.php
 1e0b1ae3720f56c7269065038d7641c2b8f3f547  StbObjects\StbAdmin.php
 b9d65d24e70588946ab5188651e5b4b934bb1396  StbObjects\StbAdminCmd.php
 93d9a4999eff69435904ed2c0a934b46a7bc4ee1  StbObjects\StbAdminModules.php
-facb4d79daddd4603ab88feea9bf7c5fed219c72  StbObjects\StbBotTools.php
+c1ffb6f4c29ff6468410ecd9a3518a1f6b74cce7  StbObjects\StbBotTools.php
 80f9c6d737c1a03e8f14b080dec671df137a465d  StbObjects\StbCronTools.php
 e5eb08226664beb45024feddacab29966cd3aa21  StbObjects\StbDatabase.php
 4d9165ee25705edf8a5ebdf48feffb9a2e5246e6  StbObjects\StbDbAdminPerm.php
@@ -39,7 +39,7 @@ e5eb08226664beb45024feddacab29966cd3aa21  StbObjects\StbDatabase.php
 6c3dfdf51e386f74d1fea0c96191c0061970a6b1  StbObjects\StbLanguageMaster.php
 56def8312e125cb8f326fcea55bf00631956eef3  StbObjects\StbLanguageModule.php
 699d1ce995c56e7493161b9c8fcf1cdc61465131  StbObjects\StbLanguageSys.php
-63219c1ec76d6adbf9bcd75a6950da554913a004  StbObjects\StbLog.php
+8011e648f0a8b1f9ae3c1648f1a7a9340e98f376  StbObjects\StbLog.php
 c0d2325fcc4c7b4e8504c94970515f2a6e41eb5c  StbObjects\StbModuleHelper.php
 ad775436ac3f32076444db0d07c6fba685abe961  StbObjects\StbResquestChatId.php
 1a6fac3ac1c1dda558b0466b62c47b24cad074d1  language\en\system.json
