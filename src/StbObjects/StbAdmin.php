@@ -25,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.01.16.00
+ * @version 2024.01.16.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -442,26 +442,38 @@ abstract class StbAdmin{
     ->Fields('count(*) as count')
     ->Run();
     $msg = sprintf(
-      '<b>' . $Lang->Get('Used', Group: 'Stats') . '</b>' . PHP_EOL,
+      $Lang->Get('Used', Group: 'Stats'),
       $chats[0]['count']
     );
-    $msg .= PHP_EOL;
-    $msg .= '<b>' . $Lang->Get('Commands', Group: 'Stats') . '</b>' . PHP_EOL;
+    $Bot->TextSend(
+      $Webhook->User->Id,
+      $msg,
+      ParseMode: TgParseMode::Html,
+      DisableNotification: true
+    );
+
+    $msg = '<b>' . $Lang->Get('Commands', Group: 'Stats') . '</b>' . PHP_EOL;
     $consult = $PlDb->Select(Tables::LogTexts)
     ->Fields(LogTexts::Event->value . ',count(' . LogTexts::Event->value . ') as count')
     ->Group(LogTexts::Event->value)
     ->Order('count desc')
-    ->Limit(10);
+    ->Limit(20);
     $consult->Run(Fetch: true);
     while(($event = $consult->Fetch()) !== false):
       $msg .= $event['count'] . ' - ' . $event[LogTexts::Event->value] . PHP_EOL;
     endwhile;
-    $msg .= PHP_EOL;
-    $msg .= '<b>' . $Lang->Get('Logs', Group: 'Stats') . '</b>' . PHP_EOL;
+    $Bot->TextSend(
+      $Webhook->User->Id,
+      $msg,
+      ParseMode: TgParseMode::Html,
+      DisableNotification: true
+    );
+
+    $msg = '<b>' . $Lang->Get('Logs', Group: 'Stats') . '</b>' . PHP_EOL;
     $consult = $PlDb->Select(Tables::LogTexts)
     ->JoinAdd(Tables::Chats, Chats::Id)
     ->Order(LogTexts::Time->value . ' desc')
-    ->Limit(10);
+    ->Limit(20);
     $consult->Run(Fetch: true);
     while(($log = $consult->Fetch()) !== false):
       $msg .= date('Y/m/d H:i:s', $log['time']) . ' - ';
@@ -471,14 +483,15 @@ abstract class StbAdmin{
       endif;
       $msg .= PHP_EOL;
       $msg .= $log[LogTexts::Chat->value] . ', ';
-      if($log[Chats::Nick->value] !== null):
-        $msg .= '@' . $log['nick'] . ', ';
-      endif;
-      $msg .= '<a href="tg://user?id=' . $log[LogTexts::Chat->value] . '">' . $log[Chats::Name->value] . ' ';
+      $msg .= '<a href="tg://user?id=' . $log[LogTexts::Chat->value] . '">' . $log[Chats::Name->value];
       if($log[Chats::NameLast->value] !== null):
-        $msg .= $log['name2'];
+        $msg .= ' ' . $log[Chats::NameLast->value];
       endif;
-      $msg .= '</a>' . PHP_EOL;
+      $msg .= '</a>';
+      if($log[Chats::Nick->value] !== null):
+        $msg .= ' @' . $log[Chats::Nick->value];
+      endif;
+      $msg .= PHP_EOL;
       $msg .= '-----------------------------' . PHP_EOL;
     endwhile;
     $Bot->TextSend(

@@ -41,8 +41,8 @@
     "UserNull": "Could not possible to get user data"
   },
   "Stats": {
-    "Commands": "Commands: (10 most used)",
-    "Logs": "Logs: (last 10)",
+    "Commands": "Commands: (20 most used)",
+    "Logs": "Logs: (last 20)",
     "Used": "Lifetime users interacted: %s"
   },
   "Add": "➕",
