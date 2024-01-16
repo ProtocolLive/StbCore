@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2024.01.08.00
+//2024.01.16.00
 
 use ProtocolLive\PhpLiveDb\Drivers;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblLog;
@@ -62,6 +62,12 @@ const Log = TblLog::Webhook | TblLog::Send | TblLog::Response;
  * Default: TgInvoiceCurrencies::USD
  */
 const DefaultCurrency = TgInvoiceCurrencies::USD;
+
+/**
+ * Forward text non captured by listeners
+ * Type: int|null
+ */
+const ForwardDontknow = Admin;
 
 /**
  * Database type

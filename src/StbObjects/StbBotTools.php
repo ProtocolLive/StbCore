@@ -34,7 +34,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.16.01
+ * @version 2024.01.16.02
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -380,6 +380,13 @@ abstract class StbBotTools{
     endif;
     if($Webhook->Data->Chat instanceof TgUser):
       StbBotTools::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text);
+      if(ForwardDontknow !== null):
+        $Bot->MessageForward(
+          $Webhook->Data->Chat->Id,
+          $Webhook->Data->Id,
+          ForwardDontknow
+        );
+      endif;
     endif;
   }
 }
