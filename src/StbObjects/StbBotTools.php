@@ -34,7 +34,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.16.00
+ * @version 2024.01.16.01
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -207,9 +207,12 @@ abstract class StbBotTools{
   ):void{
     global $Bot;
     $log = print_r($Args, true);
-    $msg = 'An error occurred:' . PHP_EOL;
+    $msg = 'An error occurred';
     if(strlen($log) < TgLimits::Text):
+      $msg .= ':' . PHP_EOL;
       $msg .= '<pre><code>' . $log . '</code></pre>';
+    else:
+      $msg .= '!';
     endif;
     $Bot->TextSend(
       Admin,
