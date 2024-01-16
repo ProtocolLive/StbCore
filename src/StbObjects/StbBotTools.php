@@ -26,6 +26,7 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\{
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
+  TgLimits,
   TgText,
   TgUser
 };
@@ -33,7 +34,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.14.00
+ * @version 2024.01.16.00
  */
 abstract class StbBotTools{
   public static function Action_(
