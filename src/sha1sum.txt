@@ -8,7 +8,7 @@ da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\TextCmds\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\TextCmds\pt-br\index.htm
 a6bd1dbe6c6fe7249552f794d0b78ba5618e0188  Install\DirBot\TextCmds\pt-br\start.txt
 673be2874cd1daaf48768fe60ce464d7254e9caa  Install\DirBot\TextCmds\pt-br\unknown.txt
-bb569a03bb4e4cc5bc143ec37a690f203d370ddb  Install\DirBot\config.txt
+45d0d441559ea93b3e3383c55a8a1c62fdb02ec8  Install\DirBot\config.txt
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\index.htm
 dd6e06385fb2c817286e001635bd4dac676d5b3e  Install\DirBot\index.php
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\logs\index.htm
@@ -27,10 +27,10 @@ f6bc75351f3c9eb9efd5fe88043e76536e6f0d2f  Install\DirBot\tools\scope.php
 9b9a8f97d7529bcc5fe09a7ef396323fd7bd7b01  NoStr\Fields\Variables.php
 42339e24ce744b286dd756ff85a4779b72e1bd92  NoStr\Tables.php
 06b8439744bc43b5823dba74e17d1c5c803c6d40  StbInterfaces\StbModuleInterface.php
-1e0b1ae3720f56c7269065038d7641c2b8f3f547  StbObjects\StbAdmin.php
+95cee357af4500b8ed37c7093f538471bb1348cb  StbObjects\StbAdmin.php
 b9d65d24e70588946ab5188651e5b4b934bb1396  StbObjects\StbAdminCmd.php
 93d9a4999eff69435904ed2c0a934b46a7bc4ee1  StbObjects\StbAdminModules.php
-c1ffb6f4c29ff6468410ecd9a3518a1f6b74cce7  StbObjects\StbBotTools.php
+21daa573afc09e8cbf5014329c9a3d77ab6fc2d5  StbObjects\StbBotTools.php
 80f9c6d737c1a03e8f14b080dec671df137a465d  StbObjects\StbCronTools.php
 e5eb08226664beb45024feddacab29966cd3aa21  StbObjects\StbDatabase.php
 4d9165ee25705edf8a5ebdf48feffb9a2e5246e6  StbObjects\StbDbAdminPerm.php
@@ -42,5 +42,5 @@ e5eb08226664beb45024feddacab29966cd3aa21  StbObjects\StbDatabase.php
 8011e648f0a8b1f9ae3c1648f1a7a9340e98f376  StbObjects\StbLog.php
 c0d2325fcc4c7b4e8504c94970515f2a6e41eb5c  StbObjects\StbModuleHelper.php
 ad775436ac3f32076444db0d07c6fba685abe961  StbObjects\StbResquestChatId.php
-1a6fac3ac1c1dda558b0466b62c47b24cad074d1  language\en\system.json
-333e9ecaf5e0fdddcdbc0f7f45bc28e5e34ee239  language\pt-br\system.json
+4e8dca5cc24fa8f70abdc687672a9786ffac4ea1  language\en\system.json
+f7a7895fce29a31ed9e5f82f5cc5b88bfe0a8b31  language\pt-br\system.json
