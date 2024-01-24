@@ -3,6 +3,7 @@
 //https://github.com/ProtocolLive/FuncoesComuns
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use ConsoleColorText;
 use Exception;
 use ProtocolLive\PhpLiveDb\Types;
 use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogUpdates;
@@ -34,7 +35,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.16.02
+ * @version 2024.01.24.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -133,20 +134,6 @@ abstract class StbBotTools{
     }
   }
 
-  public static function Cron(
-    TelegramBotLibrary $Bot,
-    StbDatabase $Db,
-    TblData $BotData
-  ):void{
-    DebugTrace();
-    call_user_func($_SERVER['Cron'] . '::Cron', $Bot, $Db, $BotData);
-    StbBotTools::Log(
-      $BotData,
-      StbLog::Cron,
-      'Time: ' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])
-    );
-  }
-
   /**
    * @param TblData $BotData Used with cron and webhook
    */
@@ -158,10 +145,9 @@ abstract class StbBotTools{
   ):void{
     DebugTrace();
     self::ModuleAutoload();
-    ArgV();
     $_GET['a'] ??= '';
-    if(isset($_SERVER['Cron'])):
-      self::Cron($Bot, $Db, $BotData);
+    if(PHP_SAPI === 'cli'):
+      self::Terminal($Bot, $Db, $BotData);
     elseif(str_contains($_GET['a'], 'Webhook')):
       call_user_func(__CLASS__ . '::Action_' . $_GET['a'], $BotData);
     elseif(is_callable(__CLASS__ . '::Action_' . $_GET['a'])):
@@ -270,6 +256,35 @@ abstract class StbBotTools{
       return true;
     else:
       return false;
+    endif;
+  }
+
+  private static function Terminal(
+    TelegramBotLibrary $Bot,
+    StbDatabase $Db,
+    TblData $BotData
+  ):void{
+    DebugTrace();
+    if(in_array('-h', $_SERVER['argv'])
+    or in_array('--help', $_SERVER['argv'])):
+      echo ConsoleColor('SimpleTelegramBot by Protocol Corp.', ConsoleColorText::Green) . PHP_EOL;
+      echo ConsoleColor('Terminal parameters help:', ConsoleColorText::Yellow) . PHP_EOL;
+      echo "-m, --module\tCall a module" . PHP_EOL;
+      return;
+    endif;
+
+    if(in_array('-m', $_SERVER['argv'])
+    or in_array('--module', $_SERVER['argv'])):
+      $temp = array_search('-m', $_SERVER['argv']);
+      if($temp === false):
+        $temp = array_search('--module', $_SERVER['argv']);
+      endif;
+      call_user_func($_SERVER['argv'][$temp + 1] . '::Cron', $Bot, $Db, $BotData);
+      StbBotTools::Log(
+        $BotData,
+        StbLog::Cron,
+        'Time: ' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])
+      );
     endif;
   }
 
