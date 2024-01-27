@@ -35,7 +35,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.24.00
+ * @version 2024.01.27.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -192,7 +192,10 @@ abstract class StbBotTools{
     mixed ...$Args
   ):void{
     global $Bot;
-    $log = print_r($Args, true);
+    ob_start();
+    var_dump($Args);
+    $log = ob_get_contents();
+    ob_end_clean();
     $msg = 'An error occurred';
     if(strlen($log) < TgLimits::Text):
       $msg .= ':' . PHP_EOL;
