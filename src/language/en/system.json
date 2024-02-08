@@ -49,8 +49,8 @@
   "Back": "🔙",
   "Cancel": "Cancelar",
   "DateTime": "m/d/Y h:i:s",
-  "MyId": "Your ID is %s",
-  "MyIdChat": "\nChat ID: %s",
+  "MyId": "Your ID is <code>%s</code>",
+  "MyIdChat": "\nChat ID: <code>%s</code>",
   "No": "❎",
   "Yes": "✅"
 }

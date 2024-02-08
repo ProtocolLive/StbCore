@@ -25,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.01.16.01
+ * @version 2024.02.08.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -569,7 +569,8 @@ abstract class StbAdmin{
     endif;
     $Bot->TextSend(
       $Webhook->Data->User->Id,
-      $msg
+      $msg,
+      ParseMode: TgParseMode::Html
     );
     $Db->UsageLog($Webhook->Data->User->Id, 'id');
   }
