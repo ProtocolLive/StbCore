@@ -9,13 +9,13 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.01.13.00
+ * @version 2024.02.09.00
  */
 abstract class StbModuleHelper{
   private static array $InstallCommands = [];
 
   /**
-   * Run this function before InstallHelper. We recommend to create a method to define the commands. That way, this method can be run with install and uninstall.
+   * Run this function before InstallHelper
    * @param string $Module If null, the command is an txt 
    */
   protected static function InstallCmd(
