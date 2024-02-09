@@ -29,13 +29,14 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
   TgLimits,
+  TgReactionUpdate,
   TgUser
 };
 use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.09.01
+ * @version 2024.02.09.02
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -65,6 +66,9 @@ abstract class StbBotTools{
       return;
     endif;
     $Db->ChatEdit($Webhook->Data->User);
+    if($Webhook instanceof TgReactionUpdate):
+      return;
+    endif;
     self::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text ?? $Webhook::class);
     if(ForwardDontknow !== null):
       $Bot->MessageForward(
