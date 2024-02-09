@@ -35,7 +35,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.01.27.00
+ * @version 2024.02.08.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -48,7 +48,7 @@ abstract class StbBotTools{
     if($Webhook === null):
       return;
     endif;
-    if(get_class($Webhook) === TblCmd::class)://prevent TblCmdEdited
+    if($Webhook::class === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd($Bot, $Db, $Webhook, $Lang);
       return;
     endif;
@@ -56,7 +56,7 @@ abstract class StbBotTools{
       self::Update_Callback($Bot, $Webhook, $Db, $Lang);
       return;
     endif;
-    if(get_class($Webhook) === TgText::class)://prevent TgTextEdited
+    if($Webhook::class === TgText::class)://prevent TgTextEdited
       self::Update_Text($Bot, $Webhook, $Db, $Lang);
       return;
     endif;
@@ -386,12 +386,7 @@ abstract class StbBotTools{
     if($Webhook->Data->User instanceof TgUser):
       $Db->ChatEdit($Webhook->Data->User);
     endif;
-    $listener = $Db->ListenerGet(TgText::class, $Webhook->Data->Chat->Id);
-    if($listener !== null):
-      call_user_func($listener . '::Listener', $Bot, $Webhook, $Db, $Lang);
-      return;
-    endif;
-    $listener = $Db->ListenerGet(TgText::class);
+    $listener = $Db->ListenerGet($Webhook, $Webhook->Data->Chat->Id) ?? $Db->ListenerGet($Webhook);
     if($listener !== null):
       call_user_func($listener . '::Listener', $Bot, $Webhook, $Db, $Lang);
       return;
