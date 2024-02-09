@@ -29,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
 };
 
 /**
- * @version 2023.11.20.00
+ * @version 2024.02.09.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -533,8 +533,9 @@ abstract class Install{
 
       echo '✅ Install complete!';
       $url = dirname($_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME']);
-      $url .= '/' . $DirBot . '/index.php?a=WebhookSet';
-      echo '<p><a href="https://' . $url . '">Click here to set the webhook</a></p>';?>
+      $url .= '/' . $DirBot . '/index.php?a=WebhookSet';?>
+      <p><a href="https://<?=$url?>">Click here to set the webhook</a></p>
+      <p>Note: When a unknown message are received, the bot auto forward to main admin. If you have privacy activated for voice messages, you need to put the bot in exception to receive them.</p>
     </body>
     </html><?php
   }

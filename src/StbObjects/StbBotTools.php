@@ -24,18 +24,18 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\{
   TgParseMode,
   TgUpdateType
 };
+use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgForwadableInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
   TgLimits,
-  TgText,
   TgUser
 };
 use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.08.00
+ * @version 2024.02.09.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -49,6 +49,7 @@ abstract class StbBotTools{
       return;
     endif;
     if($Webhook::class === TblCmd::class)://prevent TblCmdEdited
+      $Db->ChatEdit($Webhook->Data->User);
       self::Update_Cmd($Bot, $Db, $Webhook, $Lang);
       return;
     endif;
@@ -56,17 +57,22 @@ abstract class StbBotTools{
       self::Update_Callback($Bot, $Webhook, $Db, $Lang);
       return;
     endif;
-    if($Webhook::class === TgText::class)://prevent TgTextEdited
-      self::Update_Text($Bot, $Webhook, $Db, $Lang);
-      return;
-    endif;
     //Some updates don't have TgMessageData
     $id = $Webhook->Data->User->Id ?? $Webhook->User->Id ?? null;
     $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
-    if($module === null):
+    if($module !== null):
+      call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;
-    call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang);
+    $Db->ChatEdit($Webhook->Data->User);
+    self::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text ?? $Webhook::class);
+    if(ForwardDontknow !== null):
+      $Bot->MessageForward(
+        $Webhook->Data->Chat->Id,
+        $Webhook->Data->Id,
+        ForwardDontknow
+      );
+    endif;
   }
 
   public static function Action_WebhookDel(
@@ -213,7 +219,7 @@ abstract class StbBotTools{
 
   public static function SendUserCmd(
     TelegramBotLibrary $Bot,
-    TblCmd|TgText $Webhook,
+    TgForwadableInterface $Webhook,
     StbDatabase $Db,
     string $Command,
     string $EventAdditional = null
@@ -348,7 +354,6 @@ abstract class StbBotTools{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    $Db->ChatEdit($Webhook->Data->User);
     try{
       $Lang->LanguageSet($Webhook->Data->User->Language);
     }catch(Exception){}
@@ -373,33 +378,6 @@ abstract class StbBotTools{
   
     if(StbBotTools::SendUserCmd($Bot, $Webhook, $Db,$Webhook->Command) === false):
       StbBotTools::SendUserCmd($Bot, $Webhook, $Db, 'unknown');
-    endif;
-  }
-
-  private static function Update_Text(
-    TelegramBotLibrary $Bot,
-    TgText $Webhook,
-    StbDatabase $Db,
-    StbLanguageSys $Lang
-  ):void{
-    DebugTrace();
-    if($Webhook->Data->User instanceof TgUser):
-      $Db->ChatEdit($Webhook->Data->User);
-    endif;
-    $listener = $Db->ListenerGet($Webhook, $Webhook->Data->Chat->Id) ?? $Db->ListenerGet($Webhook);
-    if($listener !== null):
-      call_user_func($listener . '::Listener', $Bot, $Webhook, $Db, $Lang);
-      return;
-    endif;
-    if($Webhook->Data->Chat instanceof TgUser):
-      StbBotTools::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text);
-      if(ForwardDontknow !== null):
-        $Bot->MessageForward(
-          $Webhook->Data->Chat->Id,
-          $Webhook->Data->Id,
-          ForwardDontknow
-        );
-      endif;
     endif;
   }
 }

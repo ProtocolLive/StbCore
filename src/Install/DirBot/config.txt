@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2024.01.16.00
+//2024.02.09.00
 
 use ProtocolLive\PhpLiveDb\Drivers;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblLog;
@@ -64,7 +64,7 @@ const Log = TblLog::Webhook | TblLog::Send | TblLog::Response;
 const DefaultCurrency = TgInvoiceCurrencies::USD;
 
 /**
- * Forward text non captured by listeners
+ * Forward non captured events by listeners. If you have privacy activated for voice messages, you need to put the bot in exception to receive them
  * Type: int|null
  */
 const ForwardDontknow = Admin;
