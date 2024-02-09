@@ -27,12 +27,12 @@ f6bc75351f3c9eb9efd5fe88043e76536e6f0d2f  Install\DirBot\tools\scope.php
 9b9a8f97d7529bcc5fe09a7ef396323fd7bd7b01  NoStr\Fields\Variables.php
 42339e24ce744b286dd756ff85a4779b72e1bd92  NoStr\Tables.php
 06b8439744bc43b5823dba74e17d1c5c803c6d40  StbInterfaces\StbModuleInterface.php
-95cee357af4500b8ed37c7093f538471bb1348cb  StbObjects\StbAdmin.php
+2e137ac88a263f92e877b1700014960d90941001  StbObjects\StbAdmin.php
 b9d65d24e70588946ab5188651e5b4b934bb1396  StbObjects\StbAdminCmd.php
 93d9a4999eff69435904ed2c0a934b46a7bc4ee1  StbObjects\StbAdminModules.php
-fb9c57bd6ad898dbfbea3f0b85fb8e214429f23c  StbObjects\StbBotTools.php
+ea5ace05746f017583bd10235e74428e02028296  StbObjects\StbBotTools.php
 80f9c6d737c1a03e8f14b080dec671df137a465d  StbObjects\StbCronTools.php
-e5eb08226664beb45024feddacab29966cd3aa21  StbObjects\StbDatabase.php
+6d32f68716b78d9b511e61afdc1d7c9ef5e3fdb9  StbObjects\StbDatabase.php
 4d9165ee25705edf8a5ebdf48feffb9a2e5246e6  StbObjects\StbDbAdminPerm.php
 15827d4a80b0a151763497c35c2542d138e69ea8  StbObjects\StbDbListeners.php
 5d58aefcac912dcc723f9fe596f186e75698a085  StbObjects\StbDbVariables.php
@@ -42,5 +42,5 @@ e5eb08226664beb45024feddacab29966cd3aa21  StbObjects\StbDatabase.php
 8011e648f0a8b1f9ae3c1648f1a7a9340e98f376  StbObjects\StbLog.php
 c0d2325fcc4c7b4e8504c94970515f2a6e41eb5c  StbObjects\StbModuleHelper.php
 ad775436ac3f32076444db0d07c6fba685abe961  StbObjects\StbResquestChatId.php
-4e8dca5cc24fa8f70abdc687672a9786ffac4ea1  language\en\system.json
-f7a7895fce29a31ed9e5f82f5cc5b88bfe0a8b31  language\pt-br\system.json
+1cef9f1a0ac735264bfcb972ce0c2ec60a6640a6  language\en\system.json
+2936b03d069eb3d308bbc4b80490e67315542d52  language\pt-br\system.json
