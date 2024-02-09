@@ -1,11 +1,13 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2024.01.14.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 
+/**
+ * @version 2024.02.09.00
+ */
 abstract class StbLog{
-  const Cron = 32;
-  const Trace = 64;
+  public const Cron = 32;
+  public const Trace = 64;
 }

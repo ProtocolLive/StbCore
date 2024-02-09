@@ -1,11 +1,13 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.01.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
 
+/**
+ * @version 2024.02.09.00
+ */
 final class StbCronTools{
   private array $Jobs = [];
   public string|null $Email = null;
@@ -21,9 +23,9 @@ final class StbCronTools{
     endif;
     $temp = explode("\n", $temp);
     foreach($temp as $job):
-      if(substr($job, 0, 6) === 'MAILTO'):
+      if(str_starts_with($job, 'MAILTO')):
         $this->Email = substr($job, 8, -1);
-      elseif(substr($job, 0, 5) === 'SHELL'):
+      elseif(str_starts_with($job, 'SHELL')):
         $this->Shell = substr($job, 7, -1);
       elseif($job === ''):
         continue;

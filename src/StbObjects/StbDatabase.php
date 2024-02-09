@@ -35,12 +35,12 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.02.08.00
+ * @version 2024.02.09.00
  */
 final class StbDatabase{
 
   public function __construct(
-    private PhpLiveDb $Db
+    private readonly PhpLiveDb $Db
   ){
     DebugTrace();
   }
@@ -187,7 +187,6 @@ final class StbDatabase{
 
   /**
    * List all commands or check if a commands exists
-   * @param string $Command
    * @return array|string|null{ Return all commands or the respective module
    */
   public function Commands(
@@ -311,8 +310,6 @@ final class StbDatabase{
 
   /**
    * List all installed modules or get the module installation timestamp
-   * @param string $Module
-   * @return array
    */
   public function Modules(
     string $Module = null
