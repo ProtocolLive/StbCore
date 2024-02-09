@@ -24,7 +24,7 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\{
   TgParseMode,
   TgUpdateType
 };
-use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgForwadableInterface;
+use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
@@ -35,7 +35,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.09.00
+ * @version 2024.02.09.01
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -219,7 +219,7 @@ abstract class StbBotTools{
 
   public static function SendUserCmd(
     TelegramBotLibrary $Bot,
-    TgForwadableInterface $Webhook,
+    TgEventInterface $Webhook,
     StbDatabase $Db,
     string $Command,
     string $EventAdditional = null
