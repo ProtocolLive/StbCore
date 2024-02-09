@@ -35,7 +35,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.01.13.00
+ * @version 2024.02.08.00
  */
 final class StbDatabase{
 
@@ -227,8 +227,8 @@ final class StbDatabase{
     if($this->NoUserListener($Listener)):
       $Chat = null;
     endif;
-    if($Listener instanceof TgEventInterface):
-      $Listener = get_class($Listener);
+    if(is_object($Listener)):
+      $Listener = $Listener::class;
     endif;
     $consult = $this->Db->InsertUpdate(Tables::Listeners)
     ->FieldAdd(Listeners::Name, $Listener, Types::Str)
@@ -251,8 +251,8 @@ final class StbDatabase{
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
-    if($Listener instanceof TgEventInterface):
-      $Listener = get_class($Listener);
+    if(is_object($Listener)):
+      $Listener = $Listener::class;
     endif;
     $this->Db->Delete(Tables::Listeners)
     ->WhereAdd(Listeners::Name, $Listener, Types::Str)
@@ -260,35 +260,27 @@ final class StbDatabase{
     ->Run();
   }
 
+  /**
+   * Get the module linked to the specified listener
+   */
   public function ListenerGet(
-    TgEventInterface|string $Listener,
+    TgEventInterface $Listener,
     int $User = null
   ):string|null{
     DebugTrace();
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
-    if($Listener instanceof TgEventInterface):
-      $Listener = get_class($Listener);
-    endif;
-    $return = $this->Db->Select(Tables::Listeners)
-    ->WhereAdd(
-      Listeners::Name,
-      $Listener,
-      Types::Str,
-      Parenthesis: Parenthesis::Open
-    )
-    ->WhereAdd(
-      Listeners::Name,
-      TgEventInterface::class,
-      Types::Str,
-      AndOr: AndOr::Or,
-      Parenthesis: Parenthesis::Close,
-      CustomPlaceholder: 'l2'
-    )
+    $listeners = $this->Db->Select(Tables::Listeners)
     ->WhereAdd(Listeners::Chat, $User, Types::Int)
     ->Run();
-    return $return[0][Listeners::Module->value] ?? null;
+    //Test every listener because of interfaces
+    foreach($listeners as $listener):
+      if($Listener instanceof $listener['listener']):
+        return $listener['module'];
+      endif;
+    endforeach;
+    return null;
   }
 
   public function ModuleInstall(
@@ -359,7 +351,7 @@ final class StbDatabase{
   ):bool{
     DebugTrace();
     if($Listener instanceof TgEventInterface):
-      $Listener = get_class($Listener);
+      $Listener = $Listener::class;
     endif;
     if($Listener === TgInlineQuery::class
     or $Listener === TgGroupStatusMy::class):
