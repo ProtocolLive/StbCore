@@ -9,7 +9,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.09.00
+ * @version 2024.02.09.01
  */
 abstract class StbModuleHelper{
   private static array $InstallCommands = [];
@@ -37,6 +37,7 @@ abstract class StbModuleHelper{
    * If the module has commands, run InstallCmd first
    * @param string $Module Use \_\_CLASS__ constant
    * @param array $Commands Command to be added to Telegram menu
+   * @param bool $Commit Use false if need to add listeners
    */
   protected static function InstallHelper(
     TelegramBotLibrary $Bot,
