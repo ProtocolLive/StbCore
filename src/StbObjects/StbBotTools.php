@@ -36,7 +36,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.09.02
+ * @version 2024.02.10.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -62,6 +62,7 @@ abstract class StbBotTools{
     $id = $Webhook->Data->User->Id ?? $Webhook->User->Id ?? null;
     $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
     if($module !== null):
+      $Db->ChatEdit($Webhook->User ?? $Webhook->Data->User);
       call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;
