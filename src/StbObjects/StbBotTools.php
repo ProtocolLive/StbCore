@@ -5,6 +5,7 @@
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ConsoleColorText;
 use Exception;
+use HttpCode;
 use ProtocolLive\PhpLiveDb\Types;
 use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogUpdates;
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
@@ -36,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.10.00
+ * @version 2024.02.11.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -45,7 +46,13 @@ abstract class StbBotTools{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    $Webhook = $Bot->WebhookGet();
+    try{
+      $Webhook = $Bot->WebhookGet();
+    }catch(TblException $e){
+      error_log($e->getMessage());
+      http_response_code(HttpCode::BadRequest->value);
+      exit(1);
+    }
     if($Webhook === null):
       return;
     endif;
