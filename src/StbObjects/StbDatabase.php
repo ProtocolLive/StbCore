@@ -35,10 +35,9 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.02.09.00
+ * @version 2024.02.10.00
  */
 final class StbDatabase{
-
   public function __construct(
     private readonly PhpLiveDb $Db
   ){
@@ -109,24 +108,32 @@ final class StbDatabase{
   }
 
   /**
-   * Pass $Chat as integer to only edit permissions
+   * @param int|TgUser|TgChat $Chat Pass integer to only edit permissions
    */
   public function ChatEdit(
     int|TgUser|TgChat $Chat,
     int $Permissions = null
   ):bool{
     DebugTrace();
-    $consult = $this->Db->InsertUpdate(Tables::Chats);
-    if(is_int($Chat)):
-      $consult->FieldAdd(Chats::Permission, $Permissions, Types::Int, Update: true);
-    else:
+    $consult = $this->Db->InsertUpdate(Tables::Chats)
+    ->FieldAdd(Chats::Created, time(), Types::Int)
+    ->FieldAdd(Chats::LastSeen, time(), Types::Int, Update: true);
+    if($Chat instanceof TgUser):
       $consult->FieldAdd(Chats::Id, $Chat->Id, Types::Int)
-      ->FieldAdd(Chats::Created, time(), Types::Int)
       ->FieldAdd(Chats::Name, $Chat->Name, Types::Str, Update: true)
       ->FieldAdd(Chats::NameLast, $Chat->NameLast, Types::Str, Update: true)
       ->FieldAdd(Chats::Nick, $Chat->Nick, Types::Str, Update: true)
-      ->FieldAdd(Chats::Language, $Chat->Language, Types::Str, Update: true)
-      ->FieldAdd(Chats::LastSeen, time(), Types::Int, Update: true);
+      ->FieldAdd(Chats::Language, $Chat->Language, Types::Str, Update: true);
+    elseif($Chat instanceof TgChat):
+      $consult->FieldAdd(Chats::Id, $Chat->Id, Types::Int)
+      ->FieldAdd(Chats::Name, $Chat->Name, Types::Str, Update: true)
+      ->FieldAdd(Chats::Nick, $Chat->Nick, Types::Int, Update: true);
+    endif;
+    if($Permissions !== null):
+      if($Permissions === 0):
+        $Permissions = null;
+      endif;
+      $consult->FieldAdd(Chats::Permission, $Permissions, Types::Int, Update: true);
     endif;
     try{
       $consult->Run();
