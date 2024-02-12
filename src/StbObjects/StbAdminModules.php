@@ -8,7 +8,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.01.12.01
+ * @version 2024.02.11.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -18,10 +18,10 @@ abstract class StbAdminModules{
     StbLanguageSys $Lang
   ):bool{
     DebugTrace();
-    $chat = $Db->ChatGet($Webhook->User->Id);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Modules->value) == false):
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return false;
@@ -74,8 +74,8 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       $Lang->Get('Modules', Group: 'Module'),
       Markup: $mk
     );
@@ -126,8 +126,8 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       $Lang->Get('InstallPick', Group: 'Module'),
       Markup: $mk
     );
@@ -156,8 +156,8 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
-        $Webhook->Data->Data->Chat->Id,
-        $Webhook->Data->Data->Id,
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id,
         $Lang->Get('InstallNotFound', null, 'Module'),
         Markup: $mk
       );
@@ -171,8 +171,8 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
-        $Webhook->Data->Data->Chat->Id,
-        $Webhook->Data->Data->Id,
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id,
         $Lang->Get('UninstallNotFound', null, 'Module'),
         Markup: $mk
       );
@@ -214,7 +214,7 @@ abstract class StbAdminModules{
     $date = $Db->Modules($Module);
     $Bot->TextEdit(
       Admin,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Id,
       sprintf(
         $Lang->Get('Module', Group: 'Module'),
         str_replace('ProtocolLive\StbModules\\', '', $Module),
@@ -254,7 +254,7 @@ abstract class StbAdminModules{
     );
     $Bot->MarkupEdit(
       Admin,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Id,
       Markup: $mk
     );
   }

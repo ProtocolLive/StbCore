@@ -25,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.02.08.00
+ * @version 2024.02.11.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -38,7 +38,7 @@ abstract class StbAdmin{
   ):void{
     DebugTrace();
     if($Webhook instanceof TgCallback):
-      $chat = $Webhook->User->Id;
+      $chat = $Webhook->Data->User->Id;
     else:
       $chat = $Webhook->Data->User->Id;
     endif;
@@ -109,8 +109,8 @@ abstract class StbAdmin{
 
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
-        $Webhook->Data->Data->Chat->Id,
-        $Webhook->Data->Data->Id,
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id,
         $msg,
         Markup: $mk
       );
@@ -140,10 +140,10 @@ abstract class StbAdmin{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    $chat = $Db->ChatGet($Webhook->User->Id);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
@@ -157,21 +157,21 @@ abstract class StbAdmin{
       Bot: false
     );
     $Bot->TextSend(
-      $Webhook->User->Id,
+      $Webhook->Data->User->Id,
       $Lang->Get('AdminAdd', Group: 'Admin'),
       Markup: $mk
     );
     try{
       //Somes times, got the error "Bad Request: message can't be deleted for everyone". I don't know why
       $Bot->MessageDelete(
-        $Webhook->Data->Data->Chat->Id,
-        $Webhook->Data->Data->Id
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id
       );
     }catch(TblException){}
     $Db->ListenerAdd(
       TgUsersShared::class,
       __CLASS__,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
   }
 
@@ -183,10 +183,10 @@ abstract class StbAdmin{
     int $Id
   ):void{
     DebugTrace();
-    $chat = $Db->ChatGet($Webhook->User->Id);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
@@ -212,8 +212,8 @@ abstract class StbAdmin{
       )
     );
     $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       $Lang->Get('AdminDel', Group: 'Admin'),
       Markup: $mk
     );
@@ -227,10 +227,10 @@ abstract class StbAdmin{
     int $Id
   ):void{
     DebugTrace();
-    $chat = $Db->ChatGet($Webhook->User->Id);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
@@ -249,7 +249,7 @@ abstract class StbAdmin{
     if($Webhook instanceof TblCmd):
       $chat = $Webhook->Data->User->Id;
     else:
-      $chat = $Webhook->User->Id;
+      $chat = $Webhook->Data->User->Id;
     endif;
     $chat = $Db->ChatGet($chat);
     if($chat === null):
@@ -313,8 +313,8 @@ abstract class StbAdmin{
       );
     else:
       $Bot->TextEdit(
-        $Webhook->Data->Data->Chat->Id,
-        $Webhook->Data->Data->Id,
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id,
         $Lang->Get('AdminMenu', Group: 'Admin'),
         Markup: $mk
       );
@@ -331,10 +331,10 @@ abstract class StbAdmin{
     bool $Grant = false
   ):void{
     DebugTrace();
-    $chat = $Db->ChatGet($Webhook->User->Id);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
@@ -357,10 +357,10 @@ abstract class StbAdmin{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    $chat = $Db->ChatGet($Webhook->User->Id);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
@@ -400,8 +400,8 @@ abstract class StbAdmin{
       self::JumpLineCheck($line, $col);
     endforeach;
     $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       $Lang->Get('Admins', Group: 'Admin'),
       Markup: $mk
     );
@@ -446,7 +446,7 @@ abstract class StbAdmin{
       $chats[0]['count']
     );
     $Bot->TextSend(
-      $Webhook->User->Id,
+      $Webhook->Data->User->Id,
       $msg,
       ParseMode: TgParseMode::Html,
       DisableNotification: true
@@ -463,7 +463,7 @@ abstract class StbAdmin{
       $msg .= $event['count'] . ' - ' . $event[LogTexts::Event->value] . PHP_EOL;
     endwhile;
     $Bot->TextSend(
-      $Webhook->User->Id,
+      $Webhook->Data->User->Id,
       $msg,
       ParseMode: TgParseMode::Html,
       DisableNotification: true
@@ -495,7 +495,7 @@ abstract class StbAdmin{
       $msg .= '-----------------------------' . PHP_EOL;
     endwhile;
     $Bot->TextSend(
-      $Webhook->User->Id,
+      $Webhook->Data->User->Id,
       $msg,
       ParseMode: TgParseMode::Html
     );
@@ -508,9 +508,9 @@ abstract class StbAdmin{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    if($Webhook->User->Id !== Admin):
+    if($Webhook->Data->User->Id !== Admin):
       $Bot->TextSend(
-        $Webhook->User->Id,
+        $Webhook->Data->User->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
       return;
@@ -539,8 +539,8 @@ abstract class StbAdmin{
       $tbl = $Lang->Get('No');
     endif;
     $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       sprintf(
         $Lang->Get('Updates', Group: 'Admin'),
         $stb,

@@ -14,7 +14,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.01.01.01
+ * @version 2024.02.11.00
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -28,15 +28,10 @@ abstract class StbAdminCmd{
      */
     global $Webhook, $Bot, $Lang, $Db;
     DebugTrace();
-    if($Webhook instanceof TgCallback):
-      $temp = $Webhook->User->Id;
-    else:
-      $temp = $Webhook->Data->User->Id;
-    endif;
-    if(get_class($Webhook) === TgText::class):
+    if($Webhook::class === TgText::class):
       $temp = $Db->ChatGet($Webhook->Data->User->Id);
     else:
-      $temp = $Db->ChatGet($Webhook->User->Id);
+      $temp = $Db->ChatGet($Webhook->Data->User->Id);
     endif;
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
@@ -63,8 +58,8 @@ abstract class StbAdminCmd{
     );
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
-        $Webhook->Data->Data->Chat->Id,
-        $Webhook->Data->Data->Id,
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id,
         sprintf(
           $Lang->Get('Command', Group: 'Admin'),
           $Cmd,
@@ -95,7 +90,7 @@ abstract class StbAdminCmd{
      */
     global $Webhook, $Db, $Bot;
     DebugTrace();
-    $temp = $Db->ChatGet($Webhook->User->Id);
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
@@ -119,8 +114,8 @@ abstract class StbAdminCmd{
       $Db->CallBackHashSet(self::Callback_CmdDelOk(...), $Cmd)
     );
     $Bot->MarkupEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       Markup: $mk
     );
   }
@@ -134,7 +129,7 @@ abstract class StbAdminCmd{
      * @var StbDatabase $Db
      */
     global $Webhook, $Bot, $Db;
-    $temp = $Db->ChatGet($Webhook->User->Id);
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
@@ -154,7 +149,7 @@ abstract class StbAdminCmd{
      */
     global $Webhook, $Bot, $Db;
     DebugTrace();
-    $temp = $Db->ChatGet($Webhook->User->Id);
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
@@ -188,26 +183,26 @@ abstract class StbAdminCmd{
      */
     global $Webhook, $Db, $Bot, $Lang;
     DebugTrace();
-    $temp = $Db->ChatGet($Webhook->User->Id);
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $Db->ListenerAdd(
       TgText::class,
       StbAdmin::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     $Db->VariableSet(
       StbDbVariables::Action->name,
       StbDbVariables::CmdEdit->name,
       StbAdmin::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     $Db->VariableSet(
       StbDbVariables::CmdName->name,
       $Cmd,
       StbAdmin::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     $mk = new TblMarkupInline;
     $mk->ButtonCallback(
@@ -217,8 +212,8 @@ abstract class StbAdminCmd{
       $Db->CallBackHashSet(self::Callback_CmdEditCancel(...), $Cmd)
     );
     $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       $Lang->Get('CommandDescription', Group: 'Admin'),
       Markup: $mk
     );
@@ -237,17 +232,17 @@ abstract class StbAdminCmd{
       StbDbVariables::Action->name,
       null,
       StbAdmin::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     $Db->VariableDel(
       StbDbVariables::CmdName->name,
       null,
       StbAdmin::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     $Db->ListenerDel(
       TgText::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     self::Callback_Cmd($Cmd);
   }
@@ -261,24 +256,24 @@ abstract class StbAdminCmd{
      */
     global $Db, $Webhook, $Bot, $Lang;
     DebugTrace();
-    $temp = $Db->ChatGet($Webhook->User->Id);
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
     $Db->ListenerAdd(
       TgText::class,
       StbAdmin::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     $Db->VariableSet(
       StbDbVariables::Action,
       StbDbVariables::CmdAddName->name,
       StbAdmin::class,
-      $Webhook->User->Id
+      $Webhook->Data->User->Id
     );
     $Bot->TextEdit(
-      $Webhook->Data->Data->Chat->Id,
-      $Webhook->Data->Data->Id,
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       $Lang->Get('CommandName', Group: 'Admin')
     );
   }
@@ -293,7 +288,7 @@ abstract class StbAdminCmd{
      */
     global $Webhook, $Bot, $Db;
     DebugTrace();
-    $temp = $Db->ChatGet($Webhook->User->Id);
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
@@ -334,14 +329,14 @@ abstract class StbAdminCmd{
     global $Db, $Webhook, $Bot, $Lang;
     DebugTrace();
     if($Webhook instanceof TgCallback):
-      $temp = $Webhook->User->Id;
+      $temp = $Webhook->Data->User->Id;
     else:
       $temp = $Webhook->Data->User->Id;
     endif;
     if(get_class($Webhook) === TgText::class):
       $temp = $Db->ChatGet($Webhook->Data->User->Id);
     else:
-      $temp = $Db->ChatGet($Webhook->User->Id);
+      $temp = $Db->ChatGet($Webhook->Data->User->Id);
     endif;
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
@@ -393,8 +388,8 @@ abstract class StbAdminCmd{
     endforeach;
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
-        $Webhook->Data->Data->Chat->Id,
-        $Webhook->Data->Data->Id,
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id,
         $Lang->Get('CommandsButton', Group: 'Admin'),
         Markup: $mk
       );
