@@ -37,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.11.00
+ * @version 2024.02.11.01
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -56,8 +56,10 @@ abstract class StbBotTools{
     if($Webhook === null):
       return;
     endif;
-    if($Webhook::class === TblCmd::class)://prevent TblCmdEdited
+    if(empty($Webhook->Data->User) === false): //anon reaction
       $Db->ChatEdit($Webhook->Data->User);
+    endif;
+    if($Webhook::class === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd($Bot, $Db, $Webhook, $Lang);
       return;
     endif;
@@ -69,11 +71,9 @@ abstract class StbBotTools{
     $id = $Webhook->Data->User->Id ?? $Webhook->User->Id ?? null;
     $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
     if($module !== null):
-      $Db->ChatEdit($Webhook->User ?? $Webhook->Data->User);
       call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;
-    $Db->ChatEdit($Webhook->Data->User);
     if($Webhook instanceof TgReactionUpdate):
       return;
     endif;
@@ -348,12 +348,11 @@ abstract class StbBotTools{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    $Db->ChatEdit($Webhook->User);
-    $Lang->LanguageSet($Webhook->User->Language);
+    $Lang->LanguageSet($Webhook->Data->User->Language);
     $return = $Db->CallBackHashRun($Bot, $Webhook, $Db, $Lang);
     if($return === false):
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         $Lang->Get('ButtonWithoutAction', Group: 'Errors')
       );
     endif;
