@@ -13,7 +13,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.14.02
+ * @version 2024.02.14.03
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -303,7 +303,7 @@ abstract class StbAdminModules{
         endforeach;
         foreach($Listeners as $listener):
           if(in_array(TgEventInterface::class, class_implements($listener)) === false):
-            throw new StbException(StbError::ListenerInvalid, 'Listener must implement TgEventInterface');
+            throw new StbException(StbError::ListenerInvalid, 'Informed listener ' . $listener . ' not implement TgEventInterface');
           endif;
           $db->ListenerAdd($listener, $Module);
         endforeach;

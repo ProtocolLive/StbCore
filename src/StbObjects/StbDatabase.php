@@ -36,7 +36,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.02.14.01
+ * @version 2024.02.14.02
  */
 final class StbDatabase{
   public function __construct(
@@ -235,7 +235,7 @@ final class StbDatabase{
       $Chat = null;
     endif;
     if(in_array(TgEventInterface::class, class_implements($Listener)) === false):
-      throw new StbException(StbError::ListenerInvalid, 'Listener must implement TgEventInterface');
+      throw new StbException(StbError::ListenerInvalid, 'Informed listener ' . $Listener . ' not implement TgEventInterface');
     endif;
     if(is_object($Listener)):
       $Listener = $Listener::class;
