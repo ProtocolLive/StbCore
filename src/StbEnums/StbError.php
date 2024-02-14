@@ -8,4 +8,5 @@ namespace ProtocolLive\SimpleTelegramBot\StbEnums;
  * @version 2024.02.14.00
  */
 enum StbError{
+  case ListenerInvalid;
 }

@@ -23,6 +23,7 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   Variables
 };
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
+use ProtocolLive\SimpleTelegramBot\StbEnums\StbError;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
@@ -35,7 +36,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.02.10.00
+ * @version 2024.02.14.00
  */
 final class StbDatabase{
   public function __construct(
@@ -220,6 +221,7 @@ final class StbDatabase{
 
   /**
    * @param int $User User ID to associate the listener. Not allowed in checkout and InlineQuery listeners
+   * @throws StbException|PDOException
    */
   public function ListenerAdd(
     TgEventInterface|string $Listener,
@@ -232,6 +234,9 @@ final class StbDatabase{
     endif;
     if($this->NoUserListener($Listener)):
       $Chat = null;
+    endif;
+    if(in_array(TgEventInterface::class, class_implements($Listener)) === false):
+      throw new StbException(StbError::ListenerInvalid, 'Listener must implement TgEventInterface');
     endif;
     if(is_object($Listener)):
       $Listener = $Listener::class;
