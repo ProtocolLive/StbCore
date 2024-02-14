@@ -5,12 +5,15 @@
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
 use ProtocolLive\PhpLiveDb\PhpLiveDb;
+use ProtocolLive\SimpleTelegramBot\StbEnums\StbError;
+use ProtocolLive\SimpleTelegramBot\StbParams\StbGlobalModuleCmds;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblMarkupInline;
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
+use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.14.01
+ * @version 2024.02.14.02
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -275,10 +278,13 @@ abstract class StbAdminModules{
     call_user_func($Module . '::Uninstall', $Bot, $Webhook, $Db, $Lang);
   }
 
+  /**
+   * @param TgEventInterface[] $Listeners
+   */
   public static function GlobalModuleInstall(
     string $Module,
-    array $Commands = [],
-    array $Listeners = []
+    StbGlobalModuleCmds $Commands = null,
+    array $Listeners = null
   ):bool{
     $Bots = glob(dirname(__DIR__, 5) . '/Bot-*', GLOB_ONLYDIR);
     foreach($Bots as $bot):
@@ -292,19 +298,23 @@ abstract class StbAdminModules{
         $db = new StbDatabase(new PhpLiveDb($DbHost[1], $DbUser[1], $DbPwd[1], $DbName[1]));
         $db->GetCustom()->beginTransaction();
         $db->ModuleInstall($Module);
-        foreach($Commands as $cmd):
-          $db->CommandAdd($cmd[0], $Module);
+        foreach($Commands->Get() as $cmd):
+          $db->CommandAdd($cmd->Name, $Module);
         endforeach;
         foreach($Listeners as $listener):
-          $db->ListenerAdd($listener[0], $Module);
+          if(in_array(TgEventInterface::class, class_implements($listener)) === false):
+            throw new StbException(StbError::ListenerInvalid, 'Listener must implement TgEventInterface');
+          endif;
+          $db->ListenerAdd($listener, $Module);
         endforeach;
         $db->GetCustom()->commit();
+        return true;
       }catch(Exception $e){
         $db->GetCustom()->rollBack();
         return false;
       }
     endforeach;
-    return true;
+    return false;
   }
 
   public static function GlobalModuleUninstall(
