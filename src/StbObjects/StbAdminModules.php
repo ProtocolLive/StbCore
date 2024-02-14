@@ -10,7 +10,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.13.00
+ * @version 2024.02.13.01
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -299,11 +299,11 @@ abstract class StbAdminModules{
           $db->ListenerAdd($listener[0], $Module);
         endforeach;
         $db->GetCustom()->commit();
-        return true;
       }catch(Exception $e){
         $db->GetCustom()->rollBack();
         return false;
       }
     endforeach;
+    return true;
   }
 }
