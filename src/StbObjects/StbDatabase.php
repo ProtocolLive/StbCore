@@ -36,7 +36,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.02.14.00
+ * @version 2024.02.14.01
  */
 final class StbDatabase{
   public function __construct(
@@ -157,17 +157,19 @@ final class StbDatabase{
   public function CommandAdd(
     string $Command,
     string $Module
-  ):bool{
+  ):void{
     DebugTrace();
     $consult = $this->Db->Insert(Tables::Commands)
     ->FieldAdd(Commands::Name, $Command, Types::Str)
     ->FieldAdd(Commands::Module, $Module, Types::Str);
     try{
       $consult->Run();
-      return true;
     }catch(PDOException $e){
-      error_log($e);
-      return false;
+      if(str_contains($e->getMessage(), 'REFERENCES `modules` (`module`)')):
+        throw new StbException(StbError::ModuleNotFound, 'Module not found');
+      else:
+        throw $e;
+      endif;
     }
   }
 
@@ -227,11 +229,8 @@ final class StbDatabase{
     TgEventInterface|string $Listener,
     string $Class,
     int $Chat = null
-  ):bool{
+  ):void{
     DebugTrace();
-    if($Chat === 0):
-      return false;
-    endif;
     if($this->NoUserListener($Listener)):
       $Chat = null;
     endif;
@@ -247,10 +246,15 @@ final class StbDatabase{
     ->FieldAdd(Listeners::Module, $Class, Types::Str, Update: true);
     try{
       $consult->Run();
-      return true;
     }catch(PDOException $e){
-      error_log($e);
-      return false;
+      $temp = $e->getMessage();
+      if(str_contains($temp, 'REFERENCES `modules` (`module`)')):
+        throw new StbException(StbError::ModuleNotFound, 'Module not found');
+      elseif(str_contains($temp, 'REFERENCES `chats` (`chat_id`)')):
+        throw new StbException(StbError::ChatNotFound, 'Chat not found');
+      else:
+        throw $e;
+      endif;
     }
   }
 
