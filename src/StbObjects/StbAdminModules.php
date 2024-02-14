@@ -10,7 +10,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.14.00
+ * @version 2024.02.14.01
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -284,10 +284,10 @@ abstract class StbAdminModules{
     foreach($Bots as $bot):
       $config = $bot . '/config.php';
       $config = file_get_contents($config);
-      preg_match('/const DbHost = \'(.*)\';/', $config, $DbHost);
-      preg_match('/const DbUser = \'(.*)\';/', $config, $DbUser);
-      preg_match('/const DbPwd = \'(.*)\';/', $config, $DbPwd);
-      preg_match('/const DbName = \'(.*)\';/', $config, $DbName);
+      preg_match('/const DbHost {0,}= {0,}["\'](.*)["\'];/', $config, $DbHost);
+      preg_match('/const DbUser {0,}= {0,}["\'](.*)["\'];/', $config, $DbUser);
+      preg_match('/const DbPwd {0,}= {0,}["\'](.*)["\'];/', $config, $DbPwd);
+      preg_match('/const DbName {0,}= {0,}["\'](.*)["\'];/', $config, $DbName);
       try{
         $db = new StbDatabase(new PhpLiveDb($DbHost[1], $DbUser[1], $DbPwd[1], $DbName[1]));
         $db->GetCustom()->beginTransaction();
