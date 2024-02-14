@@ -10,7 +10,7 @@ use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.13.01
+ * @version 2024.02.14.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -275,7 +275,7 @@ abstract class StbAdminModules{
     call_user_func($Module . '::Uninstall', $Bot, $Webhook, $Db, $Lang);
   }
 
-  public static function InstallGlobalModule(
+  public static function GlobalModuleInstall(
     string $Module,
     array $Commands = [],
     array $Listeners = []
@@ -301,6 +301,27 @@ abstract class StbAdminModules{
         $db->GetCustom()->commit();
       }catch(Exception $e){
         $db->GetCustom()->rollBack();
+        return false;
+      }
+    endforeach;
+    return true;
+  }
+
+  public static function GlobalModuleUninstall(
+    string $Module
+  ):bool{
+    $Bots = glob(dirname(__DIR__, 5) . '/Bot-*', GLOB_ONLYDIR);
+    foreach($Bots as $bot):
+      $config = $bot . '/config.php';
+      $config = file_get_contents($config);
+      preg_match('/const DbHost = \'(.*)\';/', $config, $DbHost);
+      preg_match('/const DbUser = \'(.*)\';/', $config, $DbUser);
+      preg_match('/const DbPwd = \'(.*)\';/', $config, $DbPwd);
+      preg_match('/const DbName = \'(.*)\';/', $config, $DbName);
+      try{
+        $db = new StbDatabase(new PhpLiveDb($DbHost[1], $DbUser[1], $DbPwd[1], $DbName[1]));
+        $db->ModuleUninstall($Module);
+      }catch(Exception $e){
         return false;
       }
     endforeach;
