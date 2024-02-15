@@ -29,6 +29,8 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgChat,
+  TgGroupStatus,
+  TgGroupStatusMy,
   TgLimits,
   TgReactionUpdate,
   TgUser
@@ -37,7 +39,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.14.00
+ * @version 2024.02.15.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -67,12 +69,14 @@ abstract class StbBotTools{
       self::Update_Callback($Bot, $Webhook, $Db, $Lang);
       return;
     endif;
-    $module = $Db->ListenerGet($Webhook, $Webhook->Data->User->Id) ?? $Db->ListenerGet($Webhook);
+    $module = $Db->ListenerGet($Webhook, $Webhook->Data->User->Id ?? null) ?? $Db->ListenerGet($Webhook);
     if($module !== null
     and call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang)):
       return;
     endif;
-    if($Webhook instanceof TgReactionUpdate):
+    if($Webhook instanceof TgReactionUpdate
+    or $Webhook instanceof TgGroupStatus
+    or $Webhook instanceof TgGroupStatusMy):
       return;
     endif;
     self::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text ?? $Webhook::class);
