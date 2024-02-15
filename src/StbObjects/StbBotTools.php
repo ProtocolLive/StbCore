@@ -37,7 +37,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.11.01
+ * @version 2024.02.14.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -67,11 +67,9 @@ abstract class StbBotTools{
       self::Update_Callback($Bot, $Webhook, $Db, $Lang);
       return;
     endif;
-    //Some updates don't have TgMessageData
-    $id = $Webhook->Data->User->Id ?? $Webhook->User->Id ?? null;
-    $module = $Db->ListenerGet($Webhook, $id) ?? $Db->ListenerGet($Webhook);
-    if($module !== null):
-      call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang);
+    $module = $Db->ListenerGet($Webhook, $Webhook->Data->User->Id) ?? $Db->ListenerGet($Webhook);
+    if($module !== null
+    and call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang)):
       return;
     endif;
     if($Webhook instanceof TgReactionUpdate):

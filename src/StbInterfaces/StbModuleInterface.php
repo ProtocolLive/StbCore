@@ -17,7 +17,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.01.12.01
+ * @version 2024.02.14.00
  */
 interface StbModuleInterface{
   public static function Command(
@@ -40,12 +40,15 @@ interface StbModuleInterface{
     StbLanguageSys $Lang
   ):void;
 
+  /**
+   * @return bool If the listener are satisfied
+   */
   public static function Listener(
     TelegramBotLibrary $Bot,
     TgEventInterface $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
-  ):void;
+  ):bool;
 
   public static function Plugin_Buttons(
     StbDatabase $Db,
