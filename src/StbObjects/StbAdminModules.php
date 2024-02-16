@@ -13,7 +13,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.14.03
+ * @version 2024.02.16.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -66,10 +66,12 @@ abstract class StbAdminModules{
       if($Db->ModuleRestricted($mod['module'])):
         continue;
       endif;
+      $temp = explode('\\',  $mod['module']);
+      $temp = array_pop($temp);
       $mk->ButtonCallback(
         $line,
         $col++,
-        str_replace('ProtocolLive\StbModules\\', '', $mod['module']),
+        $temp,
         $Db->CallBackHashSet(self::Callback_Mod(...), $mod['module'])
       );
       if($col === 4):
@@ -217,12 +219,14 @@ abstract class StbAdminModules{
       call_user_func($Module . '::Plugin_Buttons', $Db, $mk);
     endif;
     $date = $Db->Modules($Module);
+    $temp = explode('\\', $Module);
+    $temp = array_pop($temp);
     $Bot->TextEdit(
       Admin,
       $Webhook->Message->Data->Id,
       sprintf(
         $Lang->Get('Module', Group: 'Module'),
-        str_replace('ProtocolLive\StbModules\\', '', $Module),
+        $temp,
         date(
           $Lang->Get('DateTime'),
           $date[0]['created']
