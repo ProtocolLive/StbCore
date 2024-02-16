@@ -22,6 +22,7 @@ use ProtocolLive\TelegramBotLibrary\TblObjects\{
 };
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgEnums\{
+  TgChatType,
   TgParseMode,
   TgUpdateType
 };
@@ -39,7 +40,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.15.00
+ * @version 2024.02.16.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -58,7 +59,8 @@ abstract class StbBotTools{
     if($Webhook === null):
       return;
     endif;
-    if(empty($Webhook->Data->User) === false): //anon reaction
+    if(empty($Webhook->Data->User) === false //anon reaction
+    or ($Webhook->Data->Chat->Type ?? null) === TgChatType::Private):
       $Db->ChatEdit($Webhook->Data->User);
     endif;
     if($Webhook::class === TblCmd::class)://prevent TblCmdEdited
@@ -74,7 +76,8 @@ abstract class StbBotTools{
     and call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang)):
       return;
     endif;
-    if($Webhook instanceof TgReactionUpdate
+    if(($Webhook->Data->Chat->Type ?? null) !== TgChatType::Private
+    or $Webhook instanceof TgReactionUpdate
     or $Webhook instanceof TgGroupStatus
     or $Webhook instanceof TgGroupStatusMy):
       return;
