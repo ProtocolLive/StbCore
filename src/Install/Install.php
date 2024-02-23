@@ -4,7 +4,7 @@
 
 namespace ProtocolLive\SimpleTelegramBot\Install;
 use DateTimeZone;
-use ProtocolLive\PhpLiveDb\{
+use ProtocolLive\PhpLiveDb\Enums\{
   Drivers,
   Formats,
   PhpLiveDb,
@@ -29,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
 };
 
 /**
- * @version 2024.02.09.00
+ * @version 2024.02.23.00
  */
 abstract class Install{
   private static function CopyRecursive(
