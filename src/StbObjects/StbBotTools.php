@@ -6,7 +6,7 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ConsoleColorText;
 use Exception;
 use HttpCode;
-use ProtocolLive\PhpLiveDb\Types;
+use ProtocolLive\PhpLiveDb\Enums\Types;
 use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogUpdates;
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\SimpleTelegramBot\StbObjects\{
@@ -40,7 +40,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.16.00
+ * @version 2024.02.23.00
  */
 abstract class StbBotTools{
   public static function Action_(
