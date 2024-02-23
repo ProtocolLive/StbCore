@@ -5,13 +5,13 @@
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
 use PDOException;
-use ProtocolLive\PhpLiveDb\{
+use ProtocolLive\PhpLiveDb\Enums\{
   AndOr,
   Operators,
   Parenthesis,
-  PhpLiveDb,
   Types
 };
+use ProtocolLive\PhpLiveDb\PhpLiveDb;
 use ProtocolLive\SimpleTelegramBot\Datas\ChatData;
 use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   CallbackHash,
@@ -36,7 +36,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.02.14.02
+ * @version 2024.02.23.00
  */
 final class StbDatabase{
   public function __construct(
