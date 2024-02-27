@@ -14,19 +14,16 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.02.11.00
+ * @version 2024.02.27.00
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
+    TelegramBotLibrary $Bot,
+    TgCallback|TgText $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Cmd
   ):void{
-    /**
-     * @var TgCallback|TgText $Webhook
-     * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
-     * @var StbDatabase $Db
-     */
-    global $Webhook, $Bot, $Lang, $Db;
     DebugTrace();
     if($Webhook::class === TgText::class):
       $temp = $Db->ChatGet($Webhook->Data->User->Id);
@@ -81,14 +78,11 @@ abstract class StbAdminCmd{
   }
 
   public static function Callback_CmdDel(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
     string $Cmd
   ):void{
-    /**
-     * @var TgCallback $Webhook
-     * @var StbDatabase $Db
-     * @var TelegramBotLibrary $Bot
-     */
-    global $Webhook, $Db, $Bot;
     DebugTrace();
     $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
@@ -121,14 +115,12 @@ abstract class StbAdminCmd{
   }
 
   public static function Callback_CmdDelOk(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Cmd
   ){
-    /**
-     * @var TgCallback $Webhook
-     * @var TelegramBotLibrary $Bot
-     * @var StbDatabase $Db
-     */
-    global $Webhook, $Bot, $Db;
     $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
@@ -137,17 +129,16 @@ abstract class StbAdminCmd{
     $cmds->Del($Cmd);
     $Bot->MyCmdSet($cmds);
     $Db->CommandDel($Cmd);
-    self::Callback_Commands();
+    self::Callback_Commands($Bot, $Webhook, $Db, $Lang);
   }
 
   public static function Callback_CmdDown(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Cmd
   ):void{
-    /**
-     * @var TgCallback $Webhook
-     * @var TelegramBotLibrary $Bot
-     */
-    global $Webhook, $Bot, $Db;
     DebugTrace();
     $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
@@ -169,19 +160,16 @@ abstract class StbAdminCmd{
       endif;
     endforeach;
     $Bot->MyCmdSet($CmdsNew);
-    self::Callback_Commands();
+    self::Callback_Commands($Bot, $Webhook, $Db, $Lang);
   }
 
   public static function Callback_CmdEdit(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Cmd
   ){
-    /**
-     * @var TgCallback $Webhook
-     * @var StbDatabase $Db
-     * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
-     */
-    global $Webhook, $Db, $Bot, $Lang;
     DebugTrace();
     $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
@@ -220,13 +208,12 @@ abstract class StbAdminCmd{
   }
 
   public static function Callback_CmdEditCancel(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Cmd
   ):void{
-    /**
-     * @var StbDatabase $Db
-     * @var TgCallback $Webhook
-     */
-    global $Db, $Webhook;
     DebugTrace();
     $Db->VariableDel(
       StbDbVariables::Action->name,
@@ -244,17 +231,15 @@ abstract class StbAdminCmd{
       TgText::class,
       $Webhook->Data->User->Id
     );
-    self::Callback_Cmd($Cmd);
+    self::Callback_Cmd($Bot, $Webhook, $Db, $Lang, $Cmd);
   }
 
-  public static function Callback_CmdNew():void{
-    /**
-     * @var StbDatabase $Db
-     * @var TgCallback $Webhook
-     * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
-     */
-    global $Db, $Webhook, $Bot, $Lang;
+  public static function Callback_CmdNew(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
     $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
@@ -279,14 +264,12 @@ abstract class StbAdminCmd{
   }
 
   public static function Callback_CmdUp(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Cmd
   ):void{
-    /**
-     * @var TgCallback $Webhook
-     * @var TelegramBotLibrary $Bot
-     * @var StbDatabase $Db
-     */
-    global $Webhook, $Bot, $Db;
     DebugTrace();
     $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
@@ -316,24 +299,22 @@ abstract class StbAdminCmd{
       $first = false;
     endforeach;
     $Bot->MyCmdSet($CmdsNew);
-    self::Callback_Commands();
+    self::Callback_Commands($Bot, $Webhook, $Db, $Lang);
   }
 
-  public static function Callback_Commands():void{
-    /**
-     * @var StbDatabase $Db
-     * @var TgCallback|TgText $Webhook
-     * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
-     */
-    global $Db, $Webhook, $Bot, $Lang;
+  public static function Callback_Commands(
+    TelegramBotLibrary $Bot,
+    TgCallback|TgText $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
     if($Webhook instanceof TgCallback):
       $temp = $Webhook->Data->User->Id;
     else:
       $temp = $Webhook->Data->User->Id;
     endif;
-    if(get_class($Webhook) === TgText::class):
+    if($Webhook::class === TgText::class):
       $temp = $Db->ChatGet($Webhook->Data->User->Id);
     else:
       $temp = $Db->ChatGet($Webhook->Data->User->Id);
@@ -402,13 +383,12 @@ abstract class StbAdminCmd{
     endif;
   }
 
-  public static function CmdAddDescription():void{
-    /**
-     * @var TgText $Webhook
-     * @var StbDatabase $Db
-     * @var TelegramBotLibrary $Bot
-     */
-    global $Webhook, $Db, $Bot;
+  public static function CmdAddDescription(
+    TelegramBotLibrary $Bot,
+    TgText $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
     $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
@@ -438,17 +418,15 @@ abstract class StbAdminCmd{
       TgText::class,
       $Webhook->Data->User->Id
     );
-    StbAdminCmd::Callback_Commands();
+    StbAdminCmd::Callback_Commands($Bot, $Webhook, $Db, $Lang);
   }
 
-  public static function CmdAddName():void{
-    /**
-     * @var TgText $Webhook
-     * @var StbDatabase $Db
-     * @var TelegramBotLibrary $Bot
-     * @var StbLanguageSys $Lang
-     */
-    global $Webhook, $Db, $Bot, $Lang;
+  public static function CmdAddName(
+    TelegramBotLibrary $Bot,
+    TgText $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
     $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
@@ -472,13 +450,12 @@ abstract class StbAdminCmd{
     );
   }
 
-  public static function CmdEdit():void{
-    /**
-     * @var TgText $Webhook
-     * @var StbDatabase $Db
-     * @var TelegramBotLibrary $Bot
-     */
-    global $Webhook, $Db, $Bot;
+  public static function CmdEdit(
+    TelegramBotLibrary $Bot,
+    TgText $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void{
     DebugTrace();
     $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
@@ -486,7 +463,7 @@ abstract class StbAdminCmd{
     endif;
     $temp = $Db->VariableGetValue(
       StbDbVariables::CmdName,
-      __CLASS__,
+      StbAdmin::class,
       $Webhook->Data->User->Id
     );
     $cmds = $Bot->MyCmdGet();
@@ -508,6 +485,6 @@ abstract class StbAdminCmd{
       TgText::class,
       $Webhook->Data->User->Id
     );
-    StbAdminCmd::Callback_Cmd($temp);
+    StbAdminCmd::Callback_Cmd($Bot, $Webhook, $Db, $Lang, $temp);
   }
 }

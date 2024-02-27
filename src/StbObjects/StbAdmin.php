@@ -25,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.02.11.00
+ * @version 2024.02.27.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -609,7 +609,7 @@ abstract class StbAdmin{
     DebugTrace();
     match(get_class($Webhook)){
       TgUsersShared::class => self::Listener_UserShared($Bot, $Webhook, $Db, $Lang),
-      TgText::class => self::Listener_Text($Webhook, $Db)
+      TgText::class => self::Listener_Text($Bot, $Webhook, $Db, $Lang)
     };
   }
 
@@ -638,8 +638,10 @@ abstract class StbAdmin{
   }
 
   private static function Listener_Text(
+    TelegramBotLibrary $Bot,
     TgText $Webhook,
-    StbDatabase $Db
+    StbDatabase $Db,
+    StbLanguageSys $Lang
   ):void{
     DebugTrace();
     $temp = $Db->VariableGetValue(
@@ -650,11 +652,11 @@ abstract class StbAdmin{
     if($temp === null):
       return;
     elseif($temp === StbDbVariables::CmdAddName->name):
-      StbAdminCmd::CmdAddName();
+      StbAdminCmd::CmdAddName($Bot, $Webhook, $Db, $Lang);
     elseif($temp === StbDbVariables::CmdAddDescription->name):
-      StbAdminCmd::CmdAddDescription();
+      StbAdminCmd::CmdAddDescription($Bot, $Webhook, $Db, $Lang);
     elseif($temp === StbDbVariables::CmdEdit->name):
-      StbAdminCmd::CmdEdit();
+      StbAdminCmd::CmdEdit($Bot, $Webhook, $Db, $Lang);
     endif;
   }
 }
