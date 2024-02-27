@@ -8,7 +8,7 @@ da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\TextCmds\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\TextCmds\pt-br\index.htm
 a6bd1dbe6c6fe7249552f794d0b78ba5618e0188  Install\DirBot\TextCmds\pt-br\start.txt
 673be2874cd1daaf48768fe60ce464d7254e9caa  Install\DirBot\TextCmds\pt-br\unknown.txt
-e924e182e9057c0bf35f6fd68279f0a83f1b8aab  Install\DirBot\config.txt
+0727c0bf9ee20887482a9a44ddd0daae13f91524  Install\DirBot\config.txt
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\index.htm
 dd6e06385fb2c817286e001635bd4dac676d5b3e  Install\DirBot\index.php
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\logs\index.htm
