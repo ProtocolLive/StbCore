@@ -40,7 +40,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.02.23.00
+ * @version 2024.03.08.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -76,7 +76,7 @@ abstract class StbBotTools{
     and call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang)):
       return;
     endif;
-    if(($Webhook->Data->Chat->Type ?? null) !== TgChatType::Private
+    if($Webhook->Data->Chat instanceof TgChat
     or $Webhook instanceof TgReactionUpdate
     or $Webhook instanceof TgGroupStatus
     or $Webhook instanceof TgGroupStatusMy):
