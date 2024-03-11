@@ -25,7 +25,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.02.27.00
+ * @version 2024.03.11.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -607,7 +607,7 @@ abstract class StbAdmin{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    match(get_class($Webhook)){
+    match($Webhook::class){
       TgUsersShared::class => self::Listener_UserShared($Bot, $Webhook, $Db, $Lang),
       TgText::class => self::Listener_Text($Bot, $Webhook, $Db, $Lang)
     };
