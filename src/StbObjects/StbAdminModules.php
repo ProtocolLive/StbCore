@@ -13,7 +13,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.16.00
+ * @version 2024.03.11.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -313,7 +313,7 @@ abstract class StbAdminModules{
         endforeach;
         $db->GetCustom()->commit();
         return true;
-      }catch(Exception $e){
+      }catch(Exception){
         $db->GetCustom()->rollBack();
         return false;
       }
@@ -335,7 +335,7 @@ abstract class StbAdminModules{
       try{
         $db = new StbDatabase(new PhpLiveDb($DbHost[1], $DbUser[1], $DbPwd[1], $DbName[1]));
         $db->ModuleUninstall($Module);
-      }catch(Exception $e){
+      }catch(Exception){
         return false;
       }
     endforeach;
