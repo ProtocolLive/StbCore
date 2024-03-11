@@ -36,11 +36,11 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.02.23.00
+ * @version 2024.03.11.00
  */
-final class StbDatabase{
+final readonly class StbDatabase{
   public function __construct(
-    private readonly PhpLiveDb $Db
+    private PhpLiveDb $Db
   ){
     DebugTrace();
   }
