@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2024.03.29.00
+//2024.03.29.01
 
 use ProtocolLive\PhpLiveDb\Enums\Drivers;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblLog;
@@ -71,7 +71,7 @@ const ForwardDontknow = Admin;
 
 /**
  * Database type
- * Type: ProtocolLive\PhpLiveDb\Drivers
+ * Type: ProtocolLive\PhpLiveDb\Enums\Drivers
  */
 const DbType = ##DBTYPE##;
 /**
