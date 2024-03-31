@@ -36,6 +36,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgInvoiceCheckout,
   TgInvoiceDone,
   TgLimits,
+  TgMessageDeleted,
   TgReactionUpdate,
   TgUser
 };
@@ -43,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.03.31.01
+ * @version 2024.03.31.02
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -86,6 +87,7 @@ abstract class StbBotTools{
     or $Webhook instanceof TgInvoiceCheckout
     or $Webhook instanceof TgInvoiceDone
     or $Webhook instanceof TgBusinessConnection
+    or $Webhook instanceof TgMessageDeleted
     or $Webhook->Data->BusinessConnection !== null):
       return;
     endif;
