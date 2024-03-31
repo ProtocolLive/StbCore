@@ -28,6 +28,7 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\{
 };
 use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
+  TgBusinessConnection,
   TgCallback,
   TgChat,
   TgGroupStatus,
@@ -42,7 +43,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.03.16.00
+ * @version 2024.03.31.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -83,7 +84,8 @@ abstract class StbBotTools{
     or $Webhook instanceof TgGroupStatus
     or $Webhook instanceof TgGroupStatusMy
     or $Webhook instanceof TgInvoiceCheckout
-    or $Webhook instanceof TgInvoiceDone):
+    or $Webhook instanceof TgInvoiceDone
+    or $Webhook instanceof TgBusinessConnection):
       return;
     endif;
     self::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text ?? $Webhook::class);
