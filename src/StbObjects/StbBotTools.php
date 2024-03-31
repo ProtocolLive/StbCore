@@ -43,7 +43,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.03.31.00
+ * @version 2024.03.31.01
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -85,7 +85,8 @@ abstract class StbBotTools{
     or $Webhook instanceof TgGroupStatusMy
     or $Webhook instanceof TgInvoiceCheckout
     or $Webhook instanceof TgInvoiceDone
-    or $Webhook instanceof TgBusinessConnection):
+    or $Webhook instanceof TgBusinessConnection
+    or $Webhook->Data->BusinessConnection !== null):
       return;
     endif;
     self::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text ?? $Webhook::class);
