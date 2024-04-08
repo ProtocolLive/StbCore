@@ -44,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.03.31.02
+ * @version 2024.04.08.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -92,7 +92,8 @@ abstract class StbBotTools{
       return;
     endif;
     self::SendUserCmd($Bot, $Webhook, $Db, 'dontknow', $Webhook->Text ?? $Webhook::class);
-    if(ForwardDontknow !== null):
+    if(ForwardDontknow !== null
+    and $Webhook->Data->User->Id !== ForwardDontknow):
       $Bot->MessageForward(
         $Webhook->Data->Chat->Id,
         $Webhook->Data->Id,
