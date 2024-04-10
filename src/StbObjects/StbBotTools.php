@@ -44,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.04.08.00
+ * @version 2024.04.09.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -155,7 +155,7 @@ abstract class StbBotTools{
     $Webhook = new TblWebhook($BotData);
     try{
       $Webhook->Set(
-        ($_GET['server'] ?? $_SERVER['SERVER_NAME']) . $_SERVER['SCRIPT_NAME'],
+        ($_SERVER['REQUEST_SCHEME'] ?? 'http') . '://' . ($_GET['server'] ?? $_SERVER['SERVER_NAME']) . $_SERVER['SCRIPT_NAME'],
         Updates: TgUpdateType::cases(),
         TokenWebhook: $BotData->TokenWebhook
       );
