@@ -9,7 +9,10 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   LogTexts
 };
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
-use ProtocolLive\SimpleTelegramBot\StbEnums\StbDbAdminPerm;
+use ProtocolLive\SimpleTelegramBot\StbEnums\{
+  StbDbAdminPerm,
+  StbDbVariables
+};
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
   TblException,
@@ -26,7 +29,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.04.11.00
+ * @version 2024.04.11.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
