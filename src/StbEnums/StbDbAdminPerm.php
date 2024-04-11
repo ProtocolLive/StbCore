@@ -1,10 +1,12 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.01.21.00
 
-namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+namespace ProtocolLive\SimpleTelegramBot\StbEnums;
 
+/**
+ * @version 2023.04.11.00
+ */
 enum StbDbAdminPerm:int{
   case All = 31;
   case None = 0;

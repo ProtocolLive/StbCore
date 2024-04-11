@@ -23,13 +23,11 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   Variables
 };
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
-use ProtocolLive\SimpleTelegramBot\StbObjects\{
-  StbAdmin,
-  StbDbAdminPerm
-};
+use ProtocolLive\SimpleTelegramBot\StbEnums\StbDbAdminPerm;
+use ProtocolLive\SimpleTelegramBot\StbObjects\StbAdmin;
 
 /**
- * @version 2024.02.23.01
+ * @version 2024.04.11.00
  */
 abstract class Install{
   private static function CopyRecursive(

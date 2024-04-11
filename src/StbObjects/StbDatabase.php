@@ -23,7 +23,10 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
   Variables
 };
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
-use ProtocolLive\SimpleTelegramBot\StbEnums\StbError;
+use ProtocolLive\SimpleTelegramBot\StbEnums\{
+  StbDbAdminPerm,
+  StbError
+};
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
 use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
@@ -36,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.03.11.00
+ * @version 2024.04.11.00
  */
 final readonly class StbDatabase{
   public function __construct(

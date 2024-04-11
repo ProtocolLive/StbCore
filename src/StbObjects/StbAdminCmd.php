@@ -3,6 +3,7 @@
 //https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use ProtocolLive\SimpleTelegramBot\StbEnums\StbDbAdminPerm;
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCommands,
   TblMarkupInline
@@ -14,7 +15,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.02.27.00
+ * @version 2024.04.11.00
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
