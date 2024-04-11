@@ -11,7 +11,8 @@ use ProtocolLive\SimpleTelegramBot\NoStr\Fields\{
 use ProtocolLive\SimpleTelegramBot\NoStr\Tables;
 use ProtocolLive\SimpleTelegramBot\StbEnums\{
   StbDbAdminPerm,
-  StbDbVariables
+  StbDbVariables,
+  StbResquestChatId
 };
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
@@ -29,7 +30,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.04.11.01
+ * @version 2024.04.11.02
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
