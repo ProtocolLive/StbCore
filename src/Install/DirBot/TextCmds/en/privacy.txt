@@ -1,0 +1,3 @@
+According to the rules of Telegram, Apple Store, and Google Store, all bots must tell what data is collected and for what purpose.
+
+This bot does not collect personal information from users
