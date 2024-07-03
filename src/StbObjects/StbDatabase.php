@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.04.11.00
+ * @version 2024.07.03.00
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -82,11 +82,10 @@ final readonly class StbDatabase{
     endif;
     $function = json_decode($result[0][CallbackHash::Method->value], true);
     if(is_callable($function[0])):
-      call_user_func_array(
+      return call_user_func_array(
         array_shift($function),
         array_merge([$Bot, $Webhook, $Db, $Lang], $function)
       );
-      return true;
     else:
       return false;
     endif;
