@@ -18,7 +18,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.04.11.01
+ * @version 2024.07.03.00
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -59,23 +59,23 @@ abstract class StbAdminCmd{
     );
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
-        $Webhook->Message->Data->Chat->Id,
-        $Webhook->Message->Data->Id,
         sprintf(
           $Lang->Get('Command', Group: 'Admin'),
           $Cmd,
           $description
         ),
+        $Webhook->Message->Data->Chat->Id,
+        $Webhook->Message->Data->Id,
         Markup: $mk
       );
     else:
       $Bot->TextSend(
-        $Webhook->Data->Chat->Id,
         sprintf(
           $Lang->Get('Command', Group: 'Admin'),
           $Cmd,
           $description
         ),
+        $Webhook->Data->Chat->Id,
         Markup: $mk
       );
     endif;
@@ -204,9 +204,9 @@ abstract class StbAdminCmd{
       $Db->CallBackHashSet(self::Callback_CmdEditCancel(...), $Cmd)
     );
     $Bot->TextEdit(
+      $Lang->Get('CommandDescription', Group: 'Admin'),
       $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
-      $Lang->Get('CommandDescription', Group: 'Admin'),
       Markup: $mk
     );
   }
@@ -261,9 +261,9 @@ abstract class StbAdminCmd{
       $Webhook->Data->User->Id
     );
     $Bot->TextEdit(
+      $Lang->Get('CommandName', Group: 'Admin'),
       $Webhook->Message->Data->Chat->Id,
-      $Webhook->Message->Data->Id,
-      $Lang->Get('CommandName', Group: 'Admin')
+      $Webhook->Message->Data->Id
     );
   }
 
@@ -373,15 +373,15 @@ abstract class StbAdminCmd{
     endforeach;
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
+        $Lang->Get('CommandsButton', Group: 'Admin'),
         $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
-        $Lang->Get('CommandsButton', Group: 'Admin'),
         Markup: $mk
       );
     else:
       $Bot->TextSend(
-        $Webhook->Data->Chat->Id,
         $Lang->Get('CommandsButton', Group: 'Admin'),
+        $Webhook->Data->Chat->Id,
         Markup: $mk
       );
     endif;
@@ -449,8 +449,8 @@ abstract class StbAdminCmd{
       $Webhook->Data->User->Id
     );
     $Bot->TextSend(
-      $Webhook->Data->User->Id,
-      $Lang->Get('CommandDescription', Group: 'Admin')
+      $Lang->Get('CommandDescription', Group: 'Admin'),
+      $Webhook->Data->User->Id
     );
   }
 

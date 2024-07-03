@@ -30,7 +30,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.04.11.02
+ * @version 2024.07.03.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -114,15 +114,15 @@ abstract class StbAdmin{
 
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
+        $msg,
         $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
-        $msg,
         Markup: $mk
       );
     else:
       $Bot->TextSend(
-        $Webhook->Data->Chat->Id,
         $msg,
+        $Webhook->Data->Chat->Id,
         Markup: $mk
       );
     endif;
@@ -162,8 +162,8 @@ abstract class StbAdmin{
       Bot: false
     );
     $Bot->TextSend(
-      $Webhook->Data->User->Id,
       $Lang->Get('AdminAdd', Group: 'Admin'),
+      $Webhook->Data->User->Id,
       Markup: $mk
     );
     try{
@@ -217,9 +217,9 @@ abstract class StbAdmin{
       )
     );
     $Bot->TextEdit(
+      $Lang->Get('AdminDel', Group: 'Admin'),
       $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
-      $Lang->Get('AdminDel', Group: 'Admin'),
       Markup: $mk
     );
   }
@@ -312,15 +312,15 @@ abstract class StbAdmin{
     endif;
     if($Webhook instanceof TblCmd):
       $Bot->TextSend(
-        $Webhook->Data->User->Id,
         $Lang->Get('AdminMenu', Group: 'Admin'),
+        $Webhook->Data->User->Id,
         Markup: $mk
       );
     else:
       $Bot->TextEdit(
+        $Lang->Get('AdminMenu', Group: 'Admin'),
         $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
-        $Lang->Get('AdminMenu', Group: 'Admin'),
         Markup: $mk
       );
     endif;
@@ -405,9 +405,9 @@ abstract class StbAdmin{
       self::JumpLineCheck($line, $col);
     endforeach;
     $Bot->TextEdit(
+      $Lang->Get('Admins', Group: 'Admin'),
       $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
-      $Lang->Get('Admins', Group: 'Admin'),
       Markup: $mk
     );
   }
@@ -451,8 +451,8 @@ abstract class StbAdmin{
       $chats[0]['count']
     );
     $Bot->TextSend(
-      $Webhook->Data->User->Id,
       $msg,
+      $Webhook->Data->User->Id,
       ParseMode: TgParseMode::Html,
       DisableNotification: true
     );
@@ -468,8 +468,8 @@ abstract class StbAdmin{
       $msg .= $event['count'] . ' - ' . $event[LogTexts::Event->value] . PHP_EOL;
     endwhile;
     $Bot->TextSend(
-      $Webhook->Data->User->Id,
       $msg,
+      $Webhook->Data->User->Id,
       ParseMode: TgParseMode::Html,
       DisableNotification: true
     );
@@ -500,8 +500,8 @@ abstract class StbAdmin{
       $msg .= '-----------------------------' . PHP_EOL;
     endwhile;
     $Bot->TextSend(
-      $Webhook->Data->User->Id,
       $msg,
+      $Webhook->Data->User->Id,
       ParseMode: TgParseMode::Html
     );
   }
@@ -515,8 +515,8 @@ abstract class StbAdmin{
     DebugTrace();
     if($Webhook->Data->User->Id !== Admin):
       $Bot->TextSend(
-        $Webhook->Data->User->Id,
-        $Lang->Get('Denied', Group: 'Errors')
+        $Lang->Get('Denied', Group: 'Errors'),
+        $Webhook->Data->User->Id
       );
       return;
     endif;
@@ -544,13 +544,13 @@ abstract class StbAdmin{
       $tbl = $Lang->Get('No');
     endif;
     $Bot->TextEdit(
-      $Webhook->Message->Data->Chat->Id,
-      $Webhook->Message->Data->Id,
       sprintf(
         $Lang->Get('Updates', Group: 'Admin'),
         $stb,
         $tbl
       ),
+      $Webhook->Message->Data->Chat->Id,
+      $Webhook->Message->Data->Id,
       Markup: $mk
     );
   }
@@ -573,8 +573,8 @@ abstract class StbAdmin{
       );
     endif;
     $Bot->TextSend(
-      $Webhook->Data->User->Id,
       $msg,
+      $Webhook->Data->User->Id,
       ParseMode: TgParseMode::Html
     );
     $Db->UsageLog($Webhook->Data->User->Id, 'id');
@@ -629,14 +629,14 @@ abstract class StbAdmin{
       $Db->ChatEdit($Bot->ChatGet($Webhook->Users[0]));
       self::Callback_Admin($Bot, $Webhook, $Db, $Lang, $Webhook->Users[0], true);
       $Bot->TextSend(
-        $Webhook->Data->User->Id,
         $Lang->Get('AdminAddPerms', Group: 'Admin'),
+        $Webhook->Data->User->Id,
         Markup: new TblMarkupRemove
       );
     }catch(TblException){
       $Bot->TextSend(
-        $Webhook->Data->User->Id,
         $Lang->Get('AdminNeedStart', Group: 'Admin'),
+        $Webhook->Data->User->Id,
         Markup: new TblMarkupRemove
       );
     }

@@ -84,9 +84,9 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
+      $Lang->Get('Modules', Group: 'Module'),
       $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
-      $Lang->Get('Modules', Group: 'Module'),
       Markup: $mk
     );
   }
@@ -136,9 +136,9 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
+      $Lang->Get('InstallPick', Group: 'Module'),
       $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
-      $Lang->Get('InstallPick', Group: 'Module'),
       Markup: $mk
     );
   }
@@ -166,9 +166,9 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
+        $Lang->Get('InstallNotFound', null, 'Module'),
         $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
-        $Lang->Get('InstallNotFound', null, 'Module'),
         Markup: $mk
       );
       return;
@@ -181,9 +181,9 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
+        $Lang->Get('UninstallNotFound', null, 'Module'),
         $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
-        $Lang->Get('UninstallNotFound', null, 'Module'),
         Markup: $mk
       );
       return;
@@ -225,8 +225,6 @@ abstract class StbAdminModules{
     $temp = explode('\\', $Module);
     $temp = array_pop($temp);
     $Bot->TextEdit(
-      Admin,
-      $Webhook->Message->Data->Id,
       sprintf(
         $Lang->Get('Module', Group: 'Module'),
         $temp,
@@ -235,6 +233,8 @@ abstract class StbAdminModules{
           $date[0]['created']
         )
       ),
+      Admin,
+      $Webhook->Message->Data->Id,
       Markup: $mk
     );
   }
