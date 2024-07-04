@@ -37,6 +37,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgInvoiceDone,
   TgLimits,
   TgMessageDeleted,
+  TgPoll,
   TgReactionUpdate,
   TgUser
 };
@@ -44,7 +45,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.07.03.00
+ * @version 2024.07.04.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -80,14 +81,15 @@ abstract class StbBotTools{
     and call_user_func($module . '::Listener', $Bot, $Webhook, $Db, $Lang)):
       return;
     endif;
-    if($Webhook->Data->Chat instanceof TgChat
-    or $Webhook instanceof TgReactionUpdate
+    if($Webhook instanceof TgReactionUpdate
     or $Webhook instanceof TgGroupStatus
     or $Webhook instanceof TgGroupStatusMy
     or $Webhook instanceof TgInvoiceCheckout
     or $Webhook instanceof TgInvoiceDone
     or $Webhook instanceof TgBusinessConnection
     or $Webhook instanceof TgMessageDeleted
+    or $Webhook instanceof TgPoll
+    or $Webhook->Data->Chat instanceof TgChat
     or $Webhook->Data->BusinessConnection !== null):
       return;
     endif;
