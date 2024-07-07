@@ -1,11 +1,11 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2024.03.29.01
+//2024.07.07.00
 
 use ProtocolLive\PhpLiveDb\Enums\Drivers;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblLog;
-use ProtocolLive\TelegramBotLibrary\TgEnums\TgInvoiceCurrencies;
+use ProtocolLive\TelegramBotLibrary\TgEnums\TgCurrencies;
 
 //Installation date: ##DATE##
 
@@ -58,10 +58,10 @@ const Log = TblLog::Webhook | TblLog::Send | TblLog::Response;
 
 /**
  * Default currency
- * Type: TgInvoiceCurrencies
- * Default: TgInvoiceCurrencies::USD
+ * Type: TgCurrencies
+ * Default: TgCurrencies::USD
  */
-const DefaultCurrency = TgInvoiceCurrencies::USD;
+const DefaultCurrency = TgCurrencies::USD;
 
 /**
  * Forward non captured events by listeners. If you have privacy activated for voice messages, you need to put the bot in exception to receive them
