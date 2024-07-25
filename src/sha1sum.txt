@@ -1,4 +1,4 @@
-c74b66d549beba17327efcd8691a3828b0e4f162  Datas\ChatData.php
+174ce95495296a9576ad6874519c6fba4f1a30c3  Datas\ChatData.php
 9ccd6abd6b29bdb66e65686d4cf36f35b6f40993  Install\DirBot\TextCmds\en\dontknow.txt
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\TextCmds\en\index.htm
 9c3535a0e46c0e951ac3c4af4332a6782057e0b9  Install\DirBot\TextCmds\en\privacy.txt
