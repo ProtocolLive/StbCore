@@ -30,7 +30,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.08.15.00
+ * @version 2024.08.15.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -40,20 +40,15 @@ abstract class StbAdmin{
     StbLanguageSys $Lang,
     int $Admin,
     bool $ListenerDel = false
-  ):void{
+  ):true{
     DebugTrace();
-    if($Webhook instanceof TgCallback):
-      $chat = $Webhook->Data->User->Id;
-    else:
-      $chat = $Webhook->Data->User->Id;
-    endif;
-    $chat = $Db->ChatGet($chat);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if(($chat->Permission & StbDbAdminPerm::Admins->value) == false):
       $Bot->CallbackAnswer(
         $Webhook->Id,
         $Lang->Get('Denied', Group: 'Errors')
       );
-      return;
+      return true;
     endif;
 
     $Admin = $Db->ChatGet($Admin);
@@ -136,6 +131,7 @@ abstract class StbAdmin{
         $Webhook->Data->User->Id
       );
     endif;
+    return true;
   }
 
   public static function Callback_AdminAdd(
@@ -249,16 +245,11 @@ abstract class StbAdmin{
     TblCmd|TgCallback $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
-  ):void{
+  ):true{
     DebugTrace();
-    if($Webhook instanceof TblCmd):
-      $chat = $Webhook->Data->User->Id;
-    else:
-      $chat = $Webhook->Data->User->Id;
-    endif;
-    $chat = $Db->ChatGet($chat);
+    $chat = $Db->ChatGet($Webhook->Data->User->Id);
     if($chat === null):
-      return;
+      return true;
     endif;
     $mk = new TblMarkupInline;
     $line = 0;
@@ -324,6 +315,7 @@ abstract class StbAdmin{
         Markup: $mk
       );
     endif;
+    return true;
   }
 
   public static function Callback_AdminPerm(

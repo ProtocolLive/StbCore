@@ -18,7 +18,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.08.15.00
+ * @version 2024.08.15.01
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -29,11 +29,7 @@ abstract class StbAdminCmd{
     string $Cmd
   ):void{
     DebugTrace();
-    if($Webhook::class === TgText::class):
-      $temp = $Db->ChatGet($Webhook->Data->User->Id);
-    else:
-      $temp = $Db->ChatGet($Webhook->Data->User->Id);
-    endif;
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
     endif;
@@ -312,20 +308,11 @@ abstract class StbAdminCmd{
     TgCallback|TgText $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
-  ):void{
+  ):true{
     DebugTrace();
-    if($Webhook instanceof TgCallback):
-      $temp = $Webhook->Data->User->Id;
-    else:
-      $temp = $Webhook->Data->User->Id;
-    endif;
-    if($Webhook::class === TgText::class):
-      $temp = $Db->ChatGet($Webhook->Data->User->Id);
-    else:
-      $temp = $Db->ChatGet($Webhook->Data->User->Id);
-    endif;
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
-      return;
+      return true;
     endif;
     $mk = new TblMarkupInline;
     $line = 0;
@@ -386,6 +373,7 @@ abstract class StbAdminCmd{
         Markup: $mk
       );
     endif;
+    return true;
   }
 
   public static function CmdAddDescription(
