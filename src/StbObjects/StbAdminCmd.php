@@ -18,7 +18,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.07.03.00
+ * @version 2024.08.15.00
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -85,6 +85,7 @@ abstract class StbAdminCmd{
     TelegramBotLibrary $Bot,
     TgCallback $Webhook,
     StbDatabase $Db,
+    StbLanguageSys $Lang,
     string $Cmd
   ):void{
     DebugTrace();
