@@ -30,7 +30,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.07.03.01
+ * @version 2024.08.15.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -121,8 +121,8 @@ abstract class StbAdmin{
       );
     else:
       $Bot->TextSend(
-        $msg,
         $Webhook->Data->Chat->Id,
+        $msg,
         Markup: $mk
       );
     endif;
@@ -162,8 +162,8 @@ abstract class StbAdmin{
       Bot: false
     );
     $Bot->TextSend(
-      $Lang->Get('AdminAdd', Group: 'Admin'),
       $Webhook->Data->User->Id,
+      $Lang->Get('AdminAdd', Group: 'Admin'),
       Markup: $mk
     );
     try{
@@ -312,8 +312,8 @@ abstract class StbAdmin{
     endif;
     if($Webhook instanceof TblCmd):
       $Bot->TextSend(
-        $Lang->Get('AdminMenu', Group: 'Admin'),
         $Webhook->Data->User->Id,
+        $Lang->Get('AdminMenu', Group: 'Admin'),
         Markup: $mk
       );
     else:
@@ -451,8 +451,8 @@ abstract class StbAdmin{
       $chats[0]['count']
     );
     $Bot->TextSend(
-      $msg,
       $Webhook->Data->User->Id,
+      $msg,
       ParseMode: TgParseMode::Html,
       DisableNotification: true
     );
@@ -468,8 +468,8 @@ abstract class StbAdmin{
       $msg .= $event['count'] . ' - ' . $event[LogTexts::Event->value] . PHP_EOL;
     endwhile;
     $Bot->TextSend(
-      $msg,
       $Webhook->Data->User->Id,
+      $msg,
       ParseMode: TgParseMode::Html,
       DisableNotification: true
     );
@@ -500,8 +500,8 @@ abstract class StbAdmin{
       $msg .= '-----------------------------' . PHP_EOL;
     endwhile;
     $Bot->TextSend(
-      $msg,
       $Webhook->Data->User->Id,
+      $msg,
       ParseMode: TgParseMode::Html
     );
   }
@@ -515,8 +515,8 @@ abstract class StbAdmin{
     DebugTrace();
     if($Webhook->Data->User->Id !== Admin):
       $Bot->TextSend(
-        $Lang->Get('Denied', Group: 'Errors'),
-        $Webhook->Data->User->Id
+        $Webhook->Data->User->Id,
+        $Lang->Get('Denied', Group: 'Errors')
       );
       return;
     endif;
@@ -573,8 +573,8 @@ abstract class StbAdmin{
       );
     endif;
     $Bot->TextSend(
-      $msg,
       $Webhook->Data->User->Id,
+      $msg,
       ParseMode: TgParseMode::Html
     );
     $Db->UsageLog($Webhook->Data->User->Id, 'id');
@@ -630,14 +630,14 @@ abstract class StbAdmin{
       $Db->ChatEdit($Bot->ChatGet($Webhook->Users[0]));
       self::Callback_Admin($Bot, $Webhook, $Db, $Lang, $Webhook->Users[0], true);
       $Bot->TextSend(
-        $Lang->Get('AdminAddPerms', Group: 'Admin'),
         $Webhook->Data->User->Id,
+        $Lang->Get('AdminAddPerms', Group: 'Admin'),
         Markup: new TblMarkupRemove
       );
     }catch(TblException){
       $Bot->TextSend(
-        $Lang->Get('AdminNeedStart', Group: 'Admin'),
         $Webhook->Data->User->Id,
+        $Lang->Get('AdminNeedStart', Group: 'Admin'),
         Markup: new TblMarkupRemove
       );
     }
