@@ -45,7 +45,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.07.15.00
+ * @version 2024.08.15.00
  */
 abstract class StbBotTools{
   public static function Action_(
@@ -103,8 +103,8 @@ abstract class StbBotTools{
       );
       if($temp->Data->Forward->Id === null):
         $Bot->TextSend(
-          $temp->Data->Forward->From . ': <code>' . $Webhook->Data->Chat->Id . '</code>',
           ForwardDontknow,
+          $temp->Data->Forward->From . ': <code>' . $Webhook->Data->Chat->Id . '</code>',
           ParseMode: TgParseMode::Html,
           DisableNotification: true
         );
@@ -247,8 +247,8 @@ abstract class StbBotTools{
       $msg .= '!';
     endif;
     $Bot->TextSend(
-      $msg,
       Admin,
+      $msg,
       ParseMode: TgParseMode::Html
     );
     Handler(...$Args);
@@ -289,8 +289,8 @@ abstract class StbBotTools{
       $text = explode('##BREAK##', $text);
       foreach($text as $txt):
         $Bot->TextSend(
-          $txt,
           $Webhook->Data->Chat->Id,
+          $txt,
           ParseMode: TgParseMode::Html
         );
       endforeach;
