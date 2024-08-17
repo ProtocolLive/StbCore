@@ -1,6 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
-//https://github.com/ProtocolLive/FuncoesComuns
+//https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ConsoleColorText;
@@ -45,9 +45,9 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.08.15.00
+ * @version 2024.08.17.00
  */
-abstract class StbBotTools{
+abstract class StbCore{
   public static function Action_(
     TelegramBotLibrary $Bot,
     StbDatabase $Db,
@@ -326,7 +326,7 @@ abstract class StbBotTools{
         $temp = array_search('--module', $_SERVER['argv']);
       endif;
       call_user_func($_SERVER['argv'][$temp + 1] . '::Cron', $Bot, $Db, $BotData);
-      StbBotTools::Log(
+      self::Log(
         $BotData,
         StbLog::Cron,
         'Time: ' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])
@@ -412,8 +412,8 @@ abstract class StbBotTools{
       return;
     endif;
   
-    if(StbBotTools::SendUserCmd($Bot, $Webhook, $Db,$Webhook->Command) === false):
-      StbBotTools::SendUserCmd($Bot, $Webhook, $Db, 'unknown');
+    if(self::SendUserCmd($Bot, $Webhook, $Db,$Webhook->Command) === false):
+      self::SendUserCmd($Bot, $Webhook, $Db, 'unknown');
     endif;
   }
 }
