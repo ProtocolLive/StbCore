@@ -30,7 +30,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.08.15.01
+ * @version 2024.08.17.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -109,8 +109,8 @@ abstract class StbAdmin{
 
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
-        $msg,
         $Webhook->Message->Data->Chat->Id,
+        $msg,
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
@@ -213,8 +213,8 @@ abstract class StbAdmin{
       )
     );
     $Bot->TextEdit(
-      $Lang->Get('AdminDel', Group: 'Admin'),
       $Webhook->Message->Data->Chat->Id,
+      $Lang->Get('AdminDel', Group: 'Admin'),
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
@@ -309,8 +309,8 @@ abstract class StbAdmin{
       );
     else:
       $Bot->TextEdit(
-        $Lang->Get('AdminMenu', Group: 'Admin'),
         $Webhook->Message->Data->Chat->Id,
+        $Lang->Get('AdminMenu', Group: 'Admin'),
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
@@ -397,8 +397,8 @@ abstract class StbAdmin{
       self::JumpLineCheck($line, $col);
     endforeach;
     $Bot->TextEdit(
-      $Lang->Get('Admins', Group: 'Admin'),
       $Webhook->Message->Data->Chat->Id,
+      $Lang->Get('Admins', Group: 'Admin'),
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
@@ -536,12 +536,12 @@ abstract class StbAdmin{
       $tbl = $Lang->Get('No');
     endif;
     $Bot->TextEdit(
+      $Webhook->Message->Data->Chat->Id,
       sprintf(
         $Lang->Get('Updates', Group: 'Admin'),
         $stb,
         $tbl
       ),
-      $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
