@@ -12,7 +12,7 @@ a6bd1dbe6c6fe7249552f794d0b78ba5618e0188  Install\DirBot\TextCmds\pt-br\start.tx
 673be2874cd1daaf48768fe60ce464d7254e9caa  Install\DirBot\TextCmds\pt-br\unknown.txt
 e6cedf05e6e3b3f557673eb43d2dee6a19702b27  Install\DirBot\config.txt
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\index.htm
-dd6e06385fb2c817286e001635bd4dac676d5b3e  Install\DirBot\index.php
+c3dad524b41b76848cef879d99820eed5c414938  Install\DirBot\index.php
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\logs\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\modules\index.htm
 da39a3ee5e6b4b0d3255bfef95601890afd80709  Install\DirBot\tools\index.htm
@@ -33,13 +33,14 @@ f6bc75351f3c9eb9efd5fe88043e76536e6f0d2f  Install\DirBot\tools\scope.php
 b105e09ccfe5d5282718818fddd0377fa188124e  StbEnums\StbError.php
 e2e69540013b6ba369945c5573e99cde87684a0e  StbEnums\StbResquestChatId.php
 c19b2c8f14ea95d2351bee8f4dcd2e8e70a8aeb0  StbInterfaces\StbModuleInterface.php
-8ee84028a0640fa93b9064bdda0119be7140ccb2  StbObjects\StbAdmin.php
+5e26b3f50c9bf237181975c4a6311ffa49b8f1e4  StbObjects\StbAdmin.php
 cb5a845e7eb883454fd2e150e3a9940118ad473b  StbObjects\StbAdminCmd.php
-509b4f467a07e21331616711e44d7bd3da21b3aa  StbObjects\StbAdminModules.php
-e51303fd21daef0ff50d1735214db55e2150ff4d  StbObjects\StbBotTools.php
+1d309490a4cfc8a9c071278ed0b2ddf91560ddca  StbObjects\StbAdminModules.php
+8966be9c4b11c8f83796327e9ad553d538a3cb5a  StbObjects\StbBotTools.php
+2432863ff8fb028209aedf8d27885ba952322ecb  StbObjects\StbCore.php
 9ab8c247c0f0b00b7407ef63291bf61f86009c47  StbObjects\StbCronTools.php
 b094fc0a20285902aadf7bb4cc1b289c21f07574  StbObjects\StbDatabase.php
-1727e046b6854b7ebbd66b2775565d2a9e6395ea  StbObjects\StbException.php
+27a754779cb9f18cbcba4fa5fa1ae04e94807909  StbObjects\StbException.php
 6c3dfdf51e386f74d1fea0c96191c0061970a6b1  StbObjects\StbLanguageMaster.php
 56def8312e125cb8f326fcea55bf00631956eef3  StbObjects\StbLanguageModule.php
 699d1ce995c56e7493161b9c8fcf1cdc61465131  StbObjects\StbLanguageSys.php
