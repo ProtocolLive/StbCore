@@ -1,6 +1,6 @@
 <?php
 //Protocol Corporation Ltda.
-//https://github.com/ProtocolLive/TelegramBotLibrary
+//https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
