@@ -16,7 +16,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.04.11.00
+ * @version 2024.08.17.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -42,10 +42,10 @@ abstract class StbAdminModules{
     TgCallback $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
-  ):void{
+  ):true{
     DebugTrace();
     if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
-      return;
+      return true;
     endif;
     $mods = $Db->Modules();
     $mk = new TblMarkupInline;
@@ -84,11 +84,12 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
-      $Lang->Get('Modules', Group: 'Module'),
       $Webhook->Message->Data->Chat->Id,
+      $Lang->Get('Modules', Group: 'Module'),
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
+    return true;
   }
 
   public static function Callback_ModuleAdd(
@@ -136,8 +137,8 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
-      $Lang->Get('InstallPick', Group: 'Module'),
       $Webhook->Message->Data->Chat->Id,
+      $Lang->Get('InstallPick', Group: 'Module'),
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
@@ -166,8 +167,8 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
-        $Lang->Get('InstallNotFound', null, 'Module'),
         $Webhook->Message->Data->Chat->Id,
+        $Lang->Get('InstallNotFound', null, 'Module'),
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
@@ -181,8 +182,8 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
-        $Lang->Get('UninstallNotFound', null, 'Module'),
         $Webhook->Message->Data->Chat->Id,
+        $Lang->Get('UninstallNotFound', null, 'Module'),
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
@@ -197,10 +198,10 @@ abstract class StbAdminModules{
     StbDatabase $Db,
     StbLanguageSys $Lang,
     string $Module
-  ):void{
+  ):true{
     DebugTrace();
     if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
-      return;
+      return true;
     endif;
 
     $mk = new TblMarkupInline;
@@ -225,6 +226,7 @@ abstract class StbAdminModules{
     $temp = explode('\\', $Module);
     $temp = array_pop($temp);
     $Bot->TextEdit(
+      Admin,
       sprintf(
         $Lang->Get('Module', Group: 'Module'),
         $temp,
@@ -233,10 +235,10 @@ abstract class StbAdminModules{
           $date[0]['created']
         )
       ),
-      Admin,
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
+    return true;
   }
 
   public static function Callback_UniModPic1(
