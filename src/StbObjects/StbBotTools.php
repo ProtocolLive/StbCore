@@ -6,6 +6,9 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\Datas\ChatData;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgUser;
 
+/**
+ * @version 2024.08.18.00
+ */
 abstract class StbBotTools{
   /**
    * Return the user full name with nick and ID as string in HTML
@@ -31,7 +34,7 @@ abstract class StbBotTools{
       $nome .= ' @' . $User->Nick;
     endif;
     if($Id):
-      $nome .= ' (' . $User->Id . ')';
+      $nome .= ' (<code>' . $User->Id . '</code>)';
     endif;
     return $nome;
   }
