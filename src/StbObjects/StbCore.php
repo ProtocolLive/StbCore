@@ -45,7 +45,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.08.17.00
+ * @version 2024.08.18.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -104,7 +104,7 @@ abstract class StbCore{
       if($temp->Data->Forward->Id === null):
         $Bot->TextSend(
           ForwardDontknow,
-          $temp->Data->Forward->From . ': <code>' . $Webhook->Data->Chat->Id . '</code>',
+          StbBotTools::FormatName($temp->Data->Forward->From),
           ParseMode: TgParseMode::Html,
           DisableNotification: true
         );
