@@ -45,7 +45,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.08.23.00
+ * @version 2024.11.05.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -412,7 +412,7 @@ abstract class StbCore{
       return;
     endif;
   
-    if(self::SendUserCmd($Bot, $Webhook, $Db,$Webhook->Command) === false):
+    if(self::SendUserCmd($Bot, $Webhook, $Db, $Webhook->Command) === false):
       self::SendUserCmd($Bot, $Webhook, $Db, 'unknown');
     endif;
   }
