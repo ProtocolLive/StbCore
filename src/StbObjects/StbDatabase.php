@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.07.03.00
+ * @version 2024.11.08.00
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -67,6 +67,9 @@ final readonly class StbDatabase{
     return $result;
   }
 
+  /**
+   * @throws StbException
+   */
   public function CallBackHashRun(
     TelegramBotLibrary $Bot,
     TgCallback $Webhook,
@@ -80,12 +83,17 @@ final readonly class StbDatabase{
     if($result === []):
       return false;
     endif;
-    $function = json_decode($result[0][CallbackHash::Method->value], true);
-    if(is_callable($function[0])):
-      return call_user_func_array(
-        array_shift($function),
-        array_merge([$Bot, $Webhook, $Db, $Lang], $function)
+    $params = json_decode($result[0][CallbackHash::Method->value], true);
+    if(is_callable($params[0])):
+      $function = array_shift($params);
+      $return = call_user_func_array(
+        $function,
+        array_merge([$Bot, $Webhook, $Db, $Lang], $params)
       );
+      if($return === null):
+        throw new StbException(StbError::CallBackReturn, 'Callback ' . $function . ' returns null');
+      endif;
+      return $return;
     else:
       return false;
     endif;
