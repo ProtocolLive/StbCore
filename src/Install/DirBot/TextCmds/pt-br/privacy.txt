@@ -1,3 +1,0 @@
-De acordo com as regras do Telegram, Apple Store e Google Store, todos os bots devem dizer quais dados são coletados e pra qual finalidade.
-
-Este bot não coleta informações pessoais dos usuários
