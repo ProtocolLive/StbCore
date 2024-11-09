@@ -18,7 +18,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.08.00
+ * @version 2024.11.08.01
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -55,12 +55,12 @@ abstract class StbAdminCmd{
     );
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
-        $Webhook->Message->Data->Chat->Id,
         sprintf(
           $Lang->Get('Command', Group: 'Admin'),
           $Cmd,
           $description
         ),
+        $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
@@ -201,8 +201,8 @@ abstract class StbAdminCmd{
       $Db->CallBackHashSet(self::Callback_CmdEditCancel(...), $Cmd)
     );
     $Bot->TextEdit(
-      $Webhook->Message->Data->Chat->Id,
       $Lang->Get('CommandDescription', Group: 'Admin'),
+      $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
@@ -258,8 +258,8 @@ abstract class StbAdminCmd{
       $Webhook->Data->User->Id
     );
     $Bot->TextEdit(
-      $Webhook->Message->Data->Chat->Id,
       $Lang->Get('CommandName', Group: 'Admin'),
+      $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id
     );
   }
@@ -361,8 +361,8 @@ abstract class StbAdminCmd{
     endforeach;
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
-        $Webhook->Message->Data->Chat->Id,
         $Lang->Get('CommandsButton', Group: 'Admin'),
+        $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
