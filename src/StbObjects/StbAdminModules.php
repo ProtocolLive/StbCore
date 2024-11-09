@@ -16,7 +16,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.08.17.00
+ * @version 2024.11.08.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -84,8 +84,8 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
-      $Webhook->Message->Data->Chat->Id,
       $Lang->Get('Modules', Group: 'Module'),
+      $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
@@ -137,8 +137,8 @@ abstract class StbAdminModules{
     endforeach;
 
     $Bot->TextEdit(
-      $Webhook->Message->Data->Chat->Id,
       $Lang->Get('InstallPick', Group: 'Module'),
+      $Webhook->Message->Data->Chat->Id,
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
@@ -167,8 +167,8 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
-        $Webhook->Message->Data->Chat->Id,
         $Lang->Get('InstallNotFound', null, 'Module'),
+        $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
@@ -182,8 +182,8 @@ abstract class StbAdminModules{
         $Db->CallBackHashSet(self::Callback_ModuleAdd(...))
       );
       $Bot->TextEdit(
-        $Webhook->Message->Data->Chat->Id,
         $Lang->Get('UninstallNotFound', null, 'Module'),
+        $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
         Markup: $mk
       );
@@ -226,7 +226,6 @@ abstract class StbAdminModules{
     $temp = explode('\\', $Module);
     $temp = array_pop($temp);
     $Bot->TextEdit(
-      Admin,
       sprintf(
         $Lang->Get('Module', Group: 'Module'),
         $temp,
@@ -235,6 +234,7 @@ abstract class StbAdminModules{
           $date[0]['created']
         )
       ),
+      Admin,
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
