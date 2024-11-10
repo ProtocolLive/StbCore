@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.11.08.00
+ * @version 2024.11.10.00
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -465,12 +465,9 @@ final readonly class StbDatabase{
     int $User = null
   ):string|array|null{
     DebugTrace();
-    if($Name instanceof UnitEnum):
-      $Name = $Name->value ?? $Name->name;
-    endif;
     $result = $this->Db->Select(Tables::Variables)
     ->Fields(Variables::Value->value)
-    ->WhereAdd(Variables::Name, $Name, Types::Str)
+    ->WhereAdd(Variables::Name, $Name->value ?? $Name->name ?? $Name, Types::Str)
     ->WhereAdd(Variables::Module, $Module, Types::Str)
     ->WhereAdd(Variables::Chat, $User, Types::Int)
     ->Run();
