@@ -4,7 +4,6 @@
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ConsoleColorText;
-use Exception;
 use HttpCode;
 use ProtocolLive\PhpLiveDb\Enums\Types;
 use ProtocolLive\SimpleTelegramBot\NoStr\Fields\LogUpdates;
@@ -45,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.11.05.00
+ * @version 2024.11.12.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -390,9 +389,7 @@ abstract class StbCore{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    try{
-      $Lang->LanguageSet($Webhook->Data->User->Language);
-    }catch(Exception){}
+    $Lang->LanguageSet($Webhook->Data->User->Language ?? DefaultLanguage);
   
     //In a group, with many bots, the commands have the target bot.
     //This block check the target and caches the bot name
