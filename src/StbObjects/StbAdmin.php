@@ -26,11 +26,12 @@ use ProtocolLive\TelegramBotLibrary\TgEnums\TgParseMode;
 use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgCallback,
   TgText,
+  TgUser,
   TgUsersShared
 };
 
 /**
- * @version 2024.11.13.01
+ * @version 2024.11.13.02
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -429,7 +430,7 @@ abstract class StbAdmin{
     TgCallback $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
-  ):void{
+  ):true{
     /**
      * @var PhpLiveDb $PlDb
      */
@@ -479,16 +480,11 @@ abstract class StbAdmin{
         $msg .= $log[LogTexts::Msg->value];
       endif;
       $msg .= PHP_EOL;
-      $msg .= $log[LogTexts::Chat->value] . ', ';
-      $msg .= '<a href="tg://user?id=' . $log[LogTexts::Chat->value] . '">' . $log[Chats::Name->value];
-      if($log[Chats::NameLast->value] !== null):
-        $msg .= ' ' . $log[Chats::NameLast->value];
-      endif;
-      $msg .= '</a>';
-      if($log[Chats::Nick->value] !== null):
-        $msg .= ' @' . $log[Chats::Nick->value];
-      endif;
-      $msg .= PHP_EOL;
+      $log['id'] = $log['chat_id'];
+      $log['first_name'] = $log['name'];
+      $log['last_name'] = $log['name2'];
+      $log['username'] = $log['nick'];
+      $msg .= StbBotTools::FormatName(new TgUser($log)) . PHP_EOL;
       $msg .= '-----------------------------' . PHP_EOL;
     endforeach;
     $Bot->TextSend(
@@ -496,6 +492,7 @@ abstract class StbAdmin{
       $msg,
       ParseMode: TgParseMode::Html
     );
+    return true;
   }
 
   public static function Callback_Updates(
