@@ -7,7 +7,7 @@ use ProtocolLive\SimpleTelegramBot\Datas\ChatData;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgUser;
 
 /**
- * @version 2024.08.18.00
+ * @version 2024.11.13.00
  */
 abstract class StbBotTools{
   /**
@@ -19,23 +19,24 @@ abstract class StbBotTools{
     bool $Link = true,
     bool $Id = true
   ):string{
+    $name = '';
     if($Link):
-      $nome = '<a href="tg://user?id=' . $User->Id . '">';
+      $name = '<a href="tg://user?id=' . $User->Id . '">';
     endif;
-    $nome .= $User->Name;
+    $name .= $User->Name;
     if($User->NameLast !== null) :
-      $nome .= ' ' . $User->NameLast;
+      $name .= ' ' . $User->NameLast;
     endif;
     if($Link):
-      $nome .= '</a>';
+      $name .= '</a>';
     endif;
     if($Nick
     and $User->Nick !== null) :
-      $nome .= ' @' . $User->Nick;
+      $name .= ' @' . $User->Nick;
     endif;
     if($Id):
-      $nome .= ' (<code>' . $User->Id . '</code>)';
+      $name .= ' (<code>' . $User->Id . '</code>)';
     endif;
-    return $nome;
+    return $name;
   }
 }
