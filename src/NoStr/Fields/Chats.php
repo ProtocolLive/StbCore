@@ -5,15 +5,15 @@
 namespace ProtocolLive\SimpleTelegramBot\NoStr\Fields;
 
 /**
- * @version 2023.05.25.00
+ * @version 2023.11.13.00
  */
 enum Chats:string{
   case Created = 'created';
   case Id = 'chat_id';
-  case Language = 'lang';
+  case Language = 'language_code';
   case LastSeen = 'lastseen';
-  case Name = 'name';
-  case NameLast = 'name2';
-  case Nick = 'nick';
+  case Name = 'first_name';
+  case NameLast = 'last_name';
+  case Nick = 'username';
   case Permission = 'perms';
 }

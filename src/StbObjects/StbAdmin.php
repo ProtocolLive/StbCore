@@ -31,7 +31,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.13.02
+ * @version 2024.11.13.03
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -481,9 +481,6 @@ abstract class StbAdmin{
       endif;
       $msg .= PHP_EOL;
       $log['id'] = $log['chat_id'];
-      $log['first_name'] = $log['name'];
-      $log['last_name'] = $log['name2'];
-      $log['username'] = $log['nick'];
       $msg .= StbBotTools::FormatName(new TgUser($log)) . PHP_EOL;
       $msg .= '-----------------------------' . PHP_EOL;
     endforeach;
