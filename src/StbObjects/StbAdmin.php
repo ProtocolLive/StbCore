@@ -30,7 +30,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.08.00
+ * @version 2024.11.13.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -611,6 +611,30 @@ abstract class StbAdmin{
     endif;
   }
 
+  private static function Listener_Text(
+    TelegramBotLibrary $Bot,
+    TgText $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):bool{
+    DebugTrace();
+    $temp = $Db->VariableGetValue(
+      StbDbVariables::Action,
+      __CLASS__,
+      $Webhook->Data->User->Id
+    );
+    if($temp === null):
+      return false;
+    elseif($temp === StbDbVariables::CmdAddName->name):
+      StbAdminCmd::CmdAddName($Bot, $Webhook, $Db, $Lang);
+    elseif($temp === StbDbVariables::CmdAddDescription->name):
+      StbAdminCmd::CmdAddDescription($Bot, $Webhook, $Db, $Lang);
+    elseif($temp === StbDbVariables::CmdEdit->name):
+      StbAdminCmd::CmdEdit($Bot, $Webhook, $Db, $Lang);
+    endif;
+    return true;
+  }
+
   private static function Listener_UserShared(
     TelegramBotLibrary $Bot,
     TgUsersShared $Webhook,
@@ -633,30 +657,6 @@ abstract class StbAdmin{
         Markup: new TblMarkupRemove
       );
     }
-    return true;
-  }
-
-  private static function Listener_Text(
-    TelegramBotLibrary $Bot,
-    TgText $Webhook,
-    StbDatabase $Db,
-    StbLanguageSys $Lang
-  ):bool{
-    DebugTrace();
-    $temp = $Db->VariableGetValue(
-      StbDbVariables::Action,
-      __CLASS__,
-      $Webhook->Data->User->Id
-    );
-    if($temp === null):
-      return false;
-    elseif($temp === StbDbVariables::CmdAddName->name):
-      StbAdminCmd::CmdAddName($Bot, $Webhook, $Db, $Lang);
-    elseif($temp === StbDbVariables::CmdAddDescription->name):
-      StbAdminCmd::CmdAddDescription($Bot, $Webhook, $Db, $Lang);
-    elseif($temp === StbDbVariables::CmdEdit->name):
-      StbAdminCmd::CmdEdit($Bot, $Webhook, $Db, $Lang);
-    endif;
     return true;
   }
 }
