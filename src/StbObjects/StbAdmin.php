@@ -30,7 +30,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.13.00
+ * @version 2024.11.13.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -454,11 +454,11 @@ abstract class StbAdmin{
     ->Fields(LogTexts::Event->value . ',count(' . LogTexts::Event->value . ') as count')
     ->Group(LogTexts::Event->value)
     ->Order('count desc')
-    ->Limit(20);
-    $consult->Run(Fetch: true);
-    while(($event = $consult->Fetch()) !== false):
+    ->Limit(20)
+    ->Run();
+    foreach($consult as $event):
       $msg .= $event['count'] . ' - ' . $event[LogTexts::Event->value] . PHP_EOL;
-    endwhile;
+    endforeach;
     $Bot->TextSend(
       $Webhook->Data->User->Id,
       $msg,
@@ -470,9 +470,9 @@ abstract class StbAdmin{
     $consult = $PlDb->Select(Tables::LogTexts)
     ->JoinAdd(Tables::Chats, Chats::Id)
     ->Order(LogTexts::Time->value . ' desc')
-    ->Limit(20);
-    $consult->Run(Fetch: true);
-    while(($log = $consult->Fetch()) !== false):
+    ->Limit(20)
+    ->Run();
+    foreach($consult as $log):
       $msg .= date('Y/m/d H:i:s', $log['time']) . ' - ';
       $msg .= $log[LogTexts::Event->value] . ' ';
       if($log[LogTexts::Msg->value] !== null):
@@ -490,7 +490,7 @@ abstract class StbAdmin{
       endif;
       $msg .= PHP_EOL;
       $msg .= '-----------------------------' . PHP_EOL;
-    endwhile;
+    endforeach;
     $Bot->TextSend(
       $Webhook->Data->User->Id,
       $msg,
