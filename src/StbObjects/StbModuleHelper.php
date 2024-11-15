@@ -15,7 +15,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.11.14.00
+ * @version 2024.11.14.01
  */
 abstract class StbModuleHelper{
   private static array $InstallCommands = [];
@@ -114,7 +114,7 @@ abstract class StbModuleHelper{
     TgCallback $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
-  ){
+  ):void{
     DebugTrace();
     $Db->GetCustom()->commit();
     $Bot->CallbackAnswer(
