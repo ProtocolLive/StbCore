@@ -15,19 +15,19 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.11.14.02
+ * @version 2024.11.15.00
  */
 abstract class StbModuleHelper{
   private static array $InstallCommands = [];
 
-  public abstract function Command(
+  public abstract static function Command(
     TelegramBotLibrary $Bot,
     TblCmd $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
   ):void;
 
-  public abstract function Cron(
+  public abstract static function Cron(
     TelegramBotLibrary $Bot,
     StbDatabase $Db,
     TblData $BotData
@@ -127,7 +127,7 @@ abstract class StbModuleHelper{
   /**
    * @return bool If the listener are satisfied
    */
-  public abstract function Listener(
+  public abstract static function Listener(
     TelegramBotLibrary $Bot,
     TgEventInterface $Webhook,
     StbDatabase $Db,
@@ -149,7 +149,7 @@ abstract class StbModuleHelper{
     StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
   }
 
-  public abstract function PluginButton_Module(
+  public abstract static function PluginButton_Module(
     StbDatabase $Db,
     TblMarkupInline $Markup
   ):void;
