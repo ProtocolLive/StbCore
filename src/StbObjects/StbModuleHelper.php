@@ -4,15 +4,34 @@
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use PDO;
-use ProtocolLive\TelegramBotLibrary\TblObjects\TblException;
+use ProtocolLive\TelegramBotLibrary\TblObjects\{
+  TblCmd,
+  TblData,
+  TblException,
+  TblMarkupInline
+};
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
+use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.02.09.01
+ * @version 2024.11.14.00
  */
 abstract class StbModuleHelper{
   private static array $InstallCommands = [];
+
+  public abstract function Command(
+    TelegramBotLibrary $Bot,
+    TblCmd $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):void;
+
+  public abstract function Cron(
+    TelegramBotLibrary $Bot,
+    StbDatabase $Db,
+    TblData $BotData
+  ):void;
 
   /**
    * Run this function before InstallHelper
@@ -105,6 +124,16 @@ abstract class StbModuleHelper{
     StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
   }
 
+  /**
+   * @return bool If the listener are satisfied
+   */
+  public abstract function Listener(
+    TelegramBotLibrary $Bot,
+    TgEventInterface $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):bool;
+
   protected static function MsgError(
     TelegramBotLibrary $Bot,
     TgCallback $Webhook,
@@ -119,6 +148,11 @@ abstract class StbModuleHelper{
     );
     StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
   }
+
+  public abstract function Plugin_Buttons(
+    StbDatabase $Db,
+    TblMarkupInline $Markup
+  ):void;
 
   /**
    * Run this before the 'drop table' block to begin the transaction. For commands and listeners, don't need the UninstallHelper2 because the cascade foreign key
