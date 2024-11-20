@@ -31,7 +31,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.13.03
+ * @version 2024.11.20.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -255,6 +255,16 @@ abstract class StbAdmin{
     $mk = new TblMarkupInline;
     $line = 0;
     $col = 0;
+    //Modules menu
+    foreach($Db->Modules() as $module):
+      if(method_exists($module['module'], 'PluginButton_Admin' === false)
+      or $module['module'] === __CLASS__):
+        continue;
+      endif;
+      call_user_func($module['module'] . '::PluginButton_Admin', $Db, $mk, $line, $col++);
+      self::JumpLineCheck($line, $col);
+    endforeach;
+    //Admins
     if($chat->Permission & StbDbAdminPerm::Admins->value):
       $mk->ButtonCallback(
         $line,
@@ -264,6 +274,7 @@ abstract class StbAdmin{
       );
       self::JumpLineCheck($line, $col);
     endif;
+    //Modules
     if($chat->Permission & StbDbAdminPerm::Modules->value):
       $mk->ButtonCallback(
         $line,
