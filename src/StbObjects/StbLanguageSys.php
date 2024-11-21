@@ -1,27 +1,65 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2023.02.05.00
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
+use Exception;
 
-final class StbLanguageSys
-extends StbLanguageMaster{
-  public function __construct(
-    string $Default
-  ){
+/**
+ * @version 2023.11.21.00
+ */
+final class StbLanguageSys{
+  private string $Default;
+  private array $Translate;
+
+  public function CommandsGet(
+    string $Language
+  ):array{
     DebugTrace();
-    $this->Default = $Default;
-    foreach(glob(dirname(__DIR__) . '/language/*', GLOB_ONLYDIR) as $dir):
-      foreach(glob($dir . '/*.json') as $file):
-        $temp = file_get_contents($file);
-        $temp = json_decode($temp, true);
-        $index = basename(dirname($file));
-        $this->Translate[$index] = array_merge_recursive(
-          $this->Translate[$index] ?? [],
-          $temp
-        );
-      endforeach;
-    endforeach;
+    return $this->Translate[$Language]['Commands'];
+  }
+
+  public function Get(
+    string $Text,
+    string $Language = null,
+    string $Group = null
+  ):string|null{
+    DebugTrace();
+    $lang = $Language ?? $this->Default;
+    if(isset($this->Translate[$lang]) === false):
+      $this->Load($lang);
+    endif;
+    if($Group === null):
+      return $this->Translate[$lang][$Text];
+    else:
+      return $this->Translate[$lang][$Group][$Text];
+    endif;
+  }
+
+  /**
+   * @throws Exception
+   */
+  public function LanguageSet(
+    string $Language
+  ):void{
+    DebugTrace();
+    if(is_dir(dirname(__DIR__) . '/language/' . $Language) === false):
+      throw new Exception('Language ' . $Language . ' not found');
+    endif;
+    $this->Default = $Language;
+  }
+
+  public function LanguagesGet():array{
+    DebugTrace();
+    $folders = scandir((dirname(__DIR__) . '/language/'));
+    unset($folders[0], $folders[1]);
+    return ArrayDefrag($folders);
+  }
+
+  private function Load(
+    string $Language
+  ):void{
+    DebugTrace();
+    $this->Translate[$Language] = json_load(dirname(__DIR__) . '/language/' . $Language . '/system.json', true);
   }
 }
