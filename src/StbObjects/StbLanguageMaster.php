@@ -6,7 +6,7 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
 
 /**
- * @version 2023.11.21.00
+ * @version 2023.11.21.01
  */
 abstract class StbLanguageMaster{
   protected string $Default;
@@ -25,11 +25,7 @@ abstract class StbLanguageMaster{
     string $Group = null
   ):string|null{
     DebugTrace();
-    if($Language === null):
-      $lang = $this->Default;
-    else:
-      $lang = $Language;
-    endif;
+    $lang = $Language ?? $this->Default;
     if($Group === null):
       return $this->Translate[$lang][$Text];
     else:
