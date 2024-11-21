@@ -6,7 +6,7 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
 
 /**
- * @version 2023.11.21.01
+ * @version 2023.11.21.02
  */
 abstract class StbLanguageMaster{
   protected string $Default;
@@ -44,6 +44,7 @@ abstract class StbLanguageMaster{
   public function LanguageSet(
     string $Language
   ):void{
+    DebugTrace();
     if(isset($this->Translate[$Language]) === false):
       throw new Exception('Language not found');
     endif;
