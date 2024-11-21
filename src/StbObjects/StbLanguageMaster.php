@@ -6,11 +6,18 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
 
 /**
- * @version 2023.05.23.00
+ * @version 2023.11.21.00
  */
 abstract class StbLanguageMaster{
   protected string $Default;
   protected array $Translate;
+
+  public function CommandsGet(
+    string $Language
+  ):array{
+    DebugTrace();
+    return $this->Translate[$Language]['Commands'];
+  }
 
   public function Get(
     string $Text,
@@ -30,11 +37,9 @@ abstract class StbLanguageMaster{
     endif;
   }
 
-  public function CommandsGet(
-    string $Language
-  ):array{
+  public function LanguagesGet():array{
     DebugTrace();
-    return $this->Translate[$Language]['Commands'];
+    return array_keys($this->Translate);
   }
 
   /**
@@ -47,10 +52,5 @@ abstract class StbLanguageMaster{
       throw new Exception('Language not found');
     endif;
     $this->Default = $Language;
-  }
-
-  public function LanguagesGet():array{
-    DebugTrace();
-    return array_keys($this->Translate);
   }
 }
