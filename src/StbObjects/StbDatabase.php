@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.11.10.00
+ * @version 2024.11.23.00
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -123,7 +123,7 @@ final readonly class StbDatabase{
    */
   public function ChatEdit(
     int|TgUser|TgChat $Chat,
-    int $Permissions = null
+    int|null $Permissions = null
   ):bool{
     DebugTrace();
     $consult = $this->Db->InsertUpdate(Tables::Chats)
@@ -210,7 +210,7 @@ final readonly class StbDatabase{
    * @return array|string|null{ Return all commands or the respective module
    */
   public function Commands(
-    string $Command = null
+    string|null $Command = null
   ):array|string|null{
     DebugTrace();
     $consult = $this->Db->Select(Tables::Commands);
@@ -238,7 +238,7 @@ final readonly class StbDatabase{
   public function ListenerAdd(
     TgEventInterface|string $Listener,
     string $Class,
-    int $Chat = null
+    int|null $Chat = null
   ):void{
     DebugTrace();
     if($this->NoUserListener($Listener)):
@@ -270,7 +270,7 @@ final readonly class StbDatabase{
 
   public function ListenerDel(
     TgEventInterface|string $Listener,
-    int $User = null
+    int|null $User = null
   ):void{
     DebugTrace();
     if($this->NoUserListener($Listener)):
@@ -290,7 +290,7 @@ final readonly class StbDatabase{
    */
   public function ListenerGet(
     TgEventInterface $Listener,
-    int $User = null
+    int|null $User = null
   ):string|null{
     DebugTrace();
     if($this->NoUserListener($Listener)):
@@ -338,7 +338,7 @@ final readonly class StbDatabase{
    * List all installed modules or get the module installation timestamp
    */
   public function Modules(
-    string $Module = null
+    string|null $Module = null
   ):array{
     DebugTrace();
     $consult = $this->Db->Select(Tables::Modules);
@@ -387,7 +387,7 @@ final readonly class StbDatabase{
   public function UsageLog(
     int $ChatId,
     string $Event,
-    string $Additional = null
+    string|null $Additional = null
   ):void{
     DebugTrace();
     $this->Db->Insert(Tables::LogTexts->value)
@@ -400,9 +400,9 @@ final readonly class StbDatabase{
 
   public function VariableDel(
     string|UnitEnum $Name,
-    string $Value = null,
-    string $Module = null,
-    int $User = null
+    string|null $Value = null,
+    string|null $Module = null,
+    int|null $User = null
   ):void{
     DebugTrace();
     if($Name instanceof UnitEnum):
@@ -420,8 +420,8 @@ final readonly class StbDatabase{
 
   public function VariableGetName(
     string|UnitEnum $Value,
-    string $Module = null,
-    int $User = null
+    string|null $Module = null,
+    int|null $User = null
   ):string|null{
     DebugTrace();
     if($Value instanceof UnitEnum):
@@ -442,7 +442,7 @@ final readonly class StbDatabase{
 
   public function VariableGetChat(
     string|UnitEnum $Name,
-    string $Module = null
+    string|null $Module = null
   ):string|array|null{
     DebugTrace();
     if($Name instanceof UnitEnum):
@@ -461,8 +461,8 @@ final readonly class StbDatabase{
 
   public function VariableGetValue(
     string|UnitEnum $Name,
-    string $Module = null,
-    int $User = null
+    string|null $Module = null,
+    int|null $User = null
   ):string|array|null{
     DebugTrace();
     $result = $this->Db->Select(Tables::Variables)
@@ -480,8 +480,8 @@ final readonly class StbDatabase{
   public function VariableSet(
     string|UnitEnum $Name,
     string|int|float $Value,
-    string $Module = null,
-    int $User = null,
+    string|null $Module = null,
+    int|null $User = null,
     bool $AllowDuplicatedName = false
   ):void{
     DebugTrace();

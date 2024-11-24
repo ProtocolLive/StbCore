@@ -44,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.11.12.00
+ * @version 2024.11.23.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -183,7 +183,7 @@ abstract class StbCore{
     TelegramBotLibrary $Bot,
     StbDatabase $Db,
     StbLanguageSys $Lang,
-    TblData $BotData = null
+    TblData|null $BotData = null
   ):void{
     DebugTrace();
     self::ModuleAutoload();
@@ -258,7 +258,7 @@ abstract class StbCore{
     TgEventInterface $Webhook,
     StbDatabase $Db,
     string $Command,
-    string $EventAdditional = null
+    string|null $EventAdditional = null
   ):bool{
     DebugTrace();
     $Photo = false;

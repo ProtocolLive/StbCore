@@ -15,7 +15,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.11.15.00
+ * @version 2024.11.23.00
  */
 abstract class StbModuleHelper{
   private static array $InstallCommands = [];
@@ -39,8 +39,8 @@ abstract class StbModuleHelper{
    */
   protected static function InstallCmd(
     string $Name,
-    string $Description = null,
-    string $Module = null,
+    string|null $Description = null,
+    string|null $Module = null,
     bool $Public = true
   ):void{
     self::$InstallCommands[] = (object)[

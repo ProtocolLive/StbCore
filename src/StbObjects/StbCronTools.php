@@ -6,7 +6,7 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
 
 /**
- * @version 2024.02.09.00
+ * @version 2024.11.23.00
  */
 final class StbCronTools{
   private array $Jobs = [];
@@ -45,11 +45,11 @@ final class StbCronTools{
 
   public function Add(
     string $Cmd,
-    int $Minute = null,
-    int $Hour = null,
-    int $Day = null,
-    int $Month = null,
-    int $Week = null
+    int|null $Minute = null,
+    int|null $Hour = null,
+    int|null $Day = null,
+    int|null $Month = null,
+    int|null $Week = null
   ):void{
     $this->Jobs[] = [
       'Minute' => $Minute ?? '*',
@@ -68,7 +68,7 @@ final class StbCronTools{
   }
 
   public function Get(
-    int $Index = null
+    int|null $Index = null
   ):array{
     if($Index === null):
       return $this->Jobs;

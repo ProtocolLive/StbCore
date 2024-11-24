@@ -5,14 +5,14 @@
 namespace ProtocolLive\SimpleTelegramBot\StbParams;
 
 /**
- * @version 2024.02.14.00
+ * @version 2024.11.23.00
  */
 final class StbGlobalModuleCmds{
   private array $Commands = [];
 
   public function __construct(
-    string $Name = null,
-    string $Description = null,
+    string|null $Name = null,
+    string|null $Description = null,
     bool $Public = true
   ){
     DebugTrace();

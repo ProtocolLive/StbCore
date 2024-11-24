@@ -6,7 +6,7 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use Exception;
 
 /**
- * @version 2023.11.21.00
+ * @version 2023.11.23.00
  */
 final class StbLanguageSys{
   private string $Default;
@@ -21,8 +21,8 @@ final class StbLanguageSys{
 
   public function Get(
     string $Text,
-    string $Language = null,
-    string $Group = null
+    string|null $Language = null,
+    string|null $Group = null
   ):string|null{
     DebugTrace();
     $lang = $Language ?? $this->Default;
