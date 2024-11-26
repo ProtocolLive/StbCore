@@ -16,7 +16,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.11.23.00
+ * @version 2024.11.26.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -97,10 +97,10 @@ abstract class StbAdminModules{
     TgCallback $Webhook,
     StbDatabase $Db,
     StbLanguageSys $Lang
-  ):void{
+  ):true{
     DebugTrace();
     if(self::Access($Bot, $Webhook, $Db, $Lang) === false):
-      return;
+      return false;
     endif;
 
     $modules = [];
@@ -142,6 +142,7 @@ abstract class StbAdminModules{
       $Webhook->Message->Data->Id,
       Markup: $mk
     );
+    return true;
   }
 
   public static function Callback_InsModPic(
