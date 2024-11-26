@@ -15,7 +15,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.11.23.00
+ * @version 2024.11.26.00
  */
 abstract class StbModuleHelper{
   private static array $InstallCommands = [];
@@ -99,7 +99,7 @@ abstract class StbModuleHelper{
     if($Commit):
       $Db->GetCustom()->commit();
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         sprintf($Lang->Get('InstallOk', Group: 'Module'))
       );
       StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
@@ -118,7 +118,7 @@ abstract class StbModuleHelper{
     DebugTrace();
     $Db->GetCustom()->commit();
     $Bot->CallbackAnswer(
-      $Webhook->Id,
+      $Webhook->Data->Id,
       sprintf($Lang->Get('InstallOk', Group: 'Module'))
     );
     StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
@@ -143,7 +143,7 @@ abstract class StbModuleHelper{
     DebugTrace();
     $Db->GetCustom()->rollBack();
     $Bot->CallbackAnswer(
-      $Webhook->Id,
+      $Webhook->Data->Id,
       sprintf($Lang->Get('Fail', Group: 'Module'))
     );
     StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
@@ -188,7 +188,7 @@ abstract class StbModuleHelper{
     if($Commit):
       $Db->GetCustom()->commit();
       $Bot->CallbackAnswer(
-        $Webhook->Id,
+        $Webhook->Data->Id,
         sprintf($Lang->Get('UninstallOk', Group: 'Module'))
       );
       StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
@@ -205,7 +205,7 @@ abstract class StbModuleHelper{
     DebugTrace();
     $Db->GetCustom()->Commit();
     $Bot->CallbackAnswer(
-      $Webhook->Id,
+      $Webhook->Data->Id,
       sprintf($Lang->Get('UninstallOk', Group: 'Module'))
     );
     StbAdminModules::Callback_Modules($Bot, $Webhook, $Db, $Lang);
