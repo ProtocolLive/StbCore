@@ -4,6 +4,8 @@
 
 namespace ProtocolLive\SimpleTelegramBot\Install;
 use DateTimeZone;
+use ErrPdoMysql;
+use PDOException;
 use ProtocolLive\PhpLiveDb\Enums\{
   Drivers,
   Formats,
@@ -27,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbEnums\StbDbAdminPerm;
 use ProtocolLive\SimpleTelegramBot\StbObjects\StbAdmin;
 
 /**
- * @version 2024.04.11.00
+ * @version 2024.11.26.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -48,21 +50,28 @@ abstract class Install{
   private static function CreateCallbackhash():void{
     global $PlDb;
     DebugTrace();
-    $PlDb->Create(Tables::CallbackHash)
-    ->Add(
-      CallbackHash::Hash,
-      Formats::Varchar,
-      40,
-      NotNull: true,
-      Primary: true
-    )
-    ->Add(
-      CallbackHash::Method,
-      Formats::Varchar,
-      255,
-      NotNull: true
-    )
-    ->Run();
+    try{
+      $PlDb->Create(Tables::CallbackHash)
+      ->Add(
+        CallbackHash::Hash,
+        Formats::Varchar,
+        40,
+        NotNull: true,
+        Primary: true
+      )
+      ->Add(
+        CallbackHash::Method,
+        Formats::Varchar,
+        255,
+        NotNull: true
+      )
+      ->Run();
+    }catch(PDOException $e){
+      if(ErrPdoMysql::tryFrom($e->getCode()) === ErrPdoMysql::Permissions):
+        echo 'Database error: No permission to create tables';
+        exit(1);
+      endif;
+    }
   }
 
   private static function CreateChats():void{
