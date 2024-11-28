@@ -31,7 +31,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.27.00
+ * @version 2024.11.27.01
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -623,6 +623,7 @@ abstract class StbAdmin{
     StbLanguageSys $Lang
   ):bool{
     DebugTrace();
+    $Lang->LanguageSet($Webhook->Data->User->Language);
     $temp = $Db->VariableGetValue(
       StbDbVariables::Action,
       __CLASS__,
