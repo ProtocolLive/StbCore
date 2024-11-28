@@ -31,7 +31,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.20.00
+ * @version 2024.11.27.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -257,7 +257,7 @@ abstract class StbAdmin{
     $col = 0;
     //Modules menu
     foreach($Db->Modules() as $module):
-      if(method_exists($module['module'], 'PluginButton_Admin' === false)
+      if(method_exists($module['module'], 'PluginButton_Admin') === false
       or $module['module'] === __CLASS__):
         continue;
       endif;
