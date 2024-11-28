@@ -44,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.11.23.00
+ * @version 2024.11.28.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -192,7 +192,7 @@ abstract class StbCore{
       self::Terminal($Bot, $Db, $BotData);
     elseif(str_contains($_GET['a'], 'Webhook')):
       call_user_func(__CLASS__ . '::Action_' . $_GET['a'], $BotData);
-    elseif(is_callable(__CLASS__ . '::Action_' . $_GET['a'])):
+    elseif(method_exists(__CLASS__, 'Action_' . $_GET['a'])):
       call_user_func(__CLASS__ . '::Action_' . $_GET['a'], $Bot, $Db, $Lang);
     endif;
   }
@@ -404,7 +404,7 @@ abstract class StbCore{
   
     //Module command
     $module = $Db->Commands($Webhook->Command);
-    if(is_callable($module . '::Command')):
+    if(method_exists($module, 'Command')):
       call_user_func($module . '::Command', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;

@@ -16,7 +16,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.11.26.00
+ * @version 2024.11.28.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -160,7 +160,7 @@ abstract class StbAdminModules{
     $line = 0;
     $col = 0;
     $mk = new TblMarkupInline;
-    if(is_callable($Module . '::Install') === false):
+    if(method_exists($Module, 'Install') === false):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -175,7 +175,7 @@ abstract class StbAdminModules{
       );
       return;
     endif;
-    if(is_callable($Module . '::Uninstall') === false):
+    if(method_exists($Module, 'Uninstall') === false):
       $mk->ButtonCallback(
         $line,
         $col++,
@@ -206,7 +206,7 @@ abstract class StbAdminModules{
     endif;
 
     $mk = new TblMarkupInline;
-    if(is_callable($Module . '::PluginButton_Module')):
+    if(method_exists($Module, 'PluginButton_Module')):
       call_user_func($Module . '::PluginButton_Module', $Db, $mk);
     endif;
     $mk->ButtonCallback(
