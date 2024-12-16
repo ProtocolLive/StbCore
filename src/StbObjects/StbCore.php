@@ -44,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.11.28.00
+ * @version 2024.12.16.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -404,7 +404,8 @@ abstract class StbCore{
   
     //Module command
     $module = $Db->Commands($Webhook->Command);
-    if(method_exists($module, 'Command')):
+    if($module !== null
+    and method_exists($module, 'Command')):
       call_user_func($module . '::Command', $Bot, $Webhook, $Db, $Lang);
       return;
     endif;
