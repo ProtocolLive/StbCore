@@ -16,7 +16,7 @@ use ProtocolLive\TelegramBotLibrary\TgInterfaces\TgEventInterface;
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCallback;
 
 /**
- * @version 2024.11.28.00
+ * @version 2024.12.22.00
  */
 abstract class StbAdminModules{
   private static function Access(
@@ -294,6 +294,7 @@ abstract class StbAdminModules{
     StbGlobalModuleCmds|null $Commands = null,
     array|null $Listeners = null
   ):bool{
+    DebugTrace();
     $Bots = glob(dirname(__DIR__, 5) . '/Bot-*', GLOB_ONLYDIR);
     foreach($Bots as $bot):
       $config = $bot . '/config.php';
@@ -328,6 +329,7 @@ abstract class StbAdminModules{
   public static function GlobalModuleUninstall(
     string $Module
   ):bool{
+    DebugTrace();
     $Bots = glob(dirname(__DIR__, 5) . '/Bot-*', GLOB_ONLYDIR);
     foreach($Bots as $bot):
       $config = $bot . '/config.php';

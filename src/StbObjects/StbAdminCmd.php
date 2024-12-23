@@ -18,7 +18,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.27.01
+ * @version 2024.12.22.00
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -122,7 +122,8 @@ abstract class StbAdminCmd{
     StbDatabase $Db,
     StbLanguageSys $Lang,
     string $Cmd
-  ){
+  ):void{
+    DebugTrace();
     $temp = $Db->ChatGet($Webhook->Data->User->Id);
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return;
