@@ -33,18 +33,18 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
   TgGroupStatus,
   TgGroupStatusMy,
   TgInvoiceCheckout,
-  TgInvoiceDone,
   TgLimits,
   TgMessageDeleted,
   TgPoll,
   TgReactionUpdate,
   TgUser
 };
+use ProtocolLive\TelegramBotLibrary\TgService\TgInvoiceDone;
 use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2024.12.16.00
+ * @version 2025.05.29.00
  */
 abstract class StbCore{
   public static function Action_(
