@@ -44,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2025.05.29.00
+ * @version 2025.06.01.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -335,10 +335,16 @@ abstract class StbCore{
 
   public static function TblLog(
     int $Type,
-    string $Msg
+    string|array $Msg
   ):void{
     global $PlDb;
     DebugTrace();
+    if(is_array($Msg)):
+      $Msg = json_encode(
+        $Msg,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+      );
+    endif;
     $constants = new ReflectionClass(TblLog::class);
     $constants = $constants->getConstants();
     $constants = array_flip($constants);
