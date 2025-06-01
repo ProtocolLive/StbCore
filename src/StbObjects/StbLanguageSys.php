@@ -6,11 +6,16 @@ namespace ProtocolLive\SimpleTelegramBot\StbObjects;
 use ProtocolLive\SimpleTelegramBot\StbEnums\StbError;
 
 /**
- * @version 2025.05.31.00
+ * @version 2025.06.01.00
  */
 final class StbLanguageSys{
-  private string $Default;
   private array $Translate;
+
+  public function __construct(
+    private string $Default
+  ){
+    DebugTrace();
+  }
 
   public function CommandsGet(
     string $Language
