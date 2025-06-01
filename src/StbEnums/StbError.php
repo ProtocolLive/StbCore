@@ -5,11 +5,12 @@
 namespace ProtocolLive\SimpleTelegramBot\StbEnums;
 
 /**
- * @version 2024.11.08.00
+ * @version 2025.05.31.00
  */
 enum StbError{
   case CallBackReturn;
   case ChatNotFound;
+  case LanguageNotFound;
   case ListenerInvalid;
   case ModuleNotFound;
 }

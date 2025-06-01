@@ -3,10 +3,10 @@
 //https://github.com/ProtocolLive/SimpleTelegramBot
 
 namespace ProtocolLive\SimpleTelegramBot\StbObjects;
-use Exception;
+use ProtocolLive\SimpleTelegramBot\StbEnums\StbError;
 
 /**
- * @version 2023.11.23.00
+ * @version 2025.05.31.00
  */
 final class StbLanguageSys{
   private string $Default;
@@ -37,14 +37,14 @@ final class StbLanguageSys{
   }
 
   /**
-   * @throws Exception
+   * @throws StbException
    */
   public function LanguageSet(
     string $Language
   ):void{
     DebugTrace();
     if(is_dir(dirname(__DIR__) . '/language/' . $Language) === false):
-      throw new Exception('Language ' . $Language . ' not found');
+      throw new StbException(StbError::LanguageNotFound, 'Language ' . $Language . ' not found');
     endif;
     $this->Default = $Language;
   }
