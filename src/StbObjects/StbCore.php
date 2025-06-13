@@ -44,7 +44,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2025.06.01.01
+ * @version 2025.06.13.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -333,10 +333,13 @@ abstract class StbCore{
     endif;
   }
 
+  /**
+   * @return int The log id
+   */
   public static function TblLog(
     int $Type,
     string|array $Msg
-  ):void{
+  ):int{
     global $PlDb;
     DebugTrace();
     if(is_array($Msg)):
@@ -349,7 +352,7 @@ abstract class StbCore{
     $constants = $constants->getConstants();
     $constants = array_flip($constants);
     $Type = $constants[$Type];
-    $PlDb->Insert(Tables::LogUpdates)
+    return $PlDb->Insert(Tables::LogUpdates)
     ->FieldAdd(LogUpdates::Time, time(), Types::Int)
     ->FieldAdd(LogUpdates::Type, $Type, Types::Str)
     ->FieldAdd(LogUpdates::Update, $Msg, Types::Str)
