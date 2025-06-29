@@ -5,7 +5,7 @@
 namespace ProtocolLive\SimpleTelegramBot\NoStr\Fields;
 
 /**
- * @version 2025.06.28.00
+ * @version 2025.06.29.00
  */
 enum LogUpdates:string{
   case Id = 'log_id';
@@ -13,5 +13,6 @@ enum LogUpdates:string{
   case Type = 'type';
   case User = 'user';
   case Chat = 'chat';
+  case MsgId = 'msg_id';
   case Update = 'update';
 }

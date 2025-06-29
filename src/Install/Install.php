@@ -29,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbEnums\StbDbAdminPerm;
 use ProtocolLive\SimpleTelegramBot\StbObjects\StbAdmin;
 
 /**
- * @version 2025.06.28.00
+ * @version 2025.06.29.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -267,6 +267,10 @@ abstract class Install{
     )
     ->Add(
       LogUpdates::User,
+      Formats::IntBig
+    )
+    ->Add(
+      LogUpdates::MsgId,
       Formats::IntBig
     )
     ->Add(

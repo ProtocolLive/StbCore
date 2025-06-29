@@ -46,7 +46,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2025.06.29.01
+ * @version 2025.06.29.02
  */
 abstract class StbCore{
   public static function Action_(
@@ -224,6 +224,7 @@ abstract class StbCore{
     ->FieldAdd(LogUpdates::Type, $Type->name, Types::Str)
     ->FieldAdd(LogUpdates::User, $Msg2->Data->User->Id ?? null, Types::Int)
     ->FieldAdd(LogUpdates::Chat, $Msg2->Data->Chat->Id ?? null, Types::Int)
+    ->FieldAdd(LogUpdates::MsgId, $Msg2->Data->Id ?? null, Types::Int)
     ->FieldAdd(LogUpdates::Update, $Msg, Types::Str)
     ->Run(HtmlSafe: false);
   }
