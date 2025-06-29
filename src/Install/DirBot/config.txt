@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2024.07.07.00
+//2025.06.29.00
 
 use ProtocolLive\PhpLiveDb\Enums\Drivers;
 use ProtocolLive\TelegramBotLibrary\TblObjects\TblLog;
@@ -49,12 +49,11 @@ const TestServer = ##TESTSERVER##;
 const Timezone = '##TIMEZONE##';
 
 /**
- * Use the log constants of the class TelegramBot or/and the constants defined to bot
- * Tips: & and, | or, ^ xor
- * Type: TblLog
- * Default: TblLog::All
+ * Use enums of the class TblLogInterface
+ * Type: array
+ * Default: []
  */
-const Log = TblLog::Webhook | TblLog::Send | TblLog::Response;
+const Log = [TblLog::Webhook, TblLog::Send, TblLog::Response];
 
 /**
  * Default currency
