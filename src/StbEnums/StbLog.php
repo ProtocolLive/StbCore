@@ -6,9 +6,9 @@ namespace ProtocolLive\SimpleTelegramBot\StbEnums;
 use ProtocolLive\TelegramBotLibrary\TblInterfaces\TblLogInterface;
 
 /**
- * @version 2025.06.29.00
+ * @version 2025.06.29.01
  */
-enum StbLog:int
+enum StbLog
 implements TblLogInterface{
   case Cron;
   case Trace;
