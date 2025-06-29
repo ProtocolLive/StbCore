@@ -13,6 +13,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbLog
 };
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
+  TblBasics,
   TblCmd,
   TblData,
   TblException,
@@ -44,7 +45,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2025.06.13.00
+ * @version 2025.06.28.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -197,26 +198,6 @@ abstract class StbCore{
     endif;
   }
 
-  public static function Log(
-    TblData $BotData,
-    int $Type,
-    string $Msg,
-    bool $NewLine = true
-  ):void{
-    DebugTrace();
-    if(($BotData->Log & $Type) === false):
-      return;
-    endif;
-    $Msg = date('Y-m-d H:i:s') . PHP_EOL . $Msg . PHP_EOL;
-    if($NewLine):
-      $Msg .= PHP_EOL;
-    endif;
-    if($Type === StbLog::Cron):
-      $file = 'cron';
-    endif;
-    file_put_contents(DirLogs . '/' . $file . '.log', $Msg, FILE_APPEND);
-  }
-
   private static function ModuleAutoload():void{
     DebugTrace();
     spl_autoload_register(function(string $Class){
@@ -325,7 +306,7 @@ abstract class StbCore{
         $temp = array_search('--module', $_SERVER['argv']);
       endif;
       call_user_func($_SERVER['argv'][$temp + 1] . '::Cron', $Bot, $Db, $BotData);
-      self::Log(
+      TblBasics::Log(
         $BotData,
         StbLog::Cron,
         'Time: ' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])
@@ -334,15 +315,17 @@ abstract class StbCore{
   }
 
   /**
+   * Log handle for TelegramBotLibrary to log in mysql
    * @return int The log id
    */
   public static function TblLog(
+    TblData $BotData,
     int $Type,
-    string|array $Msg
+    string|array|object $Msg
   ):int{
     global $PlDb;
     DebugTrace();
-    if(is_array($Msg)):
+    if(is_string($Msg) === false):
       $Msg = json_encode(
         $Msg,
         JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
