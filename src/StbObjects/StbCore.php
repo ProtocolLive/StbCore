@@ -45,7 +45,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2025.06.28.00
+ * @version 2025.06.28.01
  */
 abstract class StbCore{
   public static function Action_(
@@ -321,7 +321,10 @@ abstract class StbCore{
   public static function TblLog(
     TblData $BotData,
     int $Type,
-    string|array|object $Msg
+    string|array $Msg,
+    object|null $Msg2 = null,
+    bool $SkipLogHandler = false,
+    string|null $CustomLogName = null
   ):int{
     global $PlDb;
     DebugTrace();
@@ -336,8 +339,10 @@ abstract class StbCore{
     $constants = array_flip($constants);
     $Type = $constants[$Type];
     return $PlDb->Insert(Tables::LogUpdates)
-    ->FieldAdd(LogUpdates::Time, time(), Types::Int)
+    ->FieldAdd(LogUpdates::Time, $Msg2->Data->Date ?? time(), Types::Int)
     ->FieldAdd(LogUpdates::Type, $Type, Types::Str)
+    ->FieldAdd(LogUpdates::User, $Msg2->Data->User->Id ?? null, Types::Int)
+    ->FieldAdd(LogUpdates::Chat, $Msg2->Data->Chat->Id ?? null, Types::Int)
     ->FieldAdd(LogUpdates::Update, $Msg, Types::Str)
     ->Run(HtmlSafe: false);
   }
