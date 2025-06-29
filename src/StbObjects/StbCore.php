@@ -12,6 +12,7 @@ use ProtocolLive\SimpleTelegramBot\StbObjects\{
   StbDatabase,
   StbLog
 };
+use ProtocolLive\TelegramBotLibrary\TblInterfaces\TblLogInterface;
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblBasics,
   TblCmd,
@@ -45,7 +46,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2025.06.29.00
+ * @version 2025.06.29.01
  */
 abstract class StbCore{
   public static function Action_(
@@ -204,7 +205,7 @@ abstract class StbCore{
    */
   public static function Log(
     TblData $BotData,
-    int $Type,
+    TblLogInterface $Type,
     string|array $Msg,
     object|null $Msg2 = null,
     bool $SkipLogHandler = false,
@@ -218,13 +219,9 @@ abstract class StbCore{
         JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
       );
     endif;
-    $constants = new ReflectionClass(TblLog::class);
-    $constants = $constants->getConstants();
-    $constants = array_flip($constants);
-    $Type = $constants[$Type];
     return $PlDb->Insert(Tables::LogUpdates)
     ->FieldAdd(LogUpdates::Time, $Msg2->Data->Date ?? time(), Types::Int)
-    ->FieldAdd(LogUpdates::Type, $Type, Types::Str)
+    ->FieldAdd(LogUpdates::Type, $Type->name, Types::Str)
     ->FieldAdd(LogUpdates::User, $Msg2->Data->User->Id ?? null, Types::Int)
     ->FieldAdd(LogUpdates::Chat, $Msg2->Data->Chat->Id ?? null, Types::Int)
     ->FieldAdd(LogUpdates::Update, $Msg, Types::Str)
