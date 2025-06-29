@@ -45,7 +45,7 @@ use ReflectionClass;
 use TypeError;
 
 /**
- * @version 2025.06.28.01
+ * @version 2025.06.29.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -198,6 +198,39 @@ abstract class StbCore{
     endif;
   }
 
+  /**
+   * Log handle for TelegramBotLibrary to log in mysql
+   * @return int The log id
+   */
+  public static function Log(
+    TblData $BotData,
+    int $Type,
+    string|array $Msg,
+    object|null $Msg2 = null,
+    bool $SkipLogHandler = false,
+    string|null $CustomLogName = null
+  ):int{
+    global $PlDb;
+    DebugTrace();
+    if(is_string($Msg) === false):
+      $Msg = json_encode(
+        $Msg,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+      );
+    endif;
+    $constants = new ReflectionClass(TblLog::class);
+    $constants = $constants->getConstants();
+    $constants = array_flip($constants);
+    $Type = $constants[$Type];
+    return $PlDb->Insert(Tables::LogUpdates)
+    ->FieldAdd(LogUpdates::Time, $Msg2->Data->Date ?? time(), Types::Int)
+    ->FieldAdd(LogUpdates::Type, $Type, Types::Str)
+    ->FieldAdd(LogUpdates::User, $Msg2->Data->User->Id ?? null, Types::Int)
+    ->FieldAdd(LogUpdates::Chat, $Msg2->Data->Chat->Id ?? null, Types::Int)
+    ->FieldAdd(LogUpdates::Update, $Msg, Types::Str)
+    ->Run(HtmlSafe: false);
+  }
+
   private static function ModuleAutoload():void{
     DebugTrace();
     spl_autoload_register(function(string $Class){
@@ -312,39 +345,6 @@ abstract class StbCore{
         'Time: ' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])
       );
     endif;
-  }
-
-  /**
-   * Log handle for TelegramBotLibrary to log in mysql
-   * @return int The log id
-   */
-  public static function TblLog(
-    TblData $BotData,
-    int $Type,
-    string|array $Msg,
-    object|null $Msg2 = null,
-    bool $SkipLogHandler = false,
-    string|null $CustomLogName = null
-  ):int{
-    global $PlDb;
-    DebugTrace();
-    if(is_string($Msg) === false):
-      $Msg = json_encode(
-        $Msg,
-        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-      );
-    endif;
-    $constants = new ReflectionClass(TblLog::class);
-    $constants = $constants->getConstants();
-    $constants = array_flip($constants);
-    $Type = $constants[$Type];
-    return $PlDb->Insert(Tables::LogUpdates)
-    ->FieldAdd(LogUpdates::Time, $Msg2->Data->Date ?? time(), Types::Int)
-    ->FieldAdd(LogUpdates::Type, $Type, Types::Str)
-    ->FieldAdd(LogUpdates::User, $Msg2->Data->User->Id ?? null, Types::Int)
-    ->FieldAdd(LogUpdates::Chat, $Msg2->Data->Chat->Id ?? null, Types::Int)
-    ->FieldAdd(LogUpdates::Update, $Msg, Types::Str)
-    ->Run(HtmlSafe: false);
   }
 
   /**
