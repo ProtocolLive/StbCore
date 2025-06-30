@@ -16,7 +16,6 @@ use ProtocolLive\TelegramBotLibrary\TblObjects\{
   TblCmd,
   TblData,
   TblException,
-  TblLog,
   TblWebhook
 };
 use ProtocolLive\TelegramBotLibrary\TelegramBotLibrary;
@@ -43,7 +42,7 @@ use ProtocolLive\TelegramBotLibrary\TgService\TgInvoiceDone;
 use TypeError;
 
 /**
- * @version 2025.06.30.00
+ * @version 2025.06.30.01
  */
 abstract class StbCore{
   public static function Action_(

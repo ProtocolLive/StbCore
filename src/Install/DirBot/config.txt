@@ -1,10 +1,10 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2025.06.29.00
+//2025.06.30.00
 
 use ProtocolLive\PhpLiveDb\Enums\Drivers;
-use ProtocolLive\TelegramBotLibrary\TblObjects\TblLog;
+use ProtocolLive\TelegramBotLibrary\TblEnums\TblLog;
 use ProtocolLive\TelegramBotLibrary\TgEnums\TgCurrencies;
 
 //Installation date: ##DATE##
