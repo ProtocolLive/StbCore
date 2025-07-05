@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2025.07.05.00
+ * @version 2025.07.05.01
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -242,7 +242,7 @@ final readonly class StbDatabase{
    * @throws StbException|PDOException
    */
   public function ListenerAdd(
-    TgEventInterface|string $Listener,
+    string $Listener,
     string $Class,
     int|null $Chat = null
   ):void{
@@ -250,14 +250,15 @@ final readonly class StbDatabase{
     if($this->NoUserListener($Listener)):
       $Chat = null;
     endif;
-    if(in_array(TgEventInterface::class, class_implements($Listener)) === false):
-      throw new StbException(StbError::ListenerInvalid, 'Informed listener ' . $Listener . ' not implement TgEventInterface');
-    endif;
-    if(is_object($Listener)):
-      $Listener = $Listener::class;
+    if($Listener !== TgEventInterface::class
+    and in_array(TgEventInterface::class, class_implements($Listener)) === false):
+      throw new StbException(
+        StbError::ListenerInvalid,
+        'Informed listener ' . $Listener . ' not implement TgEventInterface'
+      );
     endif;
     $consult = $this->Db->InsertUpdate(Tables::Listeners)
-    ->FieldAdd(Listeners::Name, $Listener, Types::Str)
+    ->FieldAdd(Listeners::Name, $Listener::class, Types::Str)
     ->FieldAdd(Listeners::Chat, $Chat, Types::Str, Update: true)
     ->FieldAdd(Listeners::Module, $Class, Types::Str, Update: true);
     try{
@@ -295,19 +296,24 @@ final readonly class StbDatabase{
    * Get the module linked to the specified listener
    */
   public function ListenerGet(
-    TgEventInterface $Listener,
+    string|TgEventInterface $Listener,
     int|null $User = null
   ):string|null{
     DebugTrace();
+    if(is_object($Listener)):
+      $Listener = $Listener::class;
+    endif;
     if($this->NoUserListener($Listener)):
       $User = null;
     endif;
     $listeners = $this->Db->Select(Tables::Listeners)
     ->WhereAdd(Listeners::Chat, $User, Types::Int)
     ->Run();
+    $family = class_implements($Listener);
     //Test every listener because of interfaces
     foreach($listeners as $listener):
-      if($Listener instanceof $listener['listener']):
+      if($listener['listener'] === $Listener
+      or in_array($listener['listener'], $family)):
         return $listener['module'];
       endif;
     endforeach;
@@ -376,18 +382,14 @@ final readonly class StbDatabase{
   }
 
   private function NoUserListener(
-    TgEventInterface|string $Listener
+    string $Listener
   ):bool{
     DebugTrace();
-    if($Listener instanceof TgEventInterface):
-      $Listener = $Listener::class;
-    endif;
     if($Listener === TgInlineQuery::class
     or $Listener === TgGroupStatusMy::class):
       return true;
-    else:
-      return false;
     endif;
+    return false;
   }
 
   public function UsageLog(
