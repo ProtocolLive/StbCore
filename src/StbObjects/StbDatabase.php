@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2024.11.23.00
+ * @version 2025.07.05.00
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -49,18 +49,24 @@ final readonly class StbDatabase{
   }
 
   /**
-   * @return ChatData[]
+   * Return all admins or check if a admin exists
+   * @return ChatData[] Return all admins, the admin if it exists or an empty array
    */
-  public function Admins():array{
+  public function Admins(
+    int|null $Id = null
+  ):array{
     DebugTrace();
     $result = $this->Db->Select(Tables::Chats)
     ->WhereAdd(
       Chats::Permission,
-      StbDbAdminPerm::None->value,
+      StbDbAdminPerm::None,
       Types::Int,
       Operators::Bigger
-    )
-    ->Run();
+    );
+    if($Id > 0):
+      $result->WhereAdd(Chats::Id, $Id, Types::Int);
+    endif;
+    $result = $result->Run();
     foreach($result as &$admin):
       $admin = new ChatData($admin);
     endforeach;
