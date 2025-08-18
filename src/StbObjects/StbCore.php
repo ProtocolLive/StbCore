@@ -42,7 +42,7 @@ use ProtocolLive\TelegramBotLibrary\TgService\TgInvoiceDone;
 use TypeError;
 
 /**
- * @version 2025.06.30.01
+ * @version 2025.08.18.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -380,7 +380,11 @@ abstract class StbCore{
     StbLanguageSys $Lang
   ):void{
     DebugTrace();
-    $Lang->LanguageSet($Webhook->Data->User->Language ?? DefaultLanguage);
+    try{
+      $Lang->LanguageSet($Webhook->Data->User->Language ?? DefaultLanguage);
+    }catch(StbException){
+      $Lang->LanguageSet(DefaultLanguage);
+    }
   
     //In a group, with many bots, the commands have the target bot.
     //This block check the target and caches the bot name
