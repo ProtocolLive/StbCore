@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2025.07.05.01
+ * @version 2025.12.18.00
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -258,7 +258,7 @@ final readonly class StbDatabase{
       );
     endif;
     $consult = $this->Db->InsertUpdate(Tables::Listeners)
-    ->FieldAdd(Listeners::Name, $Listener::class, Types::Str)
+    ->FieldAdd(Listeners::Name, $Listener, Types::Str)
     ->FieldAdd(Listeners::Chat, $Chat, Types::Str, Update: true)
     ->FieldAdd(Listeners::Module, $Class, Types::Str, Update: true);
     try{
