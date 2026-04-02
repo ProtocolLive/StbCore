@@ -42,7 +42,7 @@ use ProtocolLive\TelegramBotLibrary\TgService\TgInvoiceDone;
 use TypeError;
 
 /**
- * @version 2025.08.18.00
+ * @version 2026.04.02.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -164,7 +164,7 @@ abstract class StbCore{
       $Webhook->Set(
         'https://' . ($_GET['server'] ?? $_SERVER['SERVER_NAME']) . $_SERVER['SCRIPT_NAME'],
         Updates: TgUpdateType::cases(),
-        TokenWebhook: $BotData->TokenWebhook
+        TokenWebhook: $BotData->TokenWebhook->getValue()
       );
       echo '<p>Webhook set</p>';
       echo '<p><a href="index.php?a=WebhookGet">Click here see details</a></p>';
