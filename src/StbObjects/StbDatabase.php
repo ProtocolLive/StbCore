@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2026.04.10.00
+ * @version 2026.04.10.01
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -235,9 +235,15 @@ final readonly class StbDatabase{
     return $return;
   }
 
-  public function GetCustom():PDO{
+  public function GetCustom(
+    bool $Pdo = false
+  ):PhpLiveDb|PDO{
     DebugTrace();
-    return $this->Db->GetCustom();
+    if($Pdo):
+      return clone $this->Db->GetCustom();
+    else:
+      return clone $this->Db;
+    endif;
   }
 
   /**
