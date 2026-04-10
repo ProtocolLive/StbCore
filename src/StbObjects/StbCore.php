@@ -42,7 +42,7 @@ use ProtocolLive\TelegramBotLibrary\TgService\TgInvoiceDone;
 use TypeError;
 
 /**
- * @version 2026.04.02.00
+ * @version 2026.04.10.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -61,9 +61,9 @@ abstract class StbCore{
     if($Webhook === null):
       return;
     endif;
-    if(empty($Webhook->Data->User) === false //anon reaction
+    if(isset($Webhook->Data->User) //anon reaction don't have
     or ($Webhook->Data->Chat->Type ?? null) === TgChatType::Private):
-      $Db->ChatEdit($Webhook->Data->User);
+      $Db->ChatEdit($Webhook->Data->User, LastSeen: true);
     endif;
     if($Webhook::class === TblCmd::class)://prevent TblCmdEdited
       self::Update_Cmd($Bot, $Db, $Webhook, $Lang);

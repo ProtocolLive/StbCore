@@ -39,7 +39,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 use UnitEnum;
 
 /**
- * @version 2025.12.18.00
+ * @version 2026.04.10.00
  */
 final readonly class StbDatabase{
   public function __construct(
@@ -129,12 +129,15 @@ final readonly class StbDatabase{
    */
   public function ChatEdit(
     int|TgUser|TgChat $Chat,
-    int|null $Permissions = null
+    int|null $Permissions = null,
+    bool $LastSeen = false
   ):bool{
     DebugTrace();
     $consult = $this->Db->InsertUpdate(Tables::Chats)
-    ->FieldAdd(Chats::Created, time(), Types::Int)
-    ->FieldAdd(Chats::LastSeen, time(), Types::Int, Update: true);
+    ->FieldAdd(Chats::Created, time(), Types::Int);
+    if($LastSeen):
+      $consult->FieldAdd(Chats::LastSeen, time(), Types::Int, Update: true);
+    endif;
     if($Chat instanceof TgUser):
       $consult->FieldAdd(Chats::Id, $Chat->Id, Types::Int)
       ->FieldAdd(Chats::Name, $Chat->Name, Types::Str, Update: true)
