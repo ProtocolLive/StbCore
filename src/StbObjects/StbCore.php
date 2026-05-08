@@ -42,7 +42,7 @@ use ProtocolLive\TelegramBotLibrary\TgService\TgInvoiceDone;
 use TypeError;
 
 /**
- * @version 2026.04.10.00
+ * @version 2026.05.08.00
  */
 abstract class StbCore{
   public static function Action_(
@@ -134,9 +134,7 @@ abstract class StbCore{
     echo 'Server: ' . ($temp['ip_address'] ?? 'None') . '<br>';
     echo 'Updates: ';
     if(isset($temp['allowed_updates'])):
-      foreach($temp['allowed_updates'] as $update):
-        echo $update . ', ';
-      endforeach;
+      echo implode(', ', $temp['allowed_updates']);
     else:
       echo 'None';
     endif;
