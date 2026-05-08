@@ -1,7 +1,7 @@
 <?php
 //Protocol Corporation Ltda.
 //https://github.com/ProtocolLive/SimpleTelegramBot
-//2022.12.23.01
+//2026.05.07.00
 
 use ProtocolLive\TelegramBotLibrary\TgObjects\TgCmdScope;
 
@@ -19,7 +19,7 @@ $lang = substr(DefaultLanguage, 0, 2);?>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::Default));?>
 </p>
 <p>
-  Default + <?php echo $lang;?><br>
+  Default + <?=$lang?><br>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::Default, $lang));?>
 </p>
 <p>
@@ -27,7 +27,7 @@ $lang = substr(DefaultLanguage, 0, 2);?>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::Users));?>
 </p>
 <p>
-  Users + <?php echo $lang;?><br>
+  Users + <?=$lang?><br>
   <?php var_dump($Bot->MyCmdClear(TgCmdScope::Users, $lang));?>
 </p>
 <p>
@@ -35,7 +35,7 @@ $lang = substr(DefaultLanguage, 0, 2);?>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::Groups));?>
 </p>
 <p>
-  Groups + <?php echo $lang;?><br>
+  Groups + <?=$lang?><br>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::Groups, $lang));?>
 </p>
 <p>
@@ -43,7 +43,7 @@ $lang = substr(DefaultLanguage, 0, 2);?>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::GroupsAdmins));?>
 </p>
 <p>
-  Groups Admins + <?php echo $lang;?><br>
+  Groups Admins + <?=$lang?><br>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::GroupsAdmins, $lang));?>
 </p>
 <p>
@@ -51,6 +51,6 @@ $lang = substr(DefaultLanguage, 0, 2);?>
   <?php var_dump($Bot->MyCmdGet(TgCmdScope::Chat, null, Admin));?>
 </p>
 <p>
-  Main admin + <?php echo $lang;?><br>
+  Main admin + <?=$lang?><br>
   <?php var_dump($Bot->MyCmdClear(TgCmdScope::Chat, $lang, Admin));?>
 </p>
