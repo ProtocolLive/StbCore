@@ -29,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbEnums\StbDbAdminPerm;
 use ProtocolLive\SimpleTelegramBot\StbObjects\StbAdmin;
 
 /**
- * @version 2025.06.29.00
+ * @version 2026.07.14.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -148,10 +148,17 @@ abstract class Install{
       RefDelete: RefTypes::Cascade,
       RefUpdate: RefTypes::Cascade
     )
+    ->Add(
+      Commands::Ephemeral,
+      Formats::IntTiny,
+      Unsigned: true,
+      NotNull: true,
+    )
     ->Run();
     $consult = $PlDb->Insert(Tables::Commands)
     ->FieldAdd(Commands::Module, StbAdmin::class, Types::Str)
-    ->FieldAdd(Commands::Name, 'admin', Types::Str);
+    ->FieldAdd(Commands::Name, 'admin', Types::Str)
+    ->FieldAdd(Commands::Ephemeral, 1, Types::Int);
     $consult->Run();
     $consult->FieldAdd(Commands::Name, 'id', Types::Str)
     ->Run();

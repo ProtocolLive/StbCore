@@ -18,7 +18,7 @@
     "AdminNeedStart": "⚠️ The selected user don't start the bot yet",
     "Admins": "🎖️ Administrators:",
     "AdminsButton": "🎖️ Administrators",
-    "Command": "Command:%1$s\nDescription: %2$s",
+    "Command": "Command:%1$s\nDescription: %2$s\nEphemeral: %3$s",
     "CommandsButton": "🤖 Commands",
     "CommandDescription": "Send the description:",
     "CommandName": "Send the command:",

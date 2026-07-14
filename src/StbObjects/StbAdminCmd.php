@@ -8,6 +8,7 @@ use ProtocolLive\SimpleTelegramBot\StbEnums\{
   StbDbVariables
 };
 use ProtocolLive\TelegramBotLibrary\TblObjects\{
+  TblCommand,
   TblCommands,
   TblMarkupInline
 };
@@ -18,7 +19,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2026.04.10.00
+ * @version 2026.07.14.00
  */
 abstract class StbAdminCmd{
   public static function Callback_Cmd(
@@ -33,7 +34,6 @@ abstract class StbAdminCmd{
     if($temp->Permission & StbDbAdminPerm::Cmds == false):
       return false;
     endif;
-    $description = $Bot->MyCmdGet()->Get($Cmd);
     $mk = new TblMarkupInline;
     $mk->ButtonCallback(
       0,
@@ -53,12 +53,14 @@ abstract class StbAdminCmd{
       '❌',
       $Db->CallBackHashSet(self::Callback_CmdDel(...), $Cmd)
     );
+    $cmd = $Bot->MyCmdGet()->Get($Cmd);
     if($Webhook instanceof TgCallback):
       $Bot->TextEdit(
         sprintf(
           $Lang->Get('Command', Group: 'Admin'),
           $Cmd,
-          $description
+          $cmd->Description,
+          $cmd->Ephemeral ? '✅' : '❎'
         ),
         $Webhook->Message->Data->Chat->Id,
         $Webhook->Message->Data->Id,
@@ -70,7 +72,8 @@ abstract class StbAdminCmd{
         sprintf(
           $Lang->Get('Command', Group: 'Admin'),
           $Cmd,
-          $description
+          $cmd->Description,
+          $cmd->Ephemeral ? '✅' : '❎'
         ),
         Markup: $mk
       );
@@ -270,6 +273,102 @@ abstract class StbAdminCmd{
     return true;
   }
 
+  public static function Callback_CmdNewEphemeralNo(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):true{
+    DebugTrace();
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
+      return true;
+    endif;
+    $cmds = $Bot->MyCmdGet();
+    $cmds->Add(new TblCommand(
+      $Db->VariableGetValue(
+        StbDbVariables::CmdName,
+        StbAdmin::class,
+        $Webhook->Data->User->Id
+      ),
+      $Db->VariableGetValue(
+        StbDbVariables::CmdDescription,
+        StbAdmin::class,
+        $Webhook->Data->User->Id,
+      ),
+      false
+    ));
+    $Bot->MyCmdSet($cmds);
+    $Db->VariableDel(
+      StbDbVariables::Action,
+      null,
+      StbAdmin::class,
+      $Webhook->Data->User->Id
+    );
+    $Db->VariableDel(
+      StbDbVariables::CmdName,
+      null,
+      StbAdmin::class,
+      $Webhook->Data->User->Id
+    );
+    $Db->VariableDel(
+      StbDbVariables::CmdDescription,
+      null,
+      StbAdmin::class,
+      $Webhook->Data->User->Id
+    );
+    StbAdminCmd::Callback_Commands($Bot, $Webhook, $Db, $Lang);
+    return true;
+  }
+
+  public static function Callback_CmdNewEphemeralYes(
+    TelegramBotLibrary $Bot,
+    TgCallback $Webhook,
+    StbDatabase $Db,
+    StbLanguageSys $Lang
+  ):true{
+    DebugTrace();
+    $temp = $Db->ChatGet($Webhook->Data->User->Id);
+    if($temp->Permission & StbDbAdminPerm::Cmds == false):
+      return true;
+    endif;
+    $cmds = $Bot->MyCmdGet();
+    $cmds->Add(new TblCommand(
+      $Db->VariableGetValue(
+        StbDbVariables::CmdName,
+        StbAdmin::class,
+        $Webhook->Data->User->Id
+      ),
+      $Db->VariableGetValue(
+        StbDbVariables::CmdDescription,
+        StbAdmin::class,
+        $Webhook->Data->User->Id,
+      ),
+      true
+    ));
+    $Bot->MyCmdSet($cmds);
+    $Db->VariableDel(
+      StbDbVariables::Action,
+      null,
+      StbAdmin::class,
+      $Webhook->Data->User->Id
+    );
+    $Db->VariableDel(
+      StbDbVariables::CmdName,
+      null,
+      StbAdmin::class,
+      $Webhook->Data->User->Id
+    );
+    $Db->VariableDel(
+      StbDbVariables::CmdDescription,
+      null,
+      StbAdmin::class,
+      $Webhook->Data->User->Id
+    );
+    StbAdminCmd::Callback_Commands($Bot, $Webhook, $Db, $Lang);
+    return true;
+  }
+
   public static function Callback_CmdUp(
     TelegramBotLibrary $Bot,
     TgCallback $Webhook,
@@ -393,23 +492,9 @@ abstract class StbAdminCmd{
     if(($chat->Permission & StbDbAdminPerm::Cmds->value) == false):
       return;
     endif;
-    $temp = $Db->VariableGetValue(
-      StbDbVariables::CmdName,
-      StbAdmin::class,
-      $Webhook->Data->User->Id
-    );
-    $cmds = $Bot->MyCmdGet();
-    $cmds->Add($temp, trim($Webhook->Text));
-    $Bot->MyCmdSet($cmds);
-    $Db->VariableDel(
-      StbDbVariables::Action->name,
-      null,
-      StbAdmin::class,
-      $Webhook->Data->User->Id
-    );
-    $Db->VariableDel(
-      StbDbVariables::CmdName->name,
-      null,
+    $Db->VariableSet(
+      StbDbVariables::CmdDescription,
+      trim($Webhook->Text),
       StbAdmin::class,
       $Webhook->Data->User->Id
     );
@@ -417,7 +502,13 @@ abstract class StbAdminCmd{
       TgText::class,
       $Webhook->Data->User->Id
     );
-    StbAdminCmd::Callback_Commands($Bot, $Webhook, $Db, $Lang);
+    $Bot->TextSend(
+      $Webhook->Data->User->Id,
+      $Lang->Get('CommandEphemeral', Group: 'Admin'),
+      Markup: new TblMarkupInline()
+        ->ButtonCallback(0, 0, '❎', $Db->CallBackHashSet(self::Callback_CmdNewEphemeralNo(...)))
+        ->ButtonCallback(0, 1, '✅', $Db->CallBackHashSet(self::Callback_CmdNewEphemeralYes(...)))
+    );
   }
 
   public static function CmdAddName(
