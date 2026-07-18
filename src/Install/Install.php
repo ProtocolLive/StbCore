@@ -29,7 +29,7 @@ use ProtocolLive\SimpleTelegramBot\StbEnums\StbDbAdminPerm;
 use ProtocolLive\SimpleTelegramBot\StbObjects\StbAdmin;
 
 /**
- * @version 2026.07.14.00
+ * @version 2026.07.18.00
  */
 abstract class Install{
   private static function CopyRecursive(
@@ -160,8 +160,6 @@ abstract class Install{
     ->FieldAdd(Commands::Name, 'admin', Types::Str)
     ->FieldAdd(Commands::Ephemeral, 1, Types::Int);
     $consult->Run();
-    $consult->FieldAdd(Commands::Name, 'id', Types::Str)
-    ->Run();
   }
 
   private static function CreateListeners():void{

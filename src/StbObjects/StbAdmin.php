@@ -31,7 +31,7 @@ use ProtocolLive\TelegramBotLibrary\TgObjects\{
 };
 
 /**
- * @version 2024.11.27.01
+ * @version 2026.07.18.00
  */
 abstract class StbAdmin{
   public static function Callback_Admin(
@@ -552,31 +552,6 @@ abstract class StbAdmin{
     );
   }
 
-  public static function CmdId(
-    TelegramBotLibrary $Bot,
-    TblCmd $Webhook,
-    StbDatabase $Db,
-    StbLanguageSys $Lang
-  ):void{
-    DebugTrace();
-    $msg = sprintf(
-      $Lang->Get('MyId'),
-      $Webhook->Data->User->Id,
-    );
-    if($Webhook->Data->Chat->Id !== $Webhook->Data->User->Id):
-      $msg .= sprintf(
-        $Lang->Get('MyIdChat'),
-        $Webhook->Data->Chat->Id,
-      );
-    endif;
-    $Bot->TextSend(
-      $Webhook->Data->User->Id,
-      $msg,
-      ParseMode: TgParseMode::Html
-    );
-    $Db->UsageLog($Webhook->Data->User->Id, 'id');
-  }
-
   public static function Command(
     TelegramBotLibrary $Bot,
     TblCmd $Webhook,
@@ -585,8 +560,7 @@ abstract class StbAdmin{
   ):void{
     DebugTrace();
     match($Webhook->Command){
-      'admin' => self::Callback_AdminMenu($Bot, $Webhook, $Db, $Lang),
-      'id' => self::CmdId($Bot, $Webhook, $Db, $Lang)
+      'admin' => self::Callback_AdminMenu($Bot, $Webhook, $Db, $Lang)
     };
   }
 
